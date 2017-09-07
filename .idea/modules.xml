@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Heaven.iml" filepath="$PROJECT_DIR$/Heaven.iml" />
+      <module fileurl="file://$PROJECT_DIR$/heaven/heaven.iml" filepath="$PROJECT_DIR$/heaven/heaven.iml" />
+      <module fileurl="file://$PROJECT_DIR$/netcore/netcore.iml" filepath="$PROJECT_DIR$/netcore/netcore.iml" />
+    </modules>
+  </component>
+</project>
