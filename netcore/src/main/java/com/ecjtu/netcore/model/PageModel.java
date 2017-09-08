@@ -8,18 +8,18 @@ import java.util.List;
 
 public class PageModel {
     List<ItemModel> itemList;
-    int maxLen;
+    int maxPage;
 
     public PageModel(List<ItemModel> itemList) {
         this.itemList = itemList;
     }
 
-    public int getMaxLen() {
-        return maxLen;
+    public int getMaxPage() {
+        return maxPage;
     }
 
-    public void setMaxLen(int maxLen) {
-        this.maxLen = maxLen;
+    public void setMaxPage(int maxPage) {
+        this.maxPage = maxPage;
     }
 
     public List<ItemModel> getItemList() {

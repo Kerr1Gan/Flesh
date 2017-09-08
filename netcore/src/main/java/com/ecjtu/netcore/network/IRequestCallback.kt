@@ -8,5 +8,8 @@ import java.net.HttpURLConnection
  */
 interface IRequestCallback {
     fun onSuccess(httpURLConnection: HttpURLConnection?, response: String)
+}
+
+interface IRequestCallbackV2 : IRequestCallback {
     fun onError(httpURLConnection: HttpURLConnection?, exception: Exception)
 }

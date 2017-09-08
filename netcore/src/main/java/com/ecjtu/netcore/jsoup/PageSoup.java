@@ -45,6 +45,6 @@ public class PageSoup extends MenuSoup {
         String url = links.get(links.size() - 2).attr("href");
         url= url.substring(0,url.length()-1);
         int maxLen = Integer.valueOf(url.substring(url.lastIndexOf("/")+1));
-        pageModel.setMaxLen(maxLen);
+        pageModel.setMaxPage(maxLen);
     }
 }

@@ -61,8 +61,10 @@ abstract class BaseNetwork {
             e.printStackTrace()
             ex = e
         } finally {
-            if (ex != null) {
-                mCallback?.onError(mHttpUrlConnection, ex)
+            if (ex != null && mCallback is IRequestCallbackV2) {
+                mCallback?.let {
+                    (mCallback as IRequestCallbackV2).onError(mHttpUrlConnection, ex!!)
+                }
             } else {
                 mCallback?.onSuccess(mHttpUrlConnection, ret)
             }
