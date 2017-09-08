@@ -2,6 +2,7 @@ package com.ecjtu.heaven.ui.adapter
 
 import android.graphics.Bitmap
 import android.support.v7.widget.RecyclerView
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +32,11 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
     override fun onBindViewHolder(holder: VH?, position: Int) {
         val context = holder?.itemView?.context
         val params = holder?.itemView?.layoutParams
-        params?.height = mLastHeight // 防止上滑时 出现跳动的情况
+        if (mLastHeight != 0) {
+            params?.height = mLastHeight // 防止上滑时 出现跳动的情况
+        } else {
+            params?.height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300f, context?.resources?.displayMetrics).toInt()
+        }
 
         val imageView = holder?.mImageView
         val options = RequestOptions()
@@ -54,26 +59,29 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
 
     override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
         if (target is BitmapImageViewTarget) {
-            var layoutParams = (target.view.parent as View).layoutParams
-            layoutParams.height = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
+            val layoutParams = (target.view.parent as View).layoutParams
+            val height = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
+            if (layoutParams.height != height) {
+                layoutParams.height = height
+            }
             target.view.setImageBitmap(resource)
 
-            mLastHeight = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
+            mLastHeight = height
         }
         return true
     }
 
     private fun thumb2OriginalUrl(url: String): String? {
-        try {
+        return try {
             var localUrl = url.replace("/thumbs", "")
             var suffix = localUrl.substring(localUrl.lastIndexOf("/"))
             suffix = suffix.substring(suffix.indexOf("_") + 1)
             var end = suffix.substring(suffix.lastIndexOf("."))
             suffix = suffix.substring(0, suffix.lastIndexOf("_"))
             suffix += end
-            return localUrl.substring(0, localUrl.lastIndexOf("/") + 1) + suffix
+            localUrl.substring(0, localUrl.lastIndexOf("/") + 1) + suffix
         } catch (ex: Exception) {
-            return null
+            null
         }
     }
 
