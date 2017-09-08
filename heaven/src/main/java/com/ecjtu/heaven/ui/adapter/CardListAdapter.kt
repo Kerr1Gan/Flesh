@@ -1,11 +1,7 @@
 package com.ecjtu.heaven.ui.adapter
 
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.support.v7.widget.RecyclerView
-import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +22,8 @@ import com.ecjtu.netcore.model.PageModel
  */
 class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListAdapter.VH>(), RequestListener<Bitmap> {
 
+    private var mLastHeight = 0
+
     override fun getItemCount(): Int {
         return pageModel.itemList.size
     }
@@ -33,7 +31,7 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
     override fun onBindViewHolder(holder: VH?, position: Int) {
         val context = holder?.itemView?.context
         val params = holder?.itemView?.layoutParams
-        params?.height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300f,context?.resources?.displayMetrics).toInt()
+        params?.height = mLastHeight // 防止上滑时 出现跳动的情况
 
         val imageView = holder?.mImageView
         val options = RequestOptions()
@@ -43,13 +41,6 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         url.let {
             Glide.with(context).asBitmap().load(url).listener(this).apply(options).into(imageView)
         }
-    }
-
-    override fun onViewDetachedFromWindow(holder: VH?) {
-        super.onViewDetachedFromWindow(holder)
-        val context = holder?.itemView?.context
-        val params = holder?.itemView?.layoutParams
-        params?.height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300f,context?.resources?.displayMetrics).toInt()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VH {
@@ -64,8 +55,10 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
     override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
         if (target is BitmapImageViewTarget) {
             var layoutParams = (target.view.parent as View).layoutParams
-            layoutParams.height = resource?.height ?:LinearLayout.LayoutParams.WRAP_CONTENT
+            layoutParams.height = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
             target.view.setImageBitmap(resource)
+
+            mLastHeight = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
         }
         return true
     }
@@ -94,7 +87,5 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         init {
             mImageView?.adjustViewBounds = true
         }
-
-
     }
 }
