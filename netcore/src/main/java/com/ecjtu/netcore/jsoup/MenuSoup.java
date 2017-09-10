@@ -23,7 +23,7 @@ public class MenuSoup extends BaseSoup {
 
     @Override
     public void parse(Document root, Element head,Element body, Map<String, Object> values) {
-        Element set = body.getElementById("menu-nav");
+        Element set = body.getElementById("menu-ease-mobile");
         Elements childArr = set.getElementsByTag("a");
         List<MenuModel> models = new ArrayList<>();
         for (Element ele : childArr) {

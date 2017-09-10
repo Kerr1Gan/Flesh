@@ -25,7 +25,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         mRecyclerView.layoutManager = LinearLayoutManager(owner, LinearLayoutManager.VERTICAL, false)
 
         val request = AsyncNetwork()
-        request.request(Constants.HOST_URL)
+        request.request(Constants.HOST_MOBILE_URL)
         request.setRequestCallback(object : IRequestCallback {
             override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                 val values = SoupFactory.parseHtml(PageSoup::class.java, response)

@@ -11,6 +11,8 @@ import android.widget.LinearLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.BitmapImageViewTarget
@@ -41,10 +43,17 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         val imageView = holder?.mImageView
         val options = RequestOptions()
         options.centerCrop()
-        val url = thumb2OriginalUrl(pageModel.itemList[position].imgUrl)
-
+        val url = pageModel.itemList[position].imgUrl /*thumb2OriginalUrl(pageModel.itemList[position].imgUrl)*/
+        val builder = LazyHeaders.Builder().addHeader("User-Agent","Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Mobile Safari/537.36")
+                .addHeader("Accept","image/webp,image/apng,image/*,*/*;q=0.8")
+                .addHeader("Accept-Encoding","gzip, deflate")
+                .addHeader("Accept-Language","zh-CN,zh;q=0.8")
+                .addHeader("Host","i.meizitu.net")
+                .addHeader("Proxy-Connection","keep-alive")
+                .addHeader("Referer","http://m.mzitu.com/")
+        val glideUrl = GlideUrl(url,builder.build())
         url.let {
-            Glide.with(context).asBitmap().load(url).listener(this).apply(options).into(imageView)
+            Glide.with(context).asBitmap().load(glideUrl).listener(this).apply(options).into(imageView)
         }
     }
 
@@ -59,11 +68,12 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
 
     override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
         if (target is BitmapImageViewTarget) {
-            val layoutParams = (target.view.parent as View).layoutParams
+            val layoutParams = (target.view.parent?.parent as View).layoutParams
             val height = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
             if (layoutParams.height != height) {
                 layoutParams.height = height
             }
+
             target.view.setImageBitmap(resource)
 
             mLastHeight = height
@@ -90,7 +100,7 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
     }
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val mImageView = itemView.findViewById<ImageView?>(R.id.image)
+        val mImageView = itemView.findViewById(R.id.image) as ImageView
 
         init {
             mImageView?.adjustViewBounds = true

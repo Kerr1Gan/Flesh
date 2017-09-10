@@ -10,12 +10,24 @@
     android:clickable="true"
     android:foreground="@drawable/item_background_material"
     app:cardCornerRadius="10dp"
-    app:cardElevation="20dp">
+    app:cardElevation="20dp"
+    android:id="@+id/container">
 
-    <ImageView
-        android:id="@+id/image"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scaleType="fitXY" />
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scaleType="fitXY" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="123111111111"/>
+    </LinearLayout>
 </android.support.v7.widget.CardView>
 

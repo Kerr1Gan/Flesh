@@ -25,26 +25,26 @@ public class PageSoup extends MenuSoup {
     @Override
     public void parse(Document root, Element head, Element body, Map<String, Object> values) {
         super.parse(root, head, body, values);
-        Element child = body.getElementById("pins");
-        Elements children = child.getElementsByTag("li");
+        Element child = body.getElementById("content");
+        Elements children = child.getElementsByTag("figure");
         List<PageModel.ItemModel> value = new ArrayList<>();
         PageModel pageModel = new PageModel(value);
         for (Element localChild : children) {
             List<Node> nodes = localChild.childNodes();
-            Node item =nodes.get(0);
+            Node item =nodes.get(1);
             String href = item.attr("href");
-            String des = item.childNode(0).attr("alt");
+            String des = item.attr("title");
             String imgUrl = item.childNode(0).attr("data-original");
             PageModel.ItemModel model = new PageModel.ItemModel(href, des, imgUrl);
             value.add(model);
         }
         values.put(getClass().getSimpleName(), pageModel);
 
-        Elements links = body.getElementsByClass("nav-links");
-        links=links.get(0).getElementsByTag("a");
-        String url = links.get(links.size() - 2).attr("href");
-        url= url.substring(0,url.length()-1);
-        int maxLen = Integer.valueOf(url.substring(url.lastIndexOf("/")+1));
-        pageModel.setMaxPage(maxLen);
+//        Elements links = body.getElementsByClass("nav-links");
+//        links=links.get(0).getElementsByTag("a");
+//        String url = links.get(links.size() - 2).attr("href");
+//        url= url.substring(0,url.length()-1);
+//        int maxLen = Integer.valueOf(url.substring(url.lastIndexOf("/")+1));
+//        pageModel.setMaxPage(maxLen);
     }
 }
