@@ -30,7 +30,7 @@ import java.net.HttpURLConnection
 /**
  * Created by Ethan_Xiang on 2017/9/8.
  */
-class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListAdapter.VH>(), RequestListener<Bitmap>,View.OnClickListener {
+class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
 
     private val mListHeight = ArrayList<Int>()
 
@@ -93,7 +93,7 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
                 }
             })
         }
-        holder?.itemView?.setTag(R.id.extra_tag,position)
+        holder?.itemView?.setTag(R.id.extra_tag, position)
         holder?.itemView?.setOnClickListener(this)
     }
 
@@ -144,13 +144,13 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         val position = v?.getTag(R.id.extra_tag)
         position?.let {
             val url = pageModel.itemList[position as Int].href
-            val intent = PageDetailActivity.newInstance(v.context,url)
+            val intent = PageDetailActivity.newInstance(v.context, url)
             v.context.startActivity(intent)
         }
     }
 
     private fun getHeight(position: Int): Int {
-        if (position >= mListHeight.size) {
+        if (position >= mListHeight.size || position < 0) {
             return 0
         }
         return mListHeight[position]

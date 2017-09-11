@@ -1,35 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.ecjtu.heaven.ui.activity.MainActivity">
 
-    <!--<android.support.v7.widget.CardView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginBottom="10dp"-->
-        <!--android:layout_marginLeft="30dp"-->
-        <!--android:layout_marginRight="30dp"-->
-        <!--android:layout_marginTop="10dp"-->
-        <!--android:clickable="true"-->
-        <!--android:foreground="@drawable/item_background_material"-->
-        <!--app:cardBackgroundColor="#669900"-->
-        <!--app:cardCornerRadius="10dp"-->
-        <!--app:cardElevation="20dp">-->
-
-        <!--<ImageView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:background="@android:color/holo_red_dark"-->
-            <!--android:id="@+id/image"/>-->
-    <!--</android.support.v7.widget.CardView>-->
-
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recycler_view"
         android:scrollbars="vertical" />
 
-</LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="50dp"
+        android:src="@drawable/ic_arrow_up"
+        app:fabSize="mini"
+        android:id="@+id/float_button"/>
+</RelativeLayout>

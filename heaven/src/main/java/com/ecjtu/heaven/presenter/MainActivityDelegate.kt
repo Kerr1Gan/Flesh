@@ -1,6 +1,7 @@
 package com.ecjtu.heaven.presenter
 
 import android.preference.PreferenceManager
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.ecjtu.heaven.R
@@ -14,8 +15,6 @@ import com.ecjtu.netcore.model.PageModel
 import com.ecjtu.sharebox.network.AsyncNetwork
 import com.ecjtu.sharebox.network.IRequestCallback
 import java.net.HttpURLConnection
-import android.opengl.ETC1.getHeight
-import kotlin.concurrent.thread
 
 
 /**
@@ -25,6 +24,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 
     private val mRecyclerView = owner.findViewById(R.id.recycler_view) as RecyclerView
     private var mPageModel: PageModel? = null
+    private val mFloatButton = owner.findViewById(R.id.float_button) as FloatingActionButton
 
     init {
         mRecyclerView.layoutManager = LinearLayoutManager(owner, LinearLayoutManager.VERTICAL, false)
@@ -66,6 +66,9 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 }
             }
         })
+        mFloatButton.setOnClickListener{
+            (mRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(0)
+        }
     }
 
     fun onStop() {
