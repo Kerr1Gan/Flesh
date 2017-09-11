@@ -4,6 +4,7 @@ import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.cache.PageListCacheHelper
 import com.ecjtu.heaven.ui.activity.MainActivity

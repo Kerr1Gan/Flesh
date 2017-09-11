@@ -54,23 +54,16 @@
 #-verbose
 
 #混淆时所采用的算法
--optimizations !code/simplification/arithmetic,!field/,!class/merging/
+#-optimizations !code/simplification/arithmetic,!field/,!class/merging/
 
 #保护注解
 #-keepattributes Annotation
-#保持哪些类不被混淆
--keep public class * extends android.app.Fragment
--keep public class * extends android.app.Activity
--keep public class * extends android.app.Application
--keep public class * extends android.app.Service
--keep public class * extends android.content.BroadcastReceiver
--keep public class * extends android.content.ContentProvider
--keep public class * extends android.app.backup.BackupAgentHelper
--keep public class * extends android.preference.Preference
--keep public class com.android.vending.licensing.ILicensingService
-#如果有引用v4包可以添加下面这行
--keep public class * extends android.support.v4.app.Fragment
 
 #-libraryjars libs/jcifs-1.3.14.1.jar
 
 -keep class com.google.zxing.**{*;}
+
+-keep public class * extends com.ecjtu.heaven.cache.base.FileCacheHelper
+-keep public class * extends com.ecjtu.heaven.presenter.Delegate
+-keep class org.jsoup.**{*;}
+-keep class com.ecjtu.netcore.**{*;}

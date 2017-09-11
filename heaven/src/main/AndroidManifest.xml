@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ecjtu.heaven">
 
+    <uses-permission android:name="android.permission.SET_WALLPAPER"/>
+
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
