@@ -31,7 +31,7 @@ public class PageSoup extends MenuSoup {
         PageModel pageModel = new PageModel(value);
         for (Element localChild : children) {
             List<Node> nodes = localChild.childNodes();
-            Node item =nodes.get(1);
+            Node item = nodes.get(1);
             String href = item.attr("href");
             String des = item.attr("title");
             String imgUrl = item.childNode(0).attr("data-original");
@@ -40,11 +40,15 @@ public class PageSoup extends MenuSoup {
         }
         values.put(getClass().getSimpleName(), pageModel);
 
-//        Elements links = body.getElementsByClass("nav-links");
-//        links=links.get(0).getElementsByTag("a");
-//        String url = links.get(links.size() - 2).attr("href");
-//        url= url.substring(0,url.length()-1);
-//        int maxLen = Integer.valueOf(url.substring(url.lastIndexOf("/")+1));
-//        pageModel.setMaxPage(maxLen);
+        Element element = root.getElementById("pagebtn");
+        Elements elements = element.getElementsByTag("a");
+        for (int i = 0; i < elements.size(); i++) {
+            Element ele = elements.get(i);
+            if (ele.text().contains("下一页")) {
+                String nextUrl = ele.attr("href");
+                pageModel.setNextPage(nextUrl);
+                break;
+            }
+        }
     }
 }

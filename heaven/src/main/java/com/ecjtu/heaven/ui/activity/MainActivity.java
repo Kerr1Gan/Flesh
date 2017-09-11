@@ -17,4 +17,10 @@ public class MainActivity extends AppCompatActivity {
 
         mDelegate = new MainActivityDelegate(this);
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mDelegate.onStop();
+    }
 }

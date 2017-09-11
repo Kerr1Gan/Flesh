@@ -27,7 +27,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="123111111111"/>
+            android:id="@+id/title"
+            android:textSize="16dp"
+            android:padding="3dp"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>
 

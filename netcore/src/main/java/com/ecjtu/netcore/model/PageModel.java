@@ -8,18 +8,13 @@ import java.util.List;
 
 public class PageModel {
     List<ItemModel> itemList;
-    int maxPage;
+    String nextPage;
 
     public PageModel(List<ItemModel> itemList) {
         this.itemList = itemList;
     }
 
-    public int getMaxPage() {
-        return maxPage;
-    }
-
-    public void setMaxPage(int maxPage) {
-        this.maxPage = maxPage;
+    public PageModel(){
     }
 
     public List<ItemModel> getItemList() {
@@ -28,6 +23,15 @@ public class PageModel {
 
     public void setItemList(List<ItemModel> itemList) {
         this.itemList = itemList;
+    }
+
+
+    public String getNextPage() {
+        return nextPage;
+    }
+
+    public void setNextPage(String nextPage) {
+        this.nextPage = nextPage;
     }
 
     public static class ItemModel {

@@ -21,15 +21,22 @@ public class PageDetailSoup extends BaseSoup {
 
     @Override
     public void parse(Document root, Element head, Element body, Map<String, Object> values) {
-        Elements ele = body.getElementsByClass("pagenavi");
-        Elements ss = ele.get(0).getElementsByTag("a");
-        ss.get(ss.size() - 2);
-        String url = ss.get(ss.size() - 2).attr("href");
-        int maxLen = Integer.valueOf(url.substring(url.lastIndexOf("/") + 1));
-        String imgUrl = body.getElementsByClass("main-image").get(0).getElementsByTag("img").attr("src");
+        Elements elements = body.getElementsByClass("prev-next-page");
+        String text = elements.get(0).text();
+        text = text.substring(text.indexOf("/") + 1);
+        int maxPage = Integer.valueOf(text.replace("页", ""));
+        elements = body.getElementsByTag("figure");
+        elements = elements.get(0).getElementsByTag("img");
+        String imageUrl = elements.get(0).attr("src");
+
         PageDetailModel model = new PageDetailModel((String) getArguments()[0]);
-        model.setImgUrl(imgUrl);
-        model.setMaxLen(maxLen);
+        String suffix = imageUrl.substring(imageUrl.lastIndexOf("."));
+        imageUrl = imageUrl.substring(0,imageUrl.lastIndexOf("."));
+        imageUrl = imageUrl.substring(0,imageUrl.length()-2);
+        imageUrl += "%02d";
+        imageUrl += suffix;
+        model.setImgUrl(imageUrl);
+        model.setMaxLen(maxPage);
         values.put(getClass().getSimpleName(), model);
     }
 }
