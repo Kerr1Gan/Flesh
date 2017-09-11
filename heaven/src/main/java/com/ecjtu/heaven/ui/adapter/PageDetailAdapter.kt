@@ -19,13 +19,13 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.ecjtu.heaven.R
+import com.ecjtu.heaven.ui.activity.FullScreenImageActivity
 import com.ecjtu.netcore.model.PageDetailModel
 
 /**
  * Created by Ethan_Xiang on 2017/9/11.
  */
-class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<PageDetailAdapter.VH>(), RequestListener<Bitmap> {
-
+class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<PageDetailAdapter.VH>(), RequestListener<Bitmap>,View.OnClickListener {
     private val mListHeight = ArrayList<Int>()
 
     override fun getItemCount(): Int {
@@ -63,6 +63,7 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<P
         val glideUrl = GlideUrl(url, builder.build())
         url.let {
             imageView?.setTag(R.id.extra_tag, position)
+            imageView?.setOnClickListener(this)
             Glide.with(context).asBitmap().load(glideUrl).listener(this).apply(options).into(imageView)
         }
 
@@ -112,6 +113,15 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<P
         }
         mListHeight.set(position, height)
     }
+
+    override fun onClick(v: View?) {
+        val position = v?.getTag(R.id.extra_tag)
+        if(position!=null){
+            val intent = FullScreenImageActivity.newInstance(v.context,String.format(pageModel.imgUrl, position as Int +1))
+            v.context.startActivity(intent)
+        }
+    }
+
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val mImageView = itemView.findViewById(R.id.image) as ImageView
