@@ -1,5 +1,6 @@
 package com.ecjtu.heaven.presenter
 
+import android.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.ecjtu.heaven.R
@@ -13,6 +14,8 @@ import com.ecjtu.netcore.model.PageModel
 import com.ecjtu.sharebox.network.AsyncNetwork
 import com.ecjtu.sharebox.network.IRequestCallback
 import java.net.HttpURLConnection
+import android.opengl.ETC1.getHeight
+import kotlin.concurrent.thread
 
 
 /**
@@ -25,11 +28,17 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 
     init {
         mRecyclerView.layoutManager = LinearLayoutManager(owner, LinearLayoutManager.VERTICAL, false)
+        val helper = PageListCacheHelper(owner.filesDir.absolutePath)
+        mPageModel = helper.get("list_cache")
 
-        mPageModel = PageListCacheHelper(owner.filesDir.absolutePath).get("list_cache")
+        val lastPosition = PreferenceManager.getDefaultSharedPreferences(owner).getInt("last_position", -1)
 
         if (mPageModel != null) {
             mRecyclerView.adapter = CardListAdapter(mPageModel!!)
+            if (lastPosition >= 0) {
+                val yOffset = PreferenceManager.getDefaultSharedPreferences(owner).getInt("last_position_offset", 0)
+                (mRecyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(lastPosition, yOffset)
+            }
         }
 
         val request = AsyncNetwork()
@@ -44,8 +53,13 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                             mRecyclerView.adapter = CardListAdapter(soups)
                             mPageModel = soups
                         } else {
-                            (mRecyclerView.adapter as CardListAdapter).pageModel = soups
-                            mPageModel = soups
+                            val list = mPageModel!!.itemList
+                            for (item in soups.itemList) {
+                                if (list.indexOf(item) < 0) {
+                                    list.add(0, item)
+                                }
+                            }
+                            (mRecyclerView.adapter as CardListAdapter).pageModel = mPageModel!!
                             mRecyclerView.adapter.notifyDataSetChanged()
                         }
                     }
@@ -59,5 +73,27 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             val helper = PageListCacheHelper(owner.filesDir.absolutePath)
             helper.put("list_cache", mPageModel)
         }
+        PreferenceManager.getDefaultSharedPreferences(owner).edit().putInt("last_position", getScrollYPosition())
+                .putInt("last_position_offset", getScrollYOffset()).apply()
+    }
+
+    fun getScollYDistance(): Int {
+        val layoutManager = mRecyclerView.layoutManager as LinearLayoutManager
+        val position = layoutManager.findFirstVisibleItemPosition()
+        val firstVisibleChildView = layoutManager.findViewByPosition(position)
+        val itemHeight = firstVisibleChildView.height
+        return position * itemHeight - firstVisibleChildView.top
+    }
+
+    fun getScrollYPosition(): Int {
+        val layoutManager = mRecyclerView.layoutManager as LinearLayoutManager
+        return layoutManager.findFirstVisibleItemPosition()
+    }
+
+    fun getScrollYOffset(): Int {
+        val layoutManager = mRecyclerView.layoutManager as LinearLayoutManager
+        val position = layoutManager.findFirstVisibleItemPosition()
+        val firstVisibleChildView = layoutManager.findViewByPosition(position)
+        return firstVisibleChildView.top
     }
 }

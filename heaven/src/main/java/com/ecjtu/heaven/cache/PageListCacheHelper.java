@@ -2,6 +2,7 @@ package com.ecjtu.heaven.cache;
 
 import android.os.Parcel;
 
+import com.ecjtu.heaven.cache.base.ParcelableFileCacheHelper;
 import com.ecjtu.netcore.model.PageModel;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class PageListCacheHelper extends ParcelableFileCacheHelper {
     }
 
     @Override
-    <T> T readParcel(Parcel parcel) {
+    protected <T> T readParcel(Parcel parcel) {
         PageModel pageModel = new PageModel();
         String nextPage = parcel.readString();
         pageModel.setNextPage(nextPage);
@@ -35,7 +36,7 @@ public class PageListCacheHelper extends ParcelableFileCacheHelper {
     }
 
     @Override
-    <T> Parcel writeParcel(Parcel parcel, T object) {
+    protected <T> Parcel writeParcel(Parcel parcel, T object) {
         if (!(object instanceof PageModel)) {
             return null;
         }

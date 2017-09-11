@@ -28,4 +28,8 @@ public class PageDetailModel {
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
     }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
 }

@@ -32,7 +32,7 @@ import java.net.HttpURLConnection
  */
 class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListAdapter.VH>(), RequestListener<Bitmap>,View.OnClickListener {
 
-    private var mLastHeight = 0
+    private val mListHeight = ArrayList<Int>()
 
     override fun getItemCount(): Int {
         return pageModel.itemList.size
@@ -41,11 +41,20 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
     override fun onBindViewHolder(holder: VH?, position: Int) {
         val context = holder?.itemView?.context
         val params = holder?.itemView?.layoutParams
-        if (mLastHeight != 0) {
-            params?.height = mLastHeight // 防止上滑时 出现跳动的情况
+        if (getHeight(position) != 0) {
+            params?.height = getHeight(position)/*mLastHeight*/ // 防止上滑时 出现跳动的情况
         } else {
-            params?.height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300f, context?.resources?.displayMetrics).toInt()
+            val next = getHeight(position + 1)
+            val last = getHeight(position - 1)
+            if (next != 0) {
+                params?.height = next
+            } else if (last != 0) {
+                params?.height = last
+            } else {
+                params?.height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300f, context?.resources?.displayMetrics).toInt()
+            }
         }
+
 
         val imageView = holder?.mImageView
         val options = RequestOptions()
@@ -60,6 +69,7 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
                 .addHeader("Referer", "http://m.mzitu.com/")
         val glideUrl = GlideUrl(url, builder.build())
         url.let {
+            imageView?.setTag(R.id.extra_tag, position)
             Glide.with(context).asBitmap().load(glideUrl).listener(this).apply(options).into(imageView)
             holder?.mTextView?.setText(pageModel.itemList[position].description)
         }
@@ -105,10 +115,9 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
             if (layoutParams.height != height) {
                 layoutParams.height = height
             }
-
+            val position = target.view.getTag(R.id.extra_tag) as Int
             target.view.setImageBitmap(resource)
-
-            mLastHeight = height
+            setHeight(position, height)
         }
         return true
     }
@@ -140,6 +149,20 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         }
     }
 
+    private fun getHeight(position: Int): Int {
+        if (position >= mListHeight.size) {
+            return 0
+        }
+        return mListHeight[position]
+    }
+
+    private fun setHeight(position: Int, height: Int) {
+        if (position >= mListHeight.size) {
+            val diff = position - mListHeight.size + 1
+            mListHeight.addAll(Array<Int>(diff, { 0 }))
+        }
+        mListHeight.set(position, height)
+    }
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val mImageView = itemView.findViewById(R.id.image) as ImageView

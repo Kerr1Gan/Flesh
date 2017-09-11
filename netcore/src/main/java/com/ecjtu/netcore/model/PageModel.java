@@ -69,5 +69,13 @@ public class PageModel {
             this.imgUrl = imgUrl;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if(!(o instanceof ItemModel)){
+                return false;
+            }
+            ItemModel other = (ItemModel) o;
+            return other.href.equals(this.href);
+        }
     }
 }

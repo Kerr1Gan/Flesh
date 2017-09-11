@@ -1,4 +1,4 @@
-package com.ecjtu.heaven.cache;
+package com.ecjtu.heaven.cache.base;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,7 +38,7 @@ public class FileCacheHelper {
             ret = persistObject(key, object);
         } catch (InterruptedException e) {
             e.printStackTrace();
-            ret=false;
+            ret = false;
         } finally {
             mWriteLock.unlock();
         }
@@ -52,29 +52,30 @@ public class FileCacheHelper {
             ret = (T) readObject(key);
         } catch (InterruptedException e) {
             e.printStackTrace();
-            ret=null;
+            ret = null;
         } finally {
             mReadLock.unlock();
         }
         return ret;
     }
 
-    protected   <T> boolean persistObject(String key, T object) {
-        File file = new File(mPath, key);
+    protected <T> boolean persistObject(String key, T object) {
+        File file = new File(mPath, key + "@@@@");
         if (file.exists()) file.delete();
-        FileOutputStream fos=null;
+        FileOutputStream fos = null;
         boolean ret = false;
-        FileLock fileLock=null;
+        FileLock fileLock = null;
         try {
-            fos=new FileOutputStream(file);
-            fileLock=fos.getChannel().lock();
-            writeObjectFromStream(fos,object);
+            fos = new FileOutputStream(file);
+            fileLock = fos.getChannel().lock();
+            writeObjectFromStream(fos, object);
             ret = true;
+            file.renameTo(new File(mPath, key));
         } catch (Exception e) {
             e.printStackTrace();
             ret = false;
         } finally {
-            if(fileLock!=null){
+            if (fileLock != null) {
                 try {
                     fileLock.release();
                 } catch (IOException e) {
@@ -95,16 +96,16 @@ public class FileCacheHelper {
         if (!file.exists()) return null;
 
         T ret = null;
-        FileLock fileLock=null;
-        FileInputStream fis=null;
+        FileLock fileLock = null;
+        FileInputStream fis = null;
         try {
-            fis=new FileInputStream(file);
-            fileLock=fis.getChannel().lock(0L, Long.MAX_VALUE, true);
+            fis = new FileInputStream(file);
+            fileLock = fis.getChannel().lock(0L, Long.MAX_VALUE, true);
             ret = readObjectFromStream(fis);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if(fileLock!=null){
+            if (fileLock != null) {
                 try {
                     fileLock.release();
                 } catch (IOException e) {
@@ -125,7 +126,7 @@ public class FileCacheHelper {
         return (T) fis.readObject();
     }
 
-    protected <T> void writeObjectFromStream(FileOutputStream os,T object) throws IOException, ClassNotFoundException {
+    protected <T> void writeObjectFromStream(FileOutputStream os, T object) throws IOException, ClassNotFoundException {
         ObjectOutputStream fos = new ObjectOutputStream(os);
         fos.writeObject(object);
     }

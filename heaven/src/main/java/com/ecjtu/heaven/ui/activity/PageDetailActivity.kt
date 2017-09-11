@@ -39,5 +39,8 @@ class PageDetailActivity : AppCompatActivity() {
         finish()
     }
 
-
+    override fun onStop() {
+        super.onStop()
+        mDelegate?.onStop()
+    }
 }

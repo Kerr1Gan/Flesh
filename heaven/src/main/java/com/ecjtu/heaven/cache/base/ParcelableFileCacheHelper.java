@@ -1,4 +1,4 @@
-package com.ecjtu.heaven.cache;
+package com.ecjtu.heaven.cache.base;
 
 import android.os.Parcel;
 
@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Created by Ethan_Xiang on 2017/8/21.
  */
-abstract public class ParcelableFileCacheHelper extends FileCacheHelper {
+public abstract class ParcelableFileCacheHelper extends FileCacheHelper {
 
     private ByteArrayOutputStream mByteArrayOutputStream;
 
@@ -67,7 +67,7 @@ abstract public class ParcelableFileCacheHelper extends FileCacheHelper {
         System.gc();
     }
 
-    abstract <T> T readParcel(Parcel parcel);
+    protected abstract <T> T readParcel(Parcel parcel);
 
-    abstract <T> Parcel writeParcel(Parcel parcel, T object);
+    protected abstract <T> Parcel writeParcel(Parcel parcel, T object);
 }
