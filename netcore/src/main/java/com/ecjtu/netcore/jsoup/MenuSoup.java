@@ -35,6 +35,6 @@ public class MenuSoup extends BaseSoup {
                 models.add(model);
             }
         }
-        values.put(getClass().getSimpleName(), models);
+        values.put(TAG, models);
     }
 }

@@ -1,17 +1,16 @@
 package com.ecjtu.heaven.presenter
 
-import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.support.design.widget.TabLayout
+import android.support.v4.view.ViewPager
 import com.ecjtu.heaven.R
-import com.ecjtu.heaven.cache.PageListCacheHelper
+import com.ecjtu.heaven.cache.MenuListCacheHelper
 import com.ecjtu.heaven.ui.activity.MainActivity
-import com.ecjtu.heaven.ui.adapter.CardListAdapter
+import com.ecjtu.heaven.ui.adapter.TabPagerAdapter
 import com.ecjtu.netcore.Constants
-import com.ecjtu.netcore.jsoup.PageSoup
+import com.ecjtu.netcore.jsoup.MenuSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
-import com.ecjtu.netcore.model.PageModel
+import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
 import java.net.HttpURLConnection
@@ -22,82 +21,62 @@ import java.net.HttpURLConnection
  */
 class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) {
 
-    private val mRecyclerView = owner.findViewById(R.id.recycler_view) as RecyclerView
-    private var mPageModel: PageModel? = null
     private val mFloatButton = owner.findViewById(R.id.float_button) as FloatingActionButton
+    private val mViewPager = owner.findViewById(R.id.view_pager) as ViewPager
+    private val mTabLayout = owner.findViewById(R.id.tab_layout) as TabLayout
 
     init {
-        mRecyclerView.layoutManager = LinearLayoutManager(owner, LinearLayoutManager.VERTICAL, false)
-        val helper = PageListCacheHelper(owner.filesDir.absolutePath)
-        mPageModel = helper.get("list_cache")
+        val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
 
-        val lastPosition = PreferenceManager.getDefaultSharedPreferences(owner).getInt("last_position", -1)
-
-        if (mPageModel != null) {
-            mRecyclerView.adapter = CardListAdapter(mPageModel!!)
-            if (lastPosition >= 0) {
-                val yOffset = PreferenceManager.getDefaultSharedPreferences(owner).getInt("last_position_offset", 0)
-                (mRecyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(lastPosition, yOffset)
-            }
+        var menuList: MutableList<MenuModel>? = null
+        if (helper.get<Any>("menu_list_cache") != null) {
+            menuList = helper.get("menu_list_cache")
         }
-        System.out.println("com.ecjtu.heaven " + "init()")
+        if (menuList != null) {
+            mViewPager.adapter = TabPagerAdapter(menuList)
+            mTabLayout.setupWithViewPager(mViewPager)
+        }
         val request = AsyncNetwork()
         request.request(Constants.HOST_MOBILE_URL, null)
         request.setRequestCallback(object : IRequestCallback {
             override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
-                System.out.println("com.ecjtu.heaven " + "AsyncNetwork() onSuccess() " + response)
-                val values = SoupFactory.parseHtml(PageSoup::class.java, response)
+                val values = SoupFactory.parseHtml(MenuSoup::class.java, response)
                 if (values != null) {
-                    val soups = values[PageSoup::class.java.simpleName] as PageModel
                     owner.runOnUiThread {
-                        if (mPageModel == null) {
-                            mRecyclerView.adapter = CardListAdapter(soups)
-                            mPageModel = soups
-                        } else {
-                            val list = mPageModel!!.itemList
-                            for (item in soups.itemList) {
-                                if (list.indexOf(item) < 0) {
-                                    list.add(0, item)
+                        var localList: List<MenuModel>? = null
+                        if (values[MenuSoup::class.java.simpleName] != null) {
+                            localList = values[MenuSoup::class.java.simpleName] as List<MenuModel>
+                            if (menuList == null && localList != null) {
+                                mViewPager.adapter = TabPagerAdapter(localList)
+                                mTabLayout.setupWithViewPager(mViewPager)
+                            } else {
+                                var needUpdate = false
+                                for (obj in localList) {
+                                    if (menuList?.indexOf(obj) ?: 0 < 0) {
+                                        menuList?.add(0, obj)
+                                        needUpdate = true
+                                    }
+                                }
+                                if (needUpdate) {
+                                    mViewPager.adapter.notifyDataSetChanged()
                                 }
                             }
-                            (mRecyclerView.adapter as CardListAdapter).pageModel = mPageModel!!
-                            mRecyclerView.adapter.notifyDataSetChanged()
                         }
                     }
                 }
             }
         })
         mFloatButton.setOnClickListener {
-            (mRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(0)
+            //            (mRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(0)
         }
     }
 
     fun onStop() {
-        mPageModel?.let {
-            val helper = PageListCacheHelper(owner.filesDir.absolutePath)
-            helper.put("list_cache", mPageModel)
+        mViewPager.adapter?.let {
+            (mViewPager.adapter as TabPagerAdapter).onStop(owner)
         }
-        PreferenceManager.getDefaultSharedPreferences(owner).edit().putInt("last_position", getScrollYPosition())
-                .putInt("last_position_offset", getScrollYOffset()).apply()
+        val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
+        helper.put("menu_list_cache",(mViewPager.adapter as TabPagerAdapter).menu)
     }
 
-    fun getScollYDistance(): Int {
-        val layoutManager = mRecyclerView.layoutManager as LinearLayoutManager
-        val position = layoutManager.findFirstVisibleItemPosition()
-        val firstVisibleChildView = layoutManager.findViewByPosition(position)
-        val itemHeight = firstVisibleChildView.height
-        return position * itemHeight - (firstVisibleChildView?.top ?: 0)
-    }
-
-    fun getScrollYPosition(): Int {
-        val layoutManager = mRecyclerView.layoutManager as LinearLayoutManager
-        return layoutManager.findFirstVisibleItemPosition()
-    }
-
-    fun getScrollYOffset(): Int {
-        val layoutManager = mRecyclerView.layoutManager as LinearLayoutManager
-        val position = layoutManager.findFirstVisibleItemPosition()
-        val firstVisibleChildView = layoutManager.findViewByPosition(position)
-        return firstVisibleChildView?.top ?: 0
-    }
 }

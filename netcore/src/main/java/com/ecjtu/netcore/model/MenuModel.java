@@ -12,4 +12,34 @@ public class MenuModel {
         this.title = title;
         this.url = url;
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof MenuModel)){
+            return false;
+        }
+
+        MenuModel local = (MenuModel) o;
+        if(url.equals(local.url)){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

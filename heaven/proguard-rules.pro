@@ -92,3 +92,4 @@
 -keep public class com.ecjtu.netcore.network.BaseNetwork{public <methods>;}
 -keep public class * extends com.ecjtu.netcore.network.BaseNetwork{ public <methods>; }
 -keep public interface com.ecjtu.netcore.network.IRequestCallback{*;}
+-keep public class * extends com.ecjtu.heaven.ui.widget.ScrollAwareFABBehavior{*;}

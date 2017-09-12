@@ -164,6 +164,8 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         mListHeight.set(position, height)
     }
 
+
+
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val mImageView = itemView.findViewById(R.id.image) as ImageView
         val mTextView = itemView.findViewById(R.id.title) as TextView
