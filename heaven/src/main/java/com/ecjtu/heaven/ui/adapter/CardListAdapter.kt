@@ -55,6 +55,8 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
             }
         }
 
+        //set empty
+        holder?.mTextView?.setText("")
 
         val imageView = holder?.mImageView
         val options = RequestOptions()

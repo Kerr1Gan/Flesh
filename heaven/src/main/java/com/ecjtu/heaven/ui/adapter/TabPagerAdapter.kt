@@ -170,4 +170,8 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
     override fun getItemPosition(`object`: Any?): Int {
         return POSITION_NONE
     }
+
+    fun getViewStub(position :Int):View?{
+        return mViewStub.get(position)?.recyclerView
+    }
 }

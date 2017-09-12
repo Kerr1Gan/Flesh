@@ -4,6 +4,8 @@ import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.cache.MenuListCacheHelper
 import com.ecjtu.heaven.ui.activity.MainActivity
@@ -74,7 +76,11 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             }
         })
         mFloatButton.setOnClickListener {
-            //            (mRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(0)
+            val position = mTabLayout.selectedTabPosition
+            val recyclerView = (mViewPager.adapter as TabPagerAdapter).getViewStub(position) as RecyclerView?
+            recyclerView?.let {
+                (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(0)
+            }
         }
     }
 
