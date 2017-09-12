@@ -2,6 +2,7 @@ package com.ecjtu.heaven.ui.adapter
 
 import android.graphics.Bitmap
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -78,7 +79,9 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
 
         if (position == itemCount - 1) {
             val request = AsyncNetwork()
-            request.request(pageModel.nextPage,null)
+            if(!TextUtils.isEmpty(pageModel.nextPage)){
+                request.request(pageModel.nextPage,null)
+            }
             request.setRequestCallback(object : IRequestCallback {
                 override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                     val values = SoupFactory.parseHtml(PageSoup::class.java, response)
