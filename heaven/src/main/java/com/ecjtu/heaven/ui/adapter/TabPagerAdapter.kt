@@ -18,6 +18,7 @@ import com.ecjtu.netcore.model.PageModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
 import java.net.HttpURLConnection
+import kotlin.concurrent.thread
 
 /**
  * Created by Ethan_Xiang on 2017/9/12.
@@ -38,7 +39,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
 
         val helper = PageListCacheHelper(container?.context?.filesDir?.absolutePath)
         val pageModel: PageModel? = helper.get("card_cache_" + position)
-        mViewStub.put(position, VH(item, menu[position], pageModel,position.toString()))
+        mViewStub.put(position, VH(item, menu[position], pageModel, position.toString()))
         return item
     }
 
@@ -61,7 +62,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
             }
             val recyclerView = entry.value.recyclerView
             if (recyclerView != null) {
-                editor.putInt("last_position_${entry.key}" ,
+                editor.putInt("last_position_${entry.key}",
                         getScrollYPosition(recyclerView)).
                         putInt("last_position_offset_${entry.key}", getScrollYOffset(recyclerView))
             }
@@ -69,13 +70,13 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         editor.apply()
     }
 
-    private class VH(val itemView: View, private val menu: MenuModel, pageModel: PageModel?,key:String) {
+    private class VH(val itemView: View, private val menu: MenuModel, pageModel: PageModel?, key: String) {
         val recyclerView = if (itemView is RecyclerView) itemView else null
         private var mPageModel: PageModel? = pageModel
 
         init {
             recyclerView?.layoutManager = LinearLayoutManager(recyclerView?.context, LinearLayoutManager.VERTICAL, false)
-            loadCache(itemView.context,key)
+            loadCache(itemView.context, key)
             val request = AsyncNetwork()
             request.request(menu.url, null)
             request.setRequestCallback(object : IRequestCallback {
@@ -89,13 +90,17 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
                                 mPageModel = soups
                             } else {
                                 val list = mPageModel!!.itemList
+                                var needUpdate = false
                                 for (item in soups.itemList) {
                                     if (list.indexOf(item) < 0) {
                                         list.add(0, item)
+                                        needUpdate = true
                                     }
                                 }
                                 (recyclerView.adapter as CardListAdapter).pageModel = mPageModel!!
-                                recyclerView.adapter.notifyDataSetChanged()
+                                if (needUpdate) {
+                                    recyclerView.adapter.notifyDataSetChanged()
+                                }
                             }
                         }
                     }
@@ -107,7 +112,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
             return mPageModel
         }
 
-        private fun loadCache(context: Context,key:String) {
+        private fun loadCache(context: Context, key: String) {
             if (mPageModel != null) {
                 recyclerView?.adapter = CardListAdapter(mPageModel!!)
                 val lastPosition = PreferenceManager.getDefaultSharedPreferences(context).getInt("last_position_$key", -1)
