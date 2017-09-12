@@ -38,6 +38,25 @@
 #指定代码的压缩级别
 -optimizationpasses 5
 
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.app.backup.BackupAgentHelper
+-keep public class * extends android.preference.Preference
+-keep public class com.android.vending.licensing.ILicensingService
+
+#不提示V4包下错误警告
+-dontwarn android.support.v4.**
+#保持下面的V4兼容包的类不被混淆
+-keep class android.support.v4.**{*;}
+
+#不混淆Parcelable和它的实现子类，还有Creator成员变量
+-keep class * implements android.os.Parcelable {
+     public static final android.os.Parcelable$Creator *;
+}
+
 #包明不混合大小写
 #dontusemixedcaseclassnames
 
@@ -54,16 +73,22 @@
 #-verbose
 
 #混淆时所采用的算法
-#-optimizations !code/simplification/arithmetic,!field/,!class/merging/
-
+-optimizations !code/simplification/arithmetic,!field/,!class/merging/
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
 #保护注解
-#-keepattributes Annotation
+-keepattributes Annotation
 
 #-libraryjars libs/jcifs-1.3.14.1.jar
 
--keep class com.google.zxing.**{*;}
+#-keep class com.google.zxing.**{*;}
 
--keep public class * extends com.ecjtu.heaven.cache.base.FileCacheHelper
--keep public class * extends com.ecjtu.heaven.presenter.Delegate
 -keep class org.jsoup.**{*;}
--keep class com.ecjtu.netcore.**{*;}
+-keep public class com.ecjtu.netcore.jsoup.SoupFactory{*;}
+-keep public class * extends com.ecjtu.netcore.jsoup.base.BaseSoup{*;}
+-keep public class com.ecjtu.netcore.Constants{static <fields>;}
+-keep public class com.ecjtu.netcore.model.**{*;}
+-keep public class com.ecjtu.netcore.network.BaseNetwork{public <methods>;}
+-keep public class * extends com.ecjtu.netcore.network.BaseNetwork{ public <methods>; }
+-keep public interface com.ecjtu.netcore.network.IRequestCallback{*;}

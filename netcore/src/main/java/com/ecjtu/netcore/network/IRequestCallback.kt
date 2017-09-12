@@ -1,4 +1,4 @@
-package com.ecjtu.sharebox.network
+package com.ecjtu.netcore.network
 
 import java.lang.Exception
 import java.net.HttpURLConnection

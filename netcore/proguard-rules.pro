@@ -23,4 +23,14 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
--keep class com.ecjtu.netcore.**{*;}
+#-keep class com.ecjtu.netcore.**{*;}
+-keep class org.jsoup.**{*;}
+-keep public class com.ecjtu.netcore.jsoup.SoupFactory{*;}
+-keep public class * extends com.ecjtu.netcore.jsoup.base.BaseSoup{*;}
+-keep public class com.ecjtu.netcore.Constants{static <fields>;}
+-keep public class com.ecjtu.netcore.model.**{*;}
+-keep public class com.ecjtu.netcore.network.BaseNetwork{public <methods>;}
+-keep public class * extends com.ecjtu.netcore.network.BaseNetwork{ public <methods>; }
+-keep public interface com.ecjtu.netcore.network.IRequestCallback{*;}
+#-keep public class * implements com.ecjtu.netcore.network.IRequestCallback{*;}
+#-keep public class * implements com.ecjtu.netcore.network.IRequestCallbackV2{*;}

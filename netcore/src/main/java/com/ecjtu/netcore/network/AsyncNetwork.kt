@@ -1,4 +1,4 @@
-package com.ecjtu.sharebox.network
+package com.ecjtu.netcore.network
 
 import android.util.Log
 import java.lang.Exception

@@ -9,8 +9,8 @@ import com.ecjtu.heaven.ui.adapter.PageDetailAdapter
 import com.ecjtu.netcore.jsoup.PageDetailSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.model.PageDetailModel
-import com.ecjtu.sharebox.network.AsyncNetwork
-import com.ecjtu.sharebox.network.IRequestCallback
+import com.ecjtu.netcore.network.AsyncNetwork
+import com.ecjtu.netcore.network.IRequestCallback
 import java.net.HttpURLConnection
 
 /**
@@ -28,7 +28,7 @@ class PageDetailActivityDelegate(owner: PageDetailActivity, val url: String) : D
         mPageModel = helper.get(local)
 
         val request = AsyncNetwork()
-        request.request(url)
+        request.request(url,null)
         request.setRequestCallback(object : IRequestCallback {
             override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                 val ret = SoupFactory.parseHtml(PageDetailSoup::class.java, response, url)

@@ -4,7 +4,6 @@ import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.cache.PageListCacheHelper
 import com.ecjtu.heaven.ui.activity.MainActivity
@@ -13,8 +12,8 @@ import com.ecjtu.netcore.Constants
 import com.ecjtu.netcore.jsoup.PageSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.model.PageModel
-import com.ecjtu.sharebox.network.AsyncNetwork
-import com.ecjtu.sharebox.network.IRequestCallback
+import com.ecjtu.netcore.network.AsyncNetwork
+import com.ecjtu.netcore.network.IRequestCallback
 import java.net.HttpURLConnection
 
 
@@ -41,11 +40,12 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 (mRecyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(lastPosition, yOffset)
             }
         }
-
+        System.out.println("com.ecjtu.heaven " + "init()")
         val request = AsyncNetwork()
-        request.request(Constants.HOST_MOBILE_URL)
+        request.request(Constants.HOST_MOBILE_URL, null)
         request.setRequestCallback(object : IRequestCallback {
             override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
+                System.out.println("com.ecjtu.heaven " + "AsyncNetwork() onSuccess() " + response)
                 val values = SoupFactory.parseHtml(PageSoup::class.java, response)
                 if (values != null) {
                     val soups = values[PageSoup::class.java.simpleName] as PageModel
@@ -67,7 +67,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 }
             }
         })
-        mFloatButton.setOnClickListener{
+        mFloatButton.setOnClickListener {
             (mRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(0)
         }
     }
@@ -86,7 +86,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         val position = layoutManager.findFirstVisibleItemPosition()
         val firstVisibleChildView = layoutManager.findViewByPosition(position)
         val itemHeight = firstVisibleChildView.height
-        return position * itemHeight - firstVisibleChildView.top
+        return position * itemHeight - (firstVisibleChildView?.top ?: 0)
     }
 
     fun getScrollYPosition(): Int {
@@ -98,6 +98,6 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         val layoutManager = mRecyclerView.layoutManager as LinearLayoutManager
         val position = layoutManager.findFirstVisibleItemPosition()
         val firstVisibleChildView = layoutManager.findViewByPosition(position)
-        return firstVisibleChildView.top
+        return firstVisibleChildView?.top ?: 0
     }
 }

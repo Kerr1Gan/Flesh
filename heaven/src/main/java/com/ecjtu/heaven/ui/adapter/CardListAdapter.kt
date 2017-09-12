@@ -23,8 +23,8 @@ import com.ecjtu.heaven.ui.activity.PageDetailActivity
 import com.ecjtu.netcore.jsoup.PageSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.model.PageModel
-import com.ecjtu.sharebox.network.AsyncNetwork
-import com.ecjtu.sharebox.network.IRequestCallback
+import com.ecjtu.netcore.network.AsyncNetwork
+import com.ecjtu.netcore.network.IRequestCallback
 import java.net.HttpURLConnection
 
 /**
@@ -76,7 +76,7 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
 
         if (position == itemCount - 1) {
             val request = AsyncNetwork()
-            request.request(pageModel.nextPage)
+            request.request(pageModel.nextPage,null)
             request.setRequestCallback(object : IRequestCallback {
                 override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                     val values = SoupFactory.parseHtml(PageSoup::class.java, response)
