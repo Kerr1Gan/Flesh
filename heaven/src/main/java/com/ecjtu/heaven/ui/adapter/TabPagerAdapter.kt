@@ -26,6 +26,12 @@ import kotlin.concurrent.thread
  */
 class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
 
+    companion object {
+        private const val KEY_CARD_CACHE = "card_cache_"
+        private const val KEY_LAST_POSITION = "last_position_"
+        private const val KEY_LAST_POSITION_OFFSET = "last_position_offset_"
+    }
+
     private val mViewStub = HashMap<Int, VH>()
 
     override fun isViewFromObject(view: View?, `object`: Any?): Boolean = view == `object`
@@ -39,47 +45,47 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         container?.addView(item)
 
         val helper = PageListCacheHelper(container?.context?.filesDir?.absolutePath)
-        val pageModel: PageModel? = helper.get("card_cache_" + position)
+        val pageModel: PageModel? = helper.get(KEY_CARD_CACHE + position)
         mViewStub.put(position, VH(item, menu[position], pageModel, position.toString()))
         return item
     }
 
     override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
         container?.removeView(`object` as View)
-        val vh:VH? = mViewStub.remove(position)
-        onStop(container?.context!!,position.toString(),vh?.recyclerView,vh?.getPageModel())
+        val vh: VH? = mViewStub.remove(position)
+        onStop(container?.context!!, position.toString(), vh?.recyclerView, vh?.getPageModel())
     }
 
     override fun getPageTitle(position: Int): CharSequence {
         return menu[position].title
     }
 
-    fun onStop(context: Context,key:String,recyclerView: RecyclerView?,pageModel: PageModel?) {
+    fun onStop(context: Context, key: String, recyclerView: RecyclerView?, pageModel: PageModel?) {
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         val helper = PageListCacheHelper(context.filesDir.absolutePath)
         if (pageModel != null) {
-            helper.put("card_cache_" + key, pageModel)
+            helper.put(KEY_CARD_CACHE + key, pageModel)
         }
         if (recyclerView != null) {
-            editor.putInt("last_position_$key",
+            editor.putInt(KEY_LAST_POSITION + key,
                     getScrollYPosition(recyclerView)).
-                    putInt("last_position_offset_$key", getScrollYOffset(recyclerView))
+                    putInt(KEY_LAST_POSITION_OFFSET + key, getScrollYOffset(recyclerView))
         }
         editor.apply()
     }
 
-    fun onStop(context: Context){
+    fun onStop(context: Context) {
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         for (entry in mViewStub) {
             val helper = PageListCacheHelper(context.filesDir.absolutePath)
             if (entry.value.getPageModel() != null) {
-                helper.put("card_cache_" + entry.key, entry.value.getPageModel())
+                helper.put(KEY_CARD_CACHE + entry.key, entry.value.getPageModel())
             }
             val recyclerView = entry.value.recyclerView
             if (recyclerView != null) {
-                editor.putInt("last_position_${entry.key}",
+                editor.putInt(KEY_LAST_POSITION + entry.key,
                         getScrollYPosition(recyclerView)).
-                        putInt("last_position_offset_${entry.key}", getScrollYOffset(recyclerView))
+                        putInt(KEY_LAST_POSITION_OFFSET + entry.key, getScrollYOffset(recyclerView))
             }
         }
         editor.apply()
@@ -93,7 +99,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
             recyclerView?.layoutManager = LinearLayoutManager(recyclerView?.context, LinearLayoutManager.VERTICAL, false)
             loadCache(itemView.context, key)
             val request = AsyncNetwork()
-            if(!TextUtils.isEmpty(menu.url)){
+            if (!TextUtils.isEmpty(menu.url)) {
                 request.request(menu.url, null)
             }
             request.setRequestCallback(object : IRequestCallback {
