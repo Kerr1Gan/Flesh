@@ -1,5 +1,6 @@
 package com.ecjtu.heaven.presenter
 
+import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
@@ -21,13 +22,17 @@ import java.net.HttpURLConnection
  */
 class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) {
 
+    companion object {
+        private const val KEY_LAST_TAB_ITEM = "key_last_tab_item"
+    }
+
     private val mFloatButton = owner.findViewById(R.id.float_button) as FloatingActionButton
     private val mViewPager = owner.findViewById(R.id.view_pager) as ViewPager
     private val mTabLayout = owner.findViewById(R.id.tab_layout) as TabLayout
 
     init {
         val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
-
+        val lastTabItem = PreferenceManager.getDefaultSharedPreferences(owner).getInt(KEY_LAST_TAB_ITEM,0)
         var menuList: MutableList<MenuModel>? = null
         if (helper.get<Any>("menu_list_cache") != null) {
             menuList = helper.get("menu_list_cache")
@@ -35,6 +40,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         if (menuList != null) {
             mViewPager.adapter = TabPagerAdapter(menuList)
             mTabLayout.setupWithViewPager(mViewPager)
+            mViewPager.setCurrentItem(lastTabItem)
         }
         val request = AsyncNetwork()
         request.request(Constants.HOST_MOBILE_URL, null)
@@ -49,6 +55,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                             if (menuList == null && localList != null) {
                                 mViewPager.adapter = TabPagerAdapter(localList)
                                 mTabLayout.setupWithViewPager(mViewPager)
+                                mViewPager.setCurrentItem(lastTabItem)
                             } else {
                                 var needUpdate = false
                                 for (obj in localList) {
@@ -77,6 +84,10 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         }
         val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
         helper.put("menu_list_cache",(mViewPager.adapter as TabPagerAdapter).menu)
+
+        PreferenceManager.getDefaultSharedPreferences(owner).edit().
+                putInt(KEY_LAST_TAB_ITEM,mTabLayout.selectedTabPosition).
+                apply()
     }
 
 }

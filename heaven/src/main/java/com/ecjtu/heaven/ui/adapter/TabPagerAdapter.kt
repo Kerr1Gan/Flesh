@@ -6,6 +6,7 @@ import android.preference.PreferenceManager
 import android.support.v4.view.PagerAdapter
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,15 +46,29 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
 
     override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
         container?.removeView(`object` as View)
-        mViewStub.remove(position)
-        onStop(container?.context!!)
+        val vh:VH? = mViewStub.remove(position)
+        onStop(container?.context!!,position.toString(),vh?.recyclerView,vh?.getPageModel())
     }
 
     override fun getPageTitle(position: Int): CharSequence {
         return menu[position].title
     }
 
-    fun onStop(context: Context) {
+    fun onStop(context: Context,key:String,recyclerView: RecyclerView?,pageModel: PageModel?) {
+        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        val helper = PageListCacheHelper(context.filesDir.absolutePath)
+        if (pageModel != null) {
+            helper.put("card_cache_" + key, pageModel)
+        }
+        if (recyclerView != null) {
+            editor.putInt("last_position_$key",
+                    getScrollYPosition(recyclerView)).
+                    putInt("last_position_offset_$key", getScrollYOffset(recyclerView))
+        }
+        editor.apply()
+    }
+
+    fun onStop(context: Context){
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         for (entry in mViewStub) {
             val helper = PageListCacheHelper(context.filesDir.absolutePath)
@@ -78,7 +93,9 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
             recyclerView?.layoutManager = LinearLayoutManager(recyclerView?.context, LinearLayoutManager.VERTICAL, false)
             loadCache(itemView.context, key)
             val request = AsyncNetwork()
-            request.request(menu.url, null)
+            if(!TextUtils.isEmpty(menu.url)){
+                request.request(menu.url, null)
+            }
             request.setRequestCallback(object : IRequestCallback {
                 override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                     val values = SoupFactory.parseHtml(PageSoup::class.java, response)
