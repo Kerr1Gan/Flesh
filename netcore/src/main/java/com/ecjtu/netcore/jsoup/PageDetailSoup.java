@@ -29,7 +29,7 @@ public class PageDetailSoup extends BaseSoup {
         elements = body.getElementsByTag("figure");
         elements = elements.get(0).getElementsByTag("img");
         String imageUrl = elements.get(0).attr("src");
-
+        String originImageUrl = imageUrl;
         PageDetailModel model = new PageDetailModel((String) getArguments()[0]);
         String suffix = imageUrl.substring(imageUrl.lastIndexOf("."));
         imageUrl = imageUrl.substring(0,imageUrl.lastIndexOf("."));
@@ -39,5 +39,6 @@ public class PageDetailSoup extends BaseSoup {
         model.setImgUrl(imageUrl);
         model.setMaxLen(maxPage);
         values.put(getClass().getSimpleName(), model);
+        values.put("origin_img",originImageUrl);
     }
 }

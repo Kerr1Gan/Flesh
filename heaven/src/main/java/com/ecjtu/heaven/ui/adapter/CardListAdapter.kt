@@ -25,6 +25,7 @@ import com.ecjtu.heaven.R
 import com.ecjtu.heaven.db.DatabaseManager
 import com.ecjtu.heaven.db.table.impl.LikeTableImpl
 import com.ecjtu.heaven.ui.activity.PageDetailActivity
+import com.ecjtu.netcore.jsoup.PageDetailSoup
 import com.ecjtu.netcore.jsoup.PageSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.model.PageDetailModel
