@@ -18,7 +18,7 @@ class PageLikeActivityDelegate(owner: PageLikeActivity, private val itemList: Li
     init {
         mPageModel = PageModel()
         mPageModel?.nextPage = null
-        mPageModel?.itemList = itemList
+        mPageModel?.itemList = itemList.reversed()
 
         mRecyclerView.layoutManager = LinearLayoutManager(owner, LinearLayoutManager.VERTICAL, false)
         if (mPageModel != null) {
