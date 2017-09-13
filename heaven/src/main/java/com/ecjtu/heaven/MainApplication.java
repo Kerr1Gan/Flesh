@@ -35,8 +35,6 @@ public class MainApplication extends Application {
     private void initDb() {
         DatabaseManager manager = DatabaseManager.getInstance(this);
         manager.registerTable(new LikeTableImpl());
-        SQLiteDatabase db = manager.getHelper(this, "test", 1).getWritableDatabase();
-        db.close();
     }
 
     private static class SimpleGlideModule extends AppGlideModule {

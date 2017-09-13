@@ -32,4 +32,10 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         mDelegate.onStop();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mDelegate.onResume();
+    }
 }

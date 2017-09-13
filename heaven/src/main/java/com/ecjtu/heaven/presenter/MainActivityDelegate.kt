@@ -1,14 +1,18 @@
 package com.ecjtu.heaven.presenter
 
+import android.content.Intent
 import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
+import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.Gravity
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.cache.MenuListCacheHelper
 import com.ecjtu.heaven.ui.activity.MainActivity
+import com.ecjtu.heaven.ui.activity.PageLikeActivity
 import com.ecjtu.heaven.ui.adapter.TabPagerAdapter
 import com.ecjtu.netcore.Constants
 import com.ecjtu.netcore.jsoup.MenuSoup
@@ -82,6 +86,13 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(0)
             }
         }
+
+        findViewById(R.id.like)?.setOnClickListener {
+            val intent = Intent(owner, PageLikeActivity::class.java)
+            owner.startActivity(intent)
+            val drawerLayout = findViewById(R.id.drawer_layout) as DrawerLayout
+            drawerLayout.closeDrawer(Gravity.START)
+        }
     }
 
     fun onStop() {
@@ -95,5 +106,12 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 putInt(KEY_LAST_TAB_ITEM,mTabLayout.selectedTabPosition).
                 apply()
     }
+
+    fun onResume(){
+        mViewPager.adapter?.let {
+            (mViewPager.adapter as TabPagerAdapter).onResume()
+        }
+    }
+
 
 }

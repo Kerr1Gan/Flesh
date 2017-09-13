@@ -24,14 +24,21 @@ class DatabaseManager(context: Context? = null) {
     @JvmOverloads
     fun getHelper(context: Context, name: String, version: Int = 1, factory: SQLiteDatabase.CursorFactory? = null,
                   errorHandler: DatabaseErrorHandler? = null): DataBaseHelper? {
-        mDatabaseHelper = DataBaseHelper(context, name, factory, if (version >= 1) version else 0   , errorHandler)
+        mDatabaseHelper = DataBaseHelper(context, name, factory, if (version >= 1) version else 0, errorHandler)
         mDatabaseHelper?.setTables(mTableList)
         return mDatabaseHelper
     }
 
+    fun getDatabase(): SQLiteDatabase? {
+        if (mContext != null) {
+            return getHelper(mContext!!, "heaven")?.writableDatabase
+        }
+        return null
+    }
+
     fun <T : BaseTableImpl> registerTable(obj: T) {
-        if (mTableList.indexOf(obj) < 0) {
-            mTableList.add(obj)
+        if (getTables().indexOf(obj) < 0) {
+            (getTables() as MutableList<BaseTable>).add(obj)
         }
     }
 

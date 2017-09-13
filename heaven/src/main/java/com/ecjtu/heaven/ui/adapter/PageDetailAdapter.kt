@@ -62,7 +62,7 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<P
         val glideUrl = GlideUrl(url, builder.build())
         url.let {
             imageView?.setTag(R.id.extra_tag, position)
-            imageView?.setOnClickListener(this)
+            holder?.itemView?.setOnClickListener(this)
             Glide.with(context).asBitmap().load(glideUrl).listener(this).apply(options).into(imageView)
         }
 

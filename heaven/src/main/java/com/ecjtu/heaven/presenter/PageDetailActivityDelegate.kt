@@ -28,7 +28,7 @@ class PageDetailActivityDelegate(owner: PageDetailActivity, val url: String) : D
         mPageModel = helper.get(local)
 
         val request = AsyncNetwork()
-        request.request(url,null)
+        request.request(url, null)
         request.setRequestCallback(object : IRequestCallback {
             override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                 val ret = SoupFactory.parseHtml(PageDetailSoup::class.java, response, url)

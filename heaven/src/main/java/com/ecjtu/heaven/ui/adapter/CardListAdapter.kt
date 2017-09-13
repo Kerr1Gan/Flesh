@@ -1,5 +1,7 @@
 package com.ecjtu.heaven.ui.adapter
 
+import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
@@ -20,9 +22,12 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.ecjtu.heaven.R
+import com.ecjtu.heaven.db.DatabaseManager
+import com.ecjtu.heaven.db.table.impl.LikeTableImpl
 import com.ecjtu.heaven.ui.activity.PageDetailActivity
 import com.ecjtu.netcore.jsoup.PageSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
+import com.ecjtu.netcore.model.PageDetailModel
 import com.ecjtu.netcore.model.PageModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
@@ -34,6 +39,10 @@ import java.net.HttpURLConnection
 class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
 
     private val mListHeight = ArrayList<Int>()
+
+    private var mDatabase: SQLiteDatabase? = null
+
+    private var mLastClickPosition = -1
 
     override fun getItemCount(): Int {
         return pageModel.itemList.size
@@ -59,7 +68,20 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         //set empty
         holder?.itemView?.findViewById(R.id.bottom)?.visibility = View.INVISIBLE
 
-        val imageView = holder?.mImageView
+        //db
+        if (mDatabase == null) {
+            val context = holder?.itemView?.context as Context
+            val manager = DatabaseManager.getInstance(context)
+            mDatabase = manager?.getDatabase()
+        }
+
+        val href = pageModel.itemList[position].href
+        if (mDatabase != null && mDatabase?.isOpen == true) {
+            val impl = LikeTableImpl()
+            holder?.heart?.isActivated = impl.isLike(mDatabase!!, href)
+        }
+
+        val imageView = holder?.imageView
         val options = RequestOptions()
         options.centerCrop()
         val url = pageModel.itemList[position].imgUrl /*thumb2OriginalUrl(pageModel.itemList[position].imgUrl)*/
@@ -74,13 +96,13 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         url.let {
             imageView?.setTag(R.id.extra_tag, position)
             Glide.with(context).asBitmap().load(glideUrl).listener(this).apply(options).into(imageView)
-            holder?.mTextView?.setText(pageModel.itemList[position].description)
+            holder?.textView?.setText(pageModel.itemList[position].description)
         }
 
         if (position == itemCount - 1) {
             val request = AsyncNetwork()
-            if(!TextUtils.isEmpty(pageModel.nextPage)){
-                request.request(pageModel.nextPage,null)
+            if (!TextUtils.isEmpty(pageModel.nextPage)) {
+                request.request(pageModel.nextPage, null)
             }
             request.setRequestCallback(object : IRequestCallback {
                 override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
@@ -100,6 +122,7 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         }
         holder?.itemView?.setTag(R.id.extra_tag, position)
         holder?.itemView?.setOnClickListener(this)
+        holder?.heart?.setTag(R.id.extra_tag, pageModel.itemList[position])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VH {
@@ -152,8 +175,10 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         val position = v?.getTag(R.id.extra_tag)
         position?.let {
             val url = pageModel.itemList[position as Int].href
-            val intent = PageDetailActivity.newInstance(v.context, url)
+            val item = pageModel.itemList[position]
+            val intent = PageDetailActivity.newInstance(v.context, url,item.href,item.description,item.imgUrl)
             v.context.startActivity(intent)
+            mLastClickPosition = position
         }
     }
 
@@ -172,14 +197,41 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         mListHeight.set(position, height)
     }
 
+    fun onRelease() {
+        mDatabase?.close()
+    }
+
+    fun onResume() {
+        if (mLastClickPosition >= 0) {
+            notifyItemChanged(mLastClickPosition)
+        }
+        mLastClickPosition = -1
+    }
 
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val mImageView = itemView.findViewById(R.id.image) as ImageView
-        val mTextView = itemView.findViewById(R.id.title) as TextView
+        val imageView = itemView.findViewById(R.id.image) as ImageView
+        val textView = itemView.findViewById(R.id.title) as TextView
+        val heart = itemView.findViewById(R.id.heart) as ImageView
 
         init {
-            mImageView?.adjustViewBounds = true
+            imageView.adjustViewBounds = true
+            heart.setOnClickListener { v: View? ->
+                val manager = DatabaseManager.getInstance(v?.context)
+                val db = manager?.getDatabase()
+                val url = v?.getTag(R.id.extra_tag) as PageModel.ItemModel?
+                if (url != null) {
+                    val impl = LikeTableImpl()
+                    if (impl.isLike(db!!, url.href)) {
+                        impl.deleteLike(db, url.href)
+                        v?.isActivated = false
+                    } else {
+                        impl.addLike(db, url.href,url.href,url.description,url.imgUrl)
+                        v?.isActivated = true
+                    }
+                }
+                db!!.close()
+            }
         }
     }
 }

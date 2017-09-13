@@ -58,6 +58,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         container?.removeView(`object` as View)
         val vh: VH? = mViewStub.remove(menu[position].url)
         onStop(container?.context!!, menu[position].url, vh?.recyclerView, vh?.getPageModel())
+        (vh?.recyclerView?.adapter as CardListAdapter?)?.onRelease()
     }
 
     override fun getPageTitle(position: Int): CharSequence {
@@ -93,6 +94,14 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
             }
         }
         editor.apply()
+    }
+
+    fun onResume(){
+        for (entry in mViewStub) {
+            if(entry.value.recyclerView?.adapter is CardListAdapter){
+                (entry.value.recyclerView?.adapter as CardListAdapter).onResume()
+            }
+        }
     }
 
     private class VH(val itemView: View, private val menu: MenuModel, pageModel: PageModel?, key: String) {
