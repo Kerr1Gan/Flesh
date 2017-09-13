@@ -2,6 +2,7 @@ package com.ecjtu.heaven;
 
 import android.app.Application;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
@@ -9,6 +10,8 @@ import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.bumptech.glide.module.AppGlideModule;
+import com.ecjtu.heaven.db.DatabaseManager;
+import com.ecjtu.heaven.db.table.impl.LikeTableImpl;
 
 /**
  * Created by Ethan_Xiang on 2017/9/7.
@@ -25,6 +28,15 @@ public class MainApplication extends Application {
         module.applyOptions(this, builder);
         Glide glide = builder.build(this);
         Glide.init(glide);
+
+        initDb();
+    }
+
+    private void initDb() {
+        DatabaseManager manager = DatabaseManager.getInstance(this);
+        manager.registerTable(new LikeTableImpl());
+        SQLiteDatabase db = manager.getHelper(this, "test", 1).getWritableDatabase();
+        db.close();
     }
 
     private static class SimpleGlideModule extends AppGlideModule {

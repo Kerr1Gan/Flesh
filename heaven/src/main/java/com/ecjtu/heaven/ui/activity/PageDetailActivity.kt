@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.presenter.PageDetailActivityDelegate
 
@@ -26,6 +28,8 @@ class PageDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_page_detail)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val intent = intent
         val bundle = intent.extras
         if (bundle != null) {
@@ -42,5 +46,21 @@ class PageDetailActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         mDelegate?.onStop()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_page_detail_activity,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if(item?.itemId == R.menu.menu_page_detail_activity){
+
+            return true
+        }else if(item?.itemId == android.R.id.home){
+            finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

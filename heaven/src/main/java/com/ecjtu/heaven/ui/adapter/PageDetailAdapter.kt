@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -125,11 +124,11 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<P
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val mImageView = itemView.findViewById(R.id.image) as ImageView
-        val mTextView = itemView.findViewById(R.id.title) as TextView
+        val mBottom = itemView.findViewById(R.id.bottom) as View
 
         init {
             mImageView.adjustViewBounds = true
-            mTextView.visibility = View.GONE
+            mBottom.visibility = View.GONE
         }
     }
 }

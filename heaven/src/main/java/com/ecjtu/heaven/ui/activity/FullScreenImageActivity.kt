@@ -81,7 +81,7 @@ class FullScreenImageActivity : AppCompatActivity(), RequestListener<Bitmap> {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_full_screen_activity, menu)
+        menuInflater.inflate(R.menu.menu_page_detail_activity, menu)
         return super.onCreateOptionsMenu(menu)
     }
 

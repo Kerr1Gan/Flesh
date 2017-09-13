@@ -57,7 +57,7 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         }
 
         //set empty
-        holder?.mTextView?.setText("")
+        holder?.itemView?.findViewById(R.id.bottom)?.visibility = View.INVISIBLE
 
         val imageView = holder?.mImageView
         val options = RequestOptions()
@@ -116,7 +116,10 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
             val parent = target.view.parent?.parent
             val layoutParams = (parent as View).layoutParams
             var height = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
-            height += parent.findViewById(R.id.title).height
+
+            val bottom = parent.findViewById(R.id.bottom)
+            bottom.visibility = View.VISIBLE
+            height += bottom.height
             if (layoutParams.height != height) {
                 layoutParams.height = height
             }
