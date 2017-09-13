@@ -2,4 +2,8 @@
 <resources>
     <item name="extra_tag" type="id"/>
     <item name="extra_tag_2" type="id"/>
+    <item name="extra_tag_3" type="id"/>
+    <item name="extra_tag_4" type="id"/>
+    <item name="extra_tag_5" type="id"/>
+    <item name="extra_tag_6" type="id"/>
 </resources>

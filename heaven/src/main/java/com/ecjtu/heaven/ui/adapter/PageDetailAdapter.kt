@@ -2,6 +2,7 @@ package com.ecjtu.heaven.ui.adapter
 
 import android.graphics.Bitmap
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -56,7 +57,13 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<P
         val imageView = holder?.mImageView
         val options = RequestOptions()
         options.centerCrop()
-        val url = String.format(pageModel.imgUrl, position + 1)
+        var temp = pageModel.backupImgUrl[position]
+        var url: String? = null
+        url = if (!TextUtils.isEmpty(temp)) {
+            temp
+        } else {
+            String.format(pageModel.imgUrl, position + 1)
+        }
         val builder = LazyHeaders.Builder().addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Mobile Safari/537.36")
                 .addHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8")
                 .addHeader("Accept-Encoding", "gzip, deflate")
@@ -84,15 +91,19 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<P
     override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
         val request = AsyncNetwork()
         val header = model as GlideUrl
-        val url = header.headers["Base-Url"] ?: "" + "/" + header.headers["Base-Position"]
+
+        var base: String? = header.headers["Base-Url"] ?: return false
+        val pos = header.headers["Base-Position"] ?: return false
+        val url = base + "/" + (pos.toInt() + 1)
         request.request(url, null)
         request.setRequestCallback(object : IRequestCallback {
             override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                 val ret = SoupFactory.parseHtml(PageDetailSoup::class.java, response, url)
-                val model = ret.get("origin_img")
-                if (model != null) {
-                    if (target is BitmapImageViewTarget){
-                        target.view.post{
+                val imgUrl = ret.get("origin_img") as String?
+                if (imgUrl != null) {
+                    pageModel.backupImgUrl.set(pos.toInt(),imgUrl)
+                    if (target is BitmapImageViewTarget) {
+                        target.view.post {
                             val builder = LazyHeaders.Builder().addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Mobile Safari/537.36")
                                     .addHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8")
                                     .addHeader("Accept-Encoding", "gzip, deflate")
@@ -100,15 +111,17 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<P
                                     .addHeader("Host", "i.meizitu.net")
                                     .addHeader("Proxy-Connection", "keep-alive")
                                     .addHeader("Referer", "http://m.mzitu.com/")
-                            val glideUrl = GlideUrl(url, builder.build())
-                            Glide.with(target.view.context).asBitmap().load(glideUrl).listener(this@PageDetailAdapter).
+                            val glideUrl = GlideUrl(imgUrl, builder.build())
+                            Glide.with(target.view.context).asBitmap().load(glideUrl).
+                                    apply(RequestOptions().apply { centerCrop() }).
+                                    listener(this@PageDetailAdapter).
                                     into(target.view)
                         }
                     }
                 }
             }
         })
-        return false
+        return true
     }
 
     override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
