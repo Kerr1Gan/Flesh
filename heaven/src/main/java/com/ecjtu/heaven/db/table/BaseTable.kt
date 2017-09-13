@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase
 interface BaseTable {
     val _id: String
         get() = "_id"
-    abstract val sql : String
+    val sql : String
     fun createTable(sqLiteDatabase: SQLiteDatabase)
     fun deleteTable(sqLiteDatabase: SQLiteDatabase)
     fun updateTable(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int)

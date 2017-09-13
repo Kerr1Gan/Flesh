@@ -141,7 +141,6 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
             var height = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
 
             val bottom = parent.findViewById(R.id.bottom)
-            bottom.visibility = View.VISIBLE
             height += bottom.height
             if (layoutParams.height != height) {
                 layoutParams.height = height
@@ -149,6 +148,7 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
             val position = target.view.getTag(R.id.extra_tag) as Int
             target.view.setImageBitmap(resource)
             setHeight(position, height)
+            bottom.visibility = View.VISIBLE
         }
         return true
     }
