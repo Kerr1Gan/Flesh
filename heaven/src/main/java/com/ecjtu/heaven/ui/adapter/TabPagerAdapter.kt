@@ -56,7 +56,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
 
     override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
         container?.removeView(`object` as View)
-        val vh: VH? = mViewStub.remove(menu[position].url)
+        val vh: VH? = mViewStub.remove(menu[position].title)
         onStop(container?.context!!, menu[position].url, vh?.recyclerView, vh?.getPageModel())
         (vh?.recyclerView?.adapter as CardListAdapter?)?.onRelease()
     }
@@ -96,9 +96,9 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         editor.apply()
     }
 
-    fun onResume(){
+    fun onResume() {
         for (entry in mViewStub) {
-            if(entry.value.recyclerView?.adapter is CardListAdapter){
+            if (entry.value.recyclerView?.adapter is CardListAdapter) {
                 (entry.value.recyclerView?.adapter as CardListAdapter).onResume()
             }
         }
@@ -123,9 +123,9 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         private fun loadCache(context: Context, key: String) {
             if (mPageModel != null) {
                 recyclerView?.adapter = CardListAdapter(mPageModel!!)
-                val lastPosition = PreferenceManager.getDefaultSharedPreferences(context).getInt("last_position_$key", -1)
+                val lastPosition = PreferenceManager.getDefaultSharedPreferences(context).getInt(KEY_LAST_POSITION + key, -1)
                 if (lastPosition >= 0) {
-                    val yOffset = PreferenceManager.getDefaultSharedPreferences(context).getInt("last_position_offset_$key", 0)
+                    val yOffset = PreferenceManager.getDefaultSharedPreferences(context).getInt(KEY_LAST_POSITION_OFFSET + key, 0)
                     (recyclerView?.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(lastPosition, yOffset)
                 }
             }
