@@ -14,6 +14,7 @@ import com.ecjtu.netcore.model.PageModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,5 +69,19 @@ public class ExampleInstrumentedTest {
                 Log.e("db vs parcel", "parcel read time " + (System.currentTimeMillis() - start));
             }
         }).start();
+    }
+
+    @Test
+    public void deleteCache() throws Exception {
+        // Context of the app under test.
+        final Context appContext = InstrumentationRegistry.getTargetContext();
+
+        File[] list = new File(appContext.getFilesDir().getAbsolutePath()).listFiles();
+        for(File child : list){
+            if(child.getName().endsWith("妹子自拍")){
+                child.delete();
+                break;
+            }
+        }
     }
 }

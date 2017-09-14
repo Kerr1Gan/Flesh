@@ -23,7 +23,7 @@ public class MenuSoup extends BaseSoup {
     }
 
     @Override
-    public void parse(Document root, Element head,Element body, Map<String, Object> values) {
+    public void parse(Document root, Element head, Element body, Map<String, Object> values) {
         Element set = body.getElementById("menu-ease-mobile");
         Elements childArr = set.getElementsByTag("a");
         List<MenuModel> models = new ArrayList<>();
@@ -35,6 +35,9 @@ public class MenuSoup extends BaseSoup {
                 models.add(model);
             }
         }
+        //暂时去掉最后两个 每日更新 美女专题
+        models.remove(models.size() - 1);
+        models.remove(models.size() - 1);
         values.put(TAG, models);
     }
 }

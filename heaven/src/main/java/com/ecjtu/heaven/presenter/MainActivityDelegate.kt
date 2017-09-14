@@ -1,25 +1,30 @@
 package com.ecjtu.heaven.presenter
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.format.Formatter
 import android.view.Gravity
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.cache.MenuListCacheHelper
 import com.ecjtu.heaven.ui.activity.MainActivity
 import com.ecjtu.heaven.ui.activity.PageLikeActivity
 import com.ecjtu.heaven.ui.adapter.TabPagerAdapter
+import com.ecjtu.heaven.util.file.FileUtil
 import com.ecjtu.netcore.Constants
 import com.ecjtu.netcore.jsoup.MenuSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
+import java.io.File
 import java.net.HttpURLConnection
 
 
@@ -38,7 +43,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 
     init {
         val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
-        val lastTabItem = PreferenceManager.getDefaultSharedPreferences(owner).getInt(KEY_LAST_TAB_ITEM,0)
+        val lastTabItem = PreferenceManager.getDefaultSharedPreferences(owner).getInt(KEY_LAST_TAB_ITEM, 0)
         var menuList: MutableList<MenuModel>? = null
         if (helper.get<Any>("menu_list_cache") != null) {
             menuList = helper.get("menu_list_cache")
@@ -93,6 +98,26 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             val drawerLayout = findViewById(R.id.drawer_layout) as DrawerLayout
             drawerLayout.closeDrawer(Gravity.START)
         }
+
+        findViewById(R.id.cache)?.setOnClickListener {
+            val cacheFile = File(owner.cacheDir.absolutePath + "/image_manager_disk_cache")
+            val list = FileUtil.getFilesByFolder(cacheFile)
+            var ret = 0L
+            for (child in list) {
+                ret += child.length()
+            }
+            val size = Formatter.formatFileSize(owner, ret)
+            AlertDialog.Builder(owner).setTitle("缓存大小").setMessage("已缓存${size}数据,是否清理？")
+                    .setPositiveButton("确定", { dialog, which -> for (child in list) child.delete() })
+                    .setNegativeButton("取消", null)
+                    .create().show()
+        }
+
+        findViewById(R.id.disclaimer)?.setOnClickListener {
+            AlertDialog.Builder(owner).setTitle("声明").setMessage("所有资源均来自www.mzitu.com，如有侵权请联系mnsync@outlook.com，将会尽快删除。")
+                    .setPositiveButton("确定",null)
+                    .create().show()
+        }
     }
 
     fun onStop() {
@@ -100,14 +125,14 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             (mViewPager.adapter as TabPagerAdapter).onStop(owner)
         }
         val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
-        helper.put("menu_list_cache",(mViewPager.adapter as TabPagerAdapter).menu)
+        helper.put("menu_list_cache", (mViewPager.adapter as TabPagerAdapter).menu)
 
         PreferenceManager.getDefaultSharedPreferences(owner).edit().
-                putInt(KEY_LAST_TAB_ITEM,mTabLayout.selectedTabPosition).
+                putInt(KEY_LAST_TAB_ITEM, mTabLayout.selectedTabPosition).
                 apply()
     }
 
-    fun onResume(){
+    fun onResume() {
         mViewPager.adapter?.let {
             (mViewPager.adapter as TabPagerAdapter).onResume()
         }

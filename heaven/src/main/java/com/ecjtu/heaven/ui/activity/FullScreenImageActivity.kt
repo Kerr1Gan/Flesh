@@ -48,13 +48,16 @@ class FullScreenImageActivity : AppCompatActivity(), RequestListener<Bitmap> {
         if (intent.extras != null) {
             val uri = intent.extras.getString(EXTRA_URI, "")
             if (!TextUtils.isEmpty(uri)) {
+                var host = uri.replace("http://","")
+                host = host.substring(0,host.indexOf("/"))
                 val builder = LazyHeaders.Builder().addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Mobile Safari/537.36")
                         .addHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8")
                         .addHeader("Accept-Encoding", "gzip, deflate")
                         .addHeader("Accept-Language", "zh-CN,zh;q=0.8")
-                        .addHeader("Host", "i.meizitu.net")
+                        .addHeader("Host", host)
                         .addHeader("Proxy-Connection", "keep-alive")
                         .addHeader("Referer", "http://m.mzitu.com/")
+
                 val glideUrl = GlideUrl(uri, builder.build())
                 Glide.with(this).asBitmap().load(glideUrl).listener(this).into(findViewById(R.id.image) as ImageView)
                 findViewById(R.id.image).setOnLongClickListener {

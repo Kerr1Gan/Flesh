@@ -19,10 +19,10 @@
                 android:id="@+id/tool_bar"
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/actionBarSize"
+                android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:title="@string/app_name"
-                app:titleTextColor="@android:color/white"
-                android:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+                app:titleTextColor="@android:color/white" />
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tab_layout"
@@ -76,16 +76,61 @@
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"/>
+                    android:layout_height="200dp" />
+
                 <TextView
+                    android:id="@+id/like"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18dp"
-                    android:textColor="@android:color/white"
-                    android:id="@+id/like"
-                    android:padding="20dp"
                     android:background="@color/colorPrimary"
-                    android:text="收藏"/>
+                    android:drawableLeft="@drawable/ic_like"
+                    android:drawablePadding="12dp"
+                    android:gravity="center_vertical"
+                    android:padding="20dp"
+                    android:text="收藏"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:background="@color/colorPrimary"
+                    android:drawableLeft="@drawable/ic_history"
+                    android:drawablePadding="12dp"
+                    android:gravity="center_vertical"
+                    android:padding="20dp"
+                    android:text="历史"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/cache"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/colorPrimary"
+                    android:drawableLeft="@drawable/ic_cache"
+                    android:drawablePadding="12dp"
+                    android:gravity="center_vertical"
+                    android:padding="20dp"
+                    android:text="缓存"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/disclaimer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:drawableLeft="@drawable/ic_disclaimer"
+                    android:drawablePadding="12dp"
+                    android:gravity="center_vertical"
+                    android:padding="20dp"
+                    android:text="声明"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

@@ -35,8 +35,15 @@ class DataBaseHelper : SQLiteOpenHelper {
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         if (mTables != null) {
             for (table in mTables!!) {
-                table.updateTable(db!!,oldVersion,newVersion)
+                table.updateTable(db!!, oldVersion, newVersion)
             }
+        }
+    }
+
+    override fun onOpen(db: SQLiteDatabase?) {
+        super.onOpen(db)
+        if (db?.isReadOnly() == false) { // Enable foreign key constraints
+            db.execSQL("PRAGMA foreign_keys=ON;");
         }
     }
 }

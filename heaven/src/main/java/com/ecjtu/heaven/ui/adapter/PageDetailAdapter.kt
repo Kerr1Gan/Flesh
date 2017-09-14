@@ -64,11 +64,13 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<P
         } else {
             String.format(pageModel.imgUrl, position + 1)
         }
+        var host = url?.replace("http://", "")
+        host = host?.substring(0, host.indexOf("/"))
         val builder = LazyHeaders.Builder().addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Mobile Safari/537.36")
                 .addHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8")
                 .addHeader("Accept-Encoding", "gzip, deflate")
                 .addHeader("Accept-Language", "zh-CN,zh;q=0.8")
-                .addHeader("Host", "i.meizitu.net")
+                .addHeader("Host", host)
                 .addHeader("Proxy-Connection", "keep-alive")
                 .addHeader("Referer", "http://m.mzitu.com/")
                 .addHeader("Base-Url", pageModel.baseUrl)
@@ -101,7 +103,7 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<P
                 val ret = SoupFactory.parseHtml(PageDetailSoup::class.java, response, url)
                 val imgUrl = ret.get("origin_img") as String?
                 if (imgUrl != null) {
-                    pageModel.backupImgUrl.set(pos.toInt(),imgUrl)
+                    pageModel.backupImgUrl.set(pos.toInt(), imgUrl)
                     if (target is BitmapImageViewTarget) {
                         target.view.post {
                             val builder = LazyHeaders.Builder().addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Mobile Safari/537.36")

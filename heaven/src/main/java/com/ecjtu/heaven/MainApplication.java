@@ -39,8 +39,8 @@ public class MainApplication extends Application {
 
     private static class SimpleGlideModule extends AppGlideModule {
         public void applyOptions(Context context, GlideBuilder builder) {
-            //定义缓存大小为100M
-            int diskCacheSize = 100 * 1024 * 1024;
+            //定义缓存大小为500M
+            int diskCacheSize = 500 * 1024 * 1024;
             //提高图片质量
             builder.setDecodeFormat(DecodeFormat.PREFER_ARGB_8888);
             //自定义磁盘缓存:这种缓存只有自己的app才能访问到

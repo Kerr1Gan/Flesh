@@ -24,6 +24,7 @@ import com.bumptech.glide.request.target.Target
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.db.DatabaseManager
 import com.ecjtu.heaven.db.table.impl.LikeTableImpl
+import com.ecjtu.heaven.ui.activity.FullScreenImageActivity
 import com.ecjtu.heaven.ui.activity.PageDetailActivity
 import com.ecjtu.netcore.jsoup.PageDetailSoup
 import com.ecjtu.netcore.jsoup.PageSoup
@@ -86,11 +87,13 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         val options = RequestOptions()
         options.centerCrop()
         val url = pageModel.itemList[position].imgUrl /*thumb2OriginalUrl(pageModel.itemList[position].imgUrl)*/
+        var host = url.replace("http://","")
+        host = host.substring(0,host.indexOf("/"))
         val builder = LazyHeaders.Builder().addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Mobile Safari/537.36")
                 .addHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8")
                 .addHeader("Accept-Encoding", "gzip, deflate")
                 .addHeader("Accept-Language", "zh-CN,zh;q=0.8")
-                .addHeader("Host", "i.meizitu.net")
+                .addHeader("Host", host)
                 .addHeader("Proxy-Connection", "keep-alive")
                 .addHeader("Referer", "http://m.mzitu.com/")
         val glideUrl = GlideUrl(url, builder.build())
@@ -175,10 +178,16 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
     override fun onClick(v: View?) {
         val position = v?.getTag(R.id.extra_tag)
         position?.let {
-            val url = pageModel.itemList[position as Int].href
-            val item = pageModel.itemList[position]
-            val intent = PageDetailActivity.newInstance(v.context, url,item.href,item.description,item.imgUrl)
-            v.context.startActivity(intent)
+            val item = pageModel.itemList[position as Int]
+            val url = item.href
+            if(!TextUtils.isEmpty(url)){
+                val intent = PageDetailActivity.newInstance(v.context, url,item.href,item.description,item.imgUrl)
+                v.context.startActivity(intent)
+            }else{
+                FullScreenImageActivity.newInstance(v.context,item.imgUrl).apply {
+                    v.context.startActivity(this)
+                }
+            }
             mLastClickPosition = position
         }
     }

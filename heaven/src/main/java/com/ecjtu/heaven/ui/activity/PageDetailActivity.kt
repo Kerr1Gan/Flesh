@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.db.DatabaseManager
 import com.ecjtu.heaven.db.table.impl.LikeTableImpl
@@ -100,9 +101,11 @@ class PageDetailActivity : AppCompatActivity() {
                 if (isLike) {
                     item.title = "收藏"
                     impl.deleteLike(mDatabase!!, mUrl!!)
+                    Toast.makeText(this,"取消收藏",Toast.LENGTH_SHORT).show()
                 } else {
                     item.title = "取消收藏"
                     impl.addLike(mDatabase!!, mUrl!!, mHref!!, mDescription!!, mImgUrl!!)
+                    Toast.makeText(this,"收藏成功",Toast.LENGTH_SHORT).show()
                 }
             }
             return true
