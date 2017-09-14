@@ -1,5 +1,6 @@
 package com.ecjtu.heaven.ui.adapter
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
@@ -164,7 +165,12 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<P
     override fun onClick(v: View?) {
         val position = v?.getTag(R.id.extra_tag)
         if (position != null) {
-            val intent = FullScreenImageActivity.newInstance(v.context, String.format(pageModel.imgUrl, position as Int + 1))
+            var intent : Intent? = null
+            if(!TextUtils.isEmpty(pageModel.backupImgUrl.get(position as Int))){
+                intent = FullScreenImageActivity.newInstance(v.context, pageModel.backupImgUrl[position])
+            }else{
+                intent = FullScreenImageActivity.newInstance(v.context, String.format(pageModel.imgUrl, position as Int + 1))
+            }
             v.context.startActivity(intent)
         }
     }
