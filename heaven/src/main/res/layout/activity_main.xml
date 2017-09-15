@@ -8,10 +8,10 @@
     tools:context="com.ecjtu.heaven.ui.activity.MainActivity">
 
     <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
-        android:id="@+id/content">
+        android:background="@color/colorPrimary">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -20,8 +20,8 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/tool_bar"
                 android:layout_width="match_parent"
-                android:background="@color/colorPrimary"
                 android:layout_height="?android:attr/actionBarSize"
+                android:background="@color/colorPrimary"
                 android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:title="@string/app_name"
@@ -64,7 +64,7 @@
         android:layout_width="250dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/colorPrimaryDark"
+        android:background="@android:color/white"
         android:orientation="vertical">
 
         <ScrollView
@@ -83,33 +83,34 @@
                     android:layout_height="180dp"
                     android:layout_marginBottom="20dp"
                     android:background="@mipmap/pink">
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Mzitu"
-                        android:textSize="23dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white" />
+                        android:text="Mzitu"
+                        android:textColor="@android:color/white"
+                        android:textSize="23dp" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="图源"
                         android:layout_gravity="right|bottom"
-                        android:textColor="@android:color/white"
-                        android:padding="5dp"/>
+                        android:padding="5dp"
+                        android:text="图源"
+                        android:textColor="@android:color/white" />
                 </FrameLayout>
 
                 <TextView
                     android:id="@+id/like"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorPrimary"
                     android:drawableLeft="@drawable/ic_like"
                     android:drawablePadding="12dp"
                     android:gravity="center_vertical"
                     android:padding="20dp"
                     android:text="收藏"
-                    android:textColor="@android:color/white"
+                    android:textColor="@android:color/black"
                     android:textSize="16dp" />
 
                 <TextView
@@ -117,13 +118,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:background="@color/colorPrimary"
                     android:drawableLeft="@drawable/ic_history"
                     android:drawablePadding="12dp"
                     android:gravity="center_vertical"
                     android:padding="20dp"
                     android:text="历史"
-                    android:textColor="@android:color/white"
+                    android:textColor="@android:color/black"
                     android:textSize="16dp" />
 
                 <TextView
@@ -131,26 +131,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:background="@color/colorPrimary"
                     android:drawableLeft="@drawable/ic_cache"
                     android:drawablePadding="12dp"
                     android:gravity="center_vertical"
                     android:padding="20dp"
                     android:text="缓存"
-                    android:textColor="@android:color/white"
+                    android:textColor="@android:color/black"
                     android:textSize="16dp" />
 
                 <TextView
                     android:id="@+id/disclaimer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorPrimary"
                     android:drawableLeft="@drawable/ic_disclaimer"
                     android:drawablePadding="12dp"
                     android:gravity="center_vertical"
                     android:padding="20dp"
                     android:text="声明"
-                    android:textColor="@android:color/white"
+                    android:textColor="@android:color/black"
                     android:textSize="16dp" />
             </LinearLayout>
         </ScrollView>

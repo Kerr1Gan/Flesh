@@ -7,6 +7,7 @@ import java.util.List;
  */
 
 public class PageModel {
+    int id;
     List<ItemModel> itemList;
     String nextPage;
 
@@ -32,6 +33,14 @@ public class PageModel {
 
     public void setNextPage(String nextPage) {
         this.nextPage = nextPage;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public static class ItemModel {

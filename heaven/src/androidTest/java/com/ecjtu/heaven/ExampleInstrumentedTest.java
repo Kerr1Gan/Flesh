@@ -2,6 +2,7 @@ package com.ecjtu.heaven;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.util.Log;
 import com.ecjtu.heaven.cache.PageListCacheHelper;
 import com.ecjtu.heaven.db.DatabaseManager;
 import com.ecjtu.heaven.db.table.impl.LikeTableImpl;
+import com.ecjtu.heaven.util.file.FileUtil;
 import com.ecjtu.netcore.model.PageModel;
 
 import org.junit.Test;
@@ -77,11 +79,23 @@ public class ExampleInstrumentedTest {
         final Context appContext = InstrumentationRegistry.getTargetContext();
 
         File[] list = new File(appContext.getFilesDir().getAbsolutePath()).listFiles();
-        for(File child : list){
-            if(child.getName().endsWith("妹子自拍")){
+        for (File child : list) {
+            if (child.getName().endsWith("妹子自拍")) {
                 child.delete();
                 break;
             }
         }
+    }
+
+    @Test
+    public void copyDb2Sdcard() throws Exception {
+        // Context of the app under test.
+        final Context appContext = InstrumentationRegistry.getTargetContext();
+        File files = appContext.getFilesDir();
+        files = files.getParentFile();
+        files = new File(files, "databases");
+        File dest = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "heaven.db");
+        if (!dest.exists()) dest.createNewFile();
+        FileUtil.INSTANCE.copyFile2Path(new File(files, "heaven"), dest);
     }
 }

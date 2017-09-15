@@ -30,8 +30,12 @@ class DatabaseManager(context: Context? = null) {
     }
 
     fun getDatabase(): SQLiteDatabase? {
+        return getDatabase(2)
+    }
+
+    fun getDatabase(version: Int): SQLiteDatabase? {
         if (mContext != null) {
-            return getHelper(mContext!!, "heaven")?.writableDatabase
+            return getHelper(mContext!!, "heaven", version)?.writableDatabase
         }
         return null
     }

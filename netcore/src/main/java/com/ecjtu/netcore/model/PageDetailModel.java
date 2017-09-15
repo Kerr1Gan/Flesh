@@ -8,6 +8,7 @@ import java.util.List;
  */
 
 public class PageDetailModel {
+    int id;
     String baseUrl;
     int maxLen;
     String imgUrl;
@@ -52,5 +53,21 @@ public class PageDetailModel {
 
     public List<String> getBackupImgUrl() {
         return backupImgUrl;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    public void setBackupImgUrl(List<String> backupImgUrl) {
+        this.backupImgUrl = backupImgUrl;
     }
 }

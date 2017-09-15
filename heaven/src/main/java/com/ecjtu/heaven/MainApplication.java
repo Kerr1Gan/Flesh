@@ -11,7 +11,12 @@ import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.bumptech.glide.module.AppGlideModule;
 import com.ecjtu.heaven.db.DatabaseManager;
+import com.ecjtu.heaven.db.table.impl.ClassPageTableImpl;
+import com.ecjtu.heaven.db.table.impl.DetailPageTableImpl;
+import com.ecjtu.heaven.db.table.impl.DetailPageUrlsTableImpl;
+import com.ecjtu.heaven.db.table.impl.HistoryTableImpl;
 import com.ecjtu.heaven.db.table.impl.LikeTableImpl;
+import com.ecjtu.heaven.db.table.impl.LikeTableImplV2;
 
 /**
  * Created by Ethan_Xiang on 2017/9/7.
@@ -35,6 +40,12 @@ public class MainApplication extends Application {
     private void initDb() {
         DatabaseManager manager = DatabaseManager.getInstance(this);
         manager.registerTable(new LikeTableImpl());
+        manager.registerTable(new ClassPageTableImpl());
+        manager.registerTable(new DetailPageTableImpl());
+        manager.registerTable(new DetailPageUrlsTableImpl());
+        manager.registerTable(new HistoryTableImpl());
+        manager.registerTable(new LikeTableImplV2());
+        manager.getHelper(this,"heaven",2).getWritableDatabase();
     }
 
     private static class SimpleGlideModule extends AppGlideModule {

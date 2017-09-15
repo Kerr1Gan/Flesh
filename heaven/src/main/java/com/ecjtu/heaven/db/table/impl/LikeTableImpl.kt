@@ -29,7 +29,6 @@ class LikeTableImpl : BaseTableImpl() {
     }
 
     override fun updateTable(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     fun addLike(sqLiteDatabase: SQLiteDatabase, pageUrl: String, href: String, description: String, imgUrl: String) {

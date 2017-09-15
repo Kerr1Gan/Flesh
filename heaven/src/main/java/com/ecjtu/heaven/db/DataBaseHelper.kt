@@ -4,12 +4,16 @@ import android.content.Context
 import android.database.DatabaseErrorHandler
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import com.ecjtu.heaven.db.table.BaseTable
 
 /**
  * Created by Ethan_Xiang on 2017/8/14.
  */
 class DataBaseHelper : SQLiteOpenHelper {
+    companion object {
+        private const val TAG = "DataBaseHelper"
+    }
 
     private var mTables: List<BaseTable>? = null
 
@@ -25,16 +29,20 @@ class DataBaseHelper : SQLiteOpenHelper {
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
+        Log.e(TAG, "onCreate db table size " + mTables?.size)
         if (mTables != null) {
             for (table in mTables!!) {
+                Log.e(TAG, "create db " + table::class.java)
                 table.createTable(db!!)
             }
         }
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+        Log.e(TAG, "onUpgrade db table size " + mTables?.size)
         if (mTables != null) {
             for (table in mTables!!) {
+                Log.e(TAG, "upgrade db " + table::class.java)
                 table.updateTable(db!!, oldVersion, newVersion)
             }
         }

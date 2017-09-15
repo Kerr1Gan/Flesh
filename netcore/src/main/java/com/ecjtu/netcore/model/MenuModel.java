@@ -5,6 +5,7 @@ package com.ecjtu.netcore.model;
  */
 
 public class MenuModel {
+    int id;
     String title;
     String url;
 
@@ -27,6 +28,15 @@ public class MenuModel {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
