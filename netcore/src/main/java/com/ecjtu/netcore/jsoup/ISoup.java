@@ -1,4 +1,4 @@
-package com.ecjtu.netcore.jsoup.base;
+package com.ecjtu.netcore.jsoup;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

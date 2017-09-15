@@ -26,10 +26,8 @@ import com.ecjtu.heaven.db.DatabaseManager
 import com.ecjtu.heaven.db.table.impl.LikeTableImpl
 import com.ecjtu.heaven.ui.activity.FullScreenImageActivity
 import com.ecjtu.heaven.ui.activity.PageDetailActivity
-import com.ecjtu.netcore.jsoup.PageDetailSoup
-import com.ecjtu.netcore.jsoup.PageSoup
+import com.ecjtu.netcore.jsoup.impl.PageSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
-import com.ecjtu.netcore.model.PageDetailModel
 import com.ecjtu.netcore.model.PageModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
@@ -87,8 +85,8 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         val options = RequestOptions()
         options.centerCrop()
         val url = pageModel.itemList[position].imgUrl /*thumb2OriginalUrl(pageModel.itemList[position].imgUrl)*/
-        var host = url.replace("http://","")
-        host = host.substring(0,host.indexOf("/"))
+        var host = url.replace("http://", "")
+        host = host.substring(0, host.indexOf("/"))
         val builder = LazyHeaders.Builder().addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Mobile Safari/537.36")
                 .addHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8")
                 .addHeader("Accept-Encoding", "gzip, deflate")
@@ -180,11 +178,11 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         position?.let {
             val item = pageModel.itemList[position as Int]
             val url = item.href
-            if(!TextUtils.isEmpty(url)){
-                val intent = PageDetailActivity.newInstance(v.context, url,item.href,item.description,item.imgUrl)
+            if (!TextUtils.isEmpty(url)) {
+                val intent = PageDetailActivity.newInstance(v.context, url, item.href, item.description, item.imgUrl)
                 v.context.startActivity(intent)
-            }else{
-                FullScreenImageActivity.newInstance(v.context,item.imgUrl).apply {
+            } else {
+                FullScreenImageActivity.newInstance(v.context, item.imgUrl).apply {
                     v.context.startActivity(this)
                 }
             }
@@ -236,7 +234,7 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
                         impl.deleteLike(db, url.href)
                         v?.isActivated = false
                     } else {
-                        impl.addLike(db, url.href,url.href,url.description,url.imgUrl)
+                        impl.addLike(db, url.href, url.href, url.description, url.imgUrl)
                         v?.isActivated = true
                     }
                 }

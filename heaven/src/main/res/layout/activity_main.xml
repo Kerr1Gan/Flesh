@@ -10,7 +10,8 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:background="@color/colorPrimary"
+        android:id="@+id/content">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -19,6 +20,7 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/tool_bar"
                 android:layout_width="match_parent"
+                android:background="@color/colorPrimary"
                 android:layout_height="?android:attr/actionBarSize"
                 android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_scrollFlags="scroll|enterAlways"
@@ -39,6 +41,7 @@
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@android:color/white"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <android.support.design.widget.FloatingActionButton

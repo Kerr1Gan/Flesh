@@ -86,7 +86,7 @@
 
 -keep class org.jsoup.**{*;}
 -keep public class com.ecjtu.netcore.jsoup.SoupFactory{*;}
--keep public class * extends com.ecjtu.netcore.jsoup.base.BaseSoup{*;}
+-keep public class * extends com.ecjtu.netcore.jsoup.BaseSoup{*;}
 -keep public class com.ecjtu.netcore.Constants{static <fields>;}
 -keep public class com.ecjtu.netcore.model.**{*;}
 -keep public class com.ecjtu.netcore.network.BaseNetwork{public <methods>;}

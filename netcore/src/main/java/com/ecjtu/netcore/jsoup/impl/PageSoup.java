@@ -1,4 +1,4 @@
-package com.ecjtu.netcore.jsoup;
+package com.ecjtu.netcore.jsoup.impl;
 
 import com.ecjtu.netcore.model.PageModel;
 

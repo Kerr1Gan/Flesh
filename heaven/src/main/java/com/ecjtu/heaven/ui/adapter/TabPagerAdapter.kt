@@ -13,7 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.cache.PageListCacheHelper
-import com.ecjtu.netcore.jsoup.PageSoup
+import com.ecjtu.netcore.jsoup.impl.PageSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.model.PageModel

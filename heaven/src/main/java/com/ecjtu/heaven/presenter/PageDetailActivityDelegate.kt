@@ -6,7 +6,7 @@ import com.ecjtu.heaven.R
 import com.ecjtu.heaven.cache.PageDetailCacheHelper
 import com.ecjtu.heaven.ui.activity.PageDetailActivity
 import com.ecjtu.heaven.ui.adapter.PageDetailAdapter
-import com.ecjtu.netcore.jsoup.PageDetailSoup
+import com.ecjtu.netcore.jsoup.impl.PageDetailSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.model.PageDetailModel
 import com.ecjtu.netcore.network.AsyncNetwork

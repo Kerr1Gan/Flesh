@@ -1,6 +1,5 @@
 package com.ecjtu.heaven.presenter
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
@@ -19,7 +18,7 @@ import com.ecjtu.heaven.ui.activity.PageLikeActivity
 import com.ecjtu.heaven.ui.adapter.TabPagerAdapter
 import com.ecjtu.heaven.util.file.FileUtil
 import com.ecjtu.netcore.Constants
-import com.ecjtu.netcore.jsoup.MenuSoup
+import com.ecjtu.netcore.jsoup.impl.MenuSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork

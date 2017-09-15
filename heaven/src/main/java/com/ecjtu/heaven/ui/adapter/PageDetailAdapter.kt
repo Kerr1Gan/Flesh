@@ -21,7 +21,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.ui.activity.FullScreenImageActivity
-import com.ecjtu.netcore.jsoup.PageDetailSoup
+import com.ecjtu.netcore.jsoup.impl.PageDetailSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.model.PageDetailModel
 import com.ecjtu.netcore.network.AsyncNetwork

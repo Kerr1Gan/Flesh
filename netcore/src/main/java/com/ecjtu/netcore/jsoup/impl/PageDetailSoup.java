@@ -1,6 +1,6 @@
-package com.ecjtu.netcore.jsoup;
+package com.ecjtu.netcore.jsoup.impl;
 
-import com.ecjtu.netcore.jsoup.base.BaseSoup;
+import com.ecjtu.netcore.jsoup.BaseSoup;
 import com.ecjtu.netcore.model.PageDetailModel;
 
 import org.jsoup.nodes.Document;
