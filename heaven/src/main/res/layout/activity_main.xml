@@ -75,31 +75,35 @@
             <LinearLayout
                 android:id="@+id/drawer_layout_content"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <FrameLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
                     android:layout_marginBottom="20dp"
-                    android:background="@mipmap/pink">
+                    android:background="@mipmap/pink"
+                    android:paddingTop="15dp">
 
                     <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:id="@+id/size"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
                         android:gravity="center"
-                        android:text="Mzitu"
+                        android:text="0mb/500mb"
                         android:textColor="@android:color/white"
-                        android:textSize="23dp" />
+                        android:textSize="20dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="right|bottom"
-                        android:padding="5dp"
-                        android:text="图源"
-                        android:textColor="@android:color/white" />
-                </FrameLayout>
+                        android:layout_above="@+id/size"
+                        android:layout_margin="10dp"
+                        android:text="已缓存"
+                        android:textColor="@android:color/white"
+                        android:textSize="18dp" />
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/like"

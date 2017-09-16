@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.format.Formatter
 import android.view.Gravity
+import android.widget.TextView
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.cache.MenuListCacheHelper
 import com.ecjtu.heaven.ui.activity.MainActivity
@@ -18,8 +19,8 @@ import com.ecjtu.heaven.ui.activity.PageLikeActivity
 import com.ecjtu.heaven.ui.adapter.TabPagerAdapter
 import com.ecjtu.heaven.util.file.FileUtil
 import com.ecjtu.netcore.Constants
-import com.ecjtu.netcore.jsoup.impl.MenuSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
+import com.ecjtu.netcore.jsoup.impl.MenuSoup
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
@@ -83,6 +84,19 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 }
             }
         })
+
+        initView()
+    }
+
+    private fun initView() {
+        val cacheSize = PreferenceManager.getDefaultSharedPreferences(owner).getLong(com.ecjtu.heaven.Constants.PREF_CACHE_SIZE, com.ecjtu.heaven.Constants.DEFAULT_GLIDE_CACHE_SIZE)
+        val cacheStr = Formatter.formatFileSize(owner, cacheSize)
+        val glideSize = FileUtil.getGlideCacheSize(owner)
+        val glideStr = Formatter.formatFileSize(owner, glideSize)
+        val textView = findViewById(R.id.size) as TextView?
+        textView?.let {
+            textView.setText(String.format("%s/%s", glideStr, cacheStr))
+        }
         mFloatButton.setOnClickListener {
             val position = mTabLayout.selectedTabPosition
             val recyclerView = (mViewPager.adapter as TabPagerAdapter).getViewStub(position) as RecyclerView?
@@ -114,7 +128,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 
         findViewById(R.id.disclaimer)?.setOnClickListener {
             AlertDialog.Builder(owner).setTitle("声明").setMessage("所有资源均来自www.mzitu.com，如有侵权请联系mnsync@outlook.com，将会尽快删除。")
-                    .setPositiveButton("确定",null)
+                    .setPositiveButton("确定", null)
                     .create().show()
         }
     }

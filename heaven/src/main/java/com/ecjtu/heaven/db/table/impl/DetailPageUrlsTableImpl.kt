@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase
  */
 class DetailPageUrlsTableImpl : BaseTableImpl() {
     override val sql: String
-        get() = "CREATE TABLE tb_image_url_with_detail_page_id (\n" +
+        get() = "CREATE TABLE tb_detail_page_image_list (\n" +
                 "    _id       INTEGER PRIMARY KEY,\n" +
                 "    page_id   INTEGER REFERENCES tb_detail_page (_id) ON DELETE CASCADE\n" +
                 "                                                      ON UPDATE CASCADE,\n" +

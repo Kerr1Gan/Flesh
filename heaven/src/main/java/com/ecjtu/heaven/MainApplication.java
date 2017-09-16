@@ -11,6 +11,7 @@ import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.bumptech.glide.module.AppGlideModule;
 import com.ecjtu.heaven.db.DatabaseManager;
+import com.ecjtu.heaven.db.table.impl.ClassPageListTableImpl;
 import com.ecjtu.heaven.db.table.impl.ClassPageTableImpl;
 import com.ecjtu.heaven.db.table.impl.DetailPageTableImpl;
 import com.ecjtu.heaven.db.table.impl.DetailPageUrlsTableImpl;
@@ -44,6 +45,7 @@ public class MainApplication extends Application {
         DatabaseManager manager = DatabaseManager.getInstance(this);
         manager.registerTable(new LikeTableImpl());
         manager.registerTable(new ClassPageTableImpl());
+        manager.registerTable(new ClassPageListTableImpl());
         manager.registerTable(new DetailPageTableImpl());
         manager.registerTable(new DetailPageUrlsTableImpl());
         manager.registerTable(new HistoryTableImpl());
@@ -59,11 +61,11 @@ public class MainApplication extends Application {
     private static class SimpleGlideModule extends AppGlideModule {
         public void applyOptions(Context context, GlideBuilder builder) {
             //定义缓存大小为500M
-            int diskCacheSize = 500 * 1024 * 1024;
+            long diskCacheSize = Constants.DEFAULT_GLIDE_CACHE_SIZE;
             //提高图片质量
             builder.setDecodeFormat(DecodeFormat.PREFER_ARGB_8888);
             //自定义磁盘缓存:这种缓存只有自己的app才能访问到
-            builder.setDiskCache(new InternalCacheDiskCacheFactory(context, diskCacheSize));
+            builder.setDiskCache(new InternalCacheDiskCacheFactory(context,(int) diskCacheSize));
             //Memory Cache
             builder.setMemoryCache(new LruResourceCache(24 * 1024 * 1024));
         }

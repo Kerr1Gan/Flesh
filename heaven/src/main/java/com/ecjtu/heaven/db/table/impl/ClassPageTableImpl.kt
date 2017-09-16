@@ -9,13 +9,10 @@ import com.ecjtu.netcore.model.PageModel
  */
 class ClassPageTableImpl :BaseTableImpl(){
     override val sql: String = "CREATE TABLE tb_class_page (\n" +
-            "    _id         INTEGER PRIMARY KEY ASC AUTOINCREMENT,\n" +
-            "    next_page   STRING,\n" +
-            "    href        STRING  UNIQUE,\n" +
-            "    description STRING,\n" +
-            "    img_url     STRING,\n" +
-            "    time        STRING\n" +
-            ");"
+            "    _id       INTEGER PRIMARY KEY ASC AUTOINCREMENT,\n" +
+            "    next_page STRING,\n" +
+            "    time      STRING\n" +
+            ");\n"
 
     private val mTableName = "tb_class_page"
     override fun createTable(sqLiteDatabase: SQLiteDatabase) {

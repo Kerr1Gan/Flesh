@@ -1,5 +1,6 @@
 package com.ecjtu.heaven.util.file
 
+import android.content.Context
 import java.io.*
 import java.lang.Exception
 
@@ -54,5 +55,16 @@ object FileUtil {
             outputStream.write(arr)
             len = inputStream.read(arr)
         }
+    }
+
+    fun getGlideCacheSize(context: Context): Long {
+        var cacheFile = File(context.cacheDir.absolutePath + "/image_manager_disk_cache")
+        var size = 0L
+        var list = FileUtil.getFilesByFolder(cacheFile)
+        var ret = 0L
+        for (child in list) {
+            ret += child.length()
+        }
+        return ret
     }
 }
