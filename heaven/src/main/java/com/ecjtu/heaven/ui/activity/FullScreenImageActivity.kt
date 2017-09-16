@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
@@ -47,9 +48,10 @@ class FullScreenImageActivity : AppCompatActivity(), RequestListener<Bitmap> {
         setContentView(R.layout.activity_full_screen_image)
         if (intent.extras != null) {
             val uri = intent.extras.getString(EXTRA_URI, "")
+            initView()
             if (!TextUtils.isEmpty(uri)) {
-                var host = uri.replace("http://","")
-                host = host.substring(0,host.indexOf("/"))
+                var host = uri.replace("http://", "")
+                host = host.substring(0, host.indexOf("/"))
                 val builder = LazyHeaders.Builder().addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Mobile Safari/537.36")
                         .addHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8")
                         .addHeader("Accept-Encoding", "gzip, deflate")
@@ -60,13 +62,6 @@ class FullScreenImageActivity : AppCompatActivity(), RequestListener<Bitmap> {
 
                 val glideUrl = GlideUrl(uri, builder.build())
                 Glide.with(this).asBitmap().load(glideUrl).listener(this).into(findViewById(R.id.image) as ImageView)
-                findViewById(R.id.image).setOnLongClickListener {
-                    thread {
-                        WallpaperManager.getInstance(this).setBitmap(mWallpaper)
-                    }
-                    Toast.makeText(this,"设为壁纸",Toast.LENGTH_SHORT).show()
-                    true
-                }
                 return
             }
         }
@@ -84,7 +79,7 @@ class FullScreenImageActivity : AppCompatActivity(), RequestListener<Bitmap> {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_page_detail_activity, menu)
+        menuInflater.inflate(R.menu.menu_full_screen_activity, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -92,9 +87,29 @@ class FullScreenImageActivity : AppCompatActivity(), RequestListener<Bitmap> {
         if (item?.itemId == R.id.item) {
             thread {
                 WallpaperManager.getInstance(this).setBitmap(mWallpaper)
+                runOnUiThread {
+                    Toast.makeText(this, "设为壁纸", Toast.LENGTH_SHORT).show()
+                }
             }
             return true
+        } else if (item?.itemId == android.R.id.home) {
+            finish()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun initView() {
+        val toolbar = findViewById(R.id.tool_bar) as Toolbar?
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = ""
+
+        toolbar?.setPadding(toolbar.paddingLeft, toolbar.paddingTop + getStatusBarHeight(), toolbar.paddingRight, toolbar.paddingBottom)
+    }
+
+    private fun getStatusBarHeight(): Int {
+        val resources = resources
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        return resources.getDimensionPixelSize(resourceId)
     }
 }
