@@ -17,6 +17,8 @@ import com.ecjtu.heaven.db.table.impl.DetailPageUrlsTableImpl;
 import com.ecjtu.heaven.db.table.impl.HistoryTableImpl;
 import com.ecjtu.heaven.db.table.impl.LikeTableImpl;
 import com.ecjtu.heaven.db.table.impl.LikeTableImplV2;
+import com.tencent.bugly.Bugly;
+import com.tencent.bugly.crashreport.CrashReport;
 
 /**
  * Created by Ethan_Xiang on 2017/9/7.
@@ -35,6 +37,7 @@ public class MainApplication extends Application {
         Glide.init(glide);
 
         initDb();
+        initSDK();
     }
 
     private void initDb() {
@@ -46,6 +49,11 @@ public class MainApplication extends Application {
         manager.registerTable(new HistoryTableImpl());
         manager.registerTable(new LikeTableImplV2());
         manager.getHelper(this,"heaven",2).getWritableDatabase();
+    }
+
+    private void initSDK(){
+//        CrashReport.initCrashReport(getApplicationContext(), "bea4125c41", true);
+        Bugly.init(getApplicationContext(), "bea4125c41", false);
     }
 
     private static class SimpleGlideModule extends AppGlideModule {

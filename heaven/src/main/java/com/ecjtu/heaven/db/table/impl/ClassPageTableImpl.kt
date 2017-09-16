@@ -1,6 +1,8 @@
 package com.ecjtu.heaven.db.table.impl
 
+import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
+import com.ecjtu.netcore.model.PageModel
 
 /**
  * Created by Ethan_Xiang on 2017/9/15.
@@ -15,7 +17,7 @@ class ClassPageTableImpl :BaseTableImpl(){
             "    time        STRING\n" +
             ");"
 
-
+    private val mTableName = "tb_class_page"
     override fun createTable(sqLiteDatabase: SQLiteDatabase) {
         sqLiteDatabase.execSQL(sql)
     }
@@ -28,4 +30,9 @@ class ClassPageTableImpl :BaseTableImpl(){
         createTable(sqLiteDatabase)
     }
 
+    fun addPage(sqLiteDatabase: SQLiteDatabase,pageModel: PageModel){
+        val value = ContentValues()
+        value.put("next_page",pageModel.nextPage)
+        sqLiteDatabase.insert(mTableName,null,null)
+    }
 }
