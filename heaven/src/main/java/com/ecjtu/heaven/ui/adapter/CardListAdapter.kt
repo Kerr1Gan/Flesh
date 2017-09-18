@@ -23,11 +23,13 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.db.DatabaseManager
+import com.ecjtu.heaven.db.table.impl.HistoryTableImpl
 import com.ecjtu.heaven.db.table.impl.LikeTableImpl
+import com.ecjtu.heaven.db.table.impl.LikeTableImplV2
 import com.ecjtu.heaven.ui.activity.FullScreenImageActivity
 import com.ecjtu.heaven.ui.activity.PageDetailActivity
-import com.ecjtu.netcore.jsoup.impl.PageSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
+import com.ecjtu.netcore.jsoup.impl.PageSoup
 import com.ecjtu.netcore.model.PageModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
@@ -77,7 +79,7 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
 
         val href = pageModel.itemList[position].href
         if (mDatabase != null && mDatabase?.isOpen == true) {
-            val impl = LikeTableImpl()
+            val impl = LikeTableImplV2()
             holder?.heart?.isActivated = impl.isLike(mDatabase!!, href)
         }
 
@@ -178,9 +180,12 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         position?.let {
             val item = pageModel.itemList[position as Int]
             val url = item.href
-            if (!TextUtils.isEmpty(url)) {
+            if (!TextUtils.isEmpty(url) && url.startsWith("http://")) {
                 val intent = PageDetailActivity.newInstance(v.context, url, item.href, item.description, item.imgUrl)
                 v.context.startActivity(intent)
+                val db = DatabaseManager.getInstance(v.context)?.getDatabase() as SQLiteDatabase
+                val impl = HistoryTableImpl()
+                impl.addHistory(db, item.href)
             } else {
                 FullScreenImageActivity.newInstance(v.context, item.imgUrl).apply {
                     v.context.startActivity(this)
@@ -226,19 +231,19 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
             imageView.adjustViewBounds = true
             heart.setOnClickListener { v: View? ->
                 val manager = DatabaseManager.getInstance(v?.context)
-                val db = manager?.getDatabase()
+                val db = manager?.getDatabase() as SQLiteDatabase
                 val url = v?.getTag(R.id.extra_tag) as PageModel.ItemModel?
                 if (url != null) {
-                    val impl = LikeTableImpl()
-                    if (impl.isLike(db!!, url.href)) {
+                    val impl = LikeTableImplV2()
+                    if (impl.isLike(db, url.href)) {
                         impl.deleteLike(db, url.href)
                         v?.isActivated = false
                     } else {
-                        impl.addLike(db, url.href, url.href, url.description, url.imgUrl)
+                        impl.addLike(db, url.href)
                         v?.isActivated = true
                     }
                 }
-                db!!.close()
+                db.close()
             }
         }
     }

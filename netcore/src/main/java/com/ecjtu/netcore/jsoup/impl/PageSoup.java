@@ -55,12 +55,13 @@ public class PageSoup extends MenuSoup {
         }
 
         children = child.getElementsByTag("p");
+        //自拍
         if (children != null && children.size() > 0) {
             for (Element localChild : children) {
                 Element element = localChild.getElementsByTag("img").get(0);
                 String url = element.attr("src");
                 String des = element.attr("alt");
-                PageModel.ItemModel model = new PageModel.ItemModel("", des, url);
+                PageModel.ItemModel model = new PageModel.ItemModel(url.substring(url.lastIndexOf("/") + 1), des, url);
                 value.add(model);
             }
 

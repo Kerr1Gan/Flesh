@@ -17,7 +17,11 @@ class DetailPageTableImpl : BaseTableImpl() {
                 "    max_len  INTEGER,\n" +
                 "    img_url  STRING,\n" +
                 "    time     STRING\n" +
-                ");\n"
+                ");"
+
+    companion object {
+        const val TABLE_NAME = "tb_detail_page"
+    }
 
     override fun createTable(sqLiteDatabase: SQLiteDatabase) {
         sqLiteDatabase.execSQL(sql)
@@ -38,7 +42,14 @@ class DetailPageTableImpl : BaseTableImpl() {
         value.put("max_len", pageDetailModel.maxLen)
         value.put("img_url", pageDetailModel.imgUrl)
         value.put("time", dateFormat.format(Date()))
+        val id = sqLiteDatabase.insert(TABLE_NAME, null, value)
+        pageDetailModel.id = id.toInt()
+        val pageUrlsImpl = DetailPageUrlsTableImpl()
+        pageUrlsImpl.addPageUrls(sqLiteDatabase, id.toInt(), pageDetailModel.backupImgUrl)
+    }
 
+    fun deleteDetailPage(sqLiteDatabase: SQLiteDatabase, href: String) {
+        sqLiteDatabase.delete(TABLE_NAME, "base_url=?", arrayOf(href))
     }
 
 }

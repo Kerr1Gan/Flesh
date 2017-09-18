@@ -1,9 +1,12 @@
 package com.ecjtu.heaven.presenter
 
+import android.database.sqlite.SQLiteDatabase
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.cache.PageDetailCacheHelper
+import com.ecjtu.heaven.db.DatabaseManager
+import com.ecjtu.heaven.db.table.impl.DetailPageTableImpl
 import com.ecjtu.heaven.ui.activity.PageDetailActivity
 import com.ecjtu.heaven.ui.adapter.PageDetailAdapter
 import com.ecjtu.netcore.jsoup.impl.PageDetailSoup
@@ -45,6 +48,10 @@ class PageDetailActivityDelegate(owner: PageDetailActivity, val url: String) : D
                             mRecyclerView.adapter.notifyDataSetChanged()
                         }
                     }
+                    val db = DatabaseManager.getInstance(owner)?.getDatabase() as SQLiteDatabase
+                    val impl = DetailPageTableImpl()
+                    impl.addDetailPage(db,local)
+                    db.close()
                 }
             }
         })

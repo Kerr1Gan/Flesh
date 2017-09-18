@@ -13,14 +13,17 @@ import android.view.View
 import android.view.ViewGroup
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.cache.PageListCacheHelper
-import com.ecjtu.netcore.jsoup.impl.PageSoup
+import com.ecjtu.heaven.db.DatabaseManager
+import com.ecjtu.heaven.db.table.impl.ClassPageTableImpl
 import com.ecjtu.netcore.jsoup.SoupFactory
+import com.ecjtu.netcore.jsoup.impl.PageSoup
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.model.PageModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallbackV2
 import java.lang.Exception
 import java.net.HttpURLConnection
+import kotlin.concurrent.thread
 
 /**
  * Created by Ethan_Xiang on 2017/9/12.
@@ -44,20 +47,26 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
     override fun instantiateItem(container: ViewGroup?, position: Int): Any {
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
         container?.addView(item)
-
-        val helper = PageListCacheHelper(container?.context?.filesDir?.absolutePath)
-        var pageModel: PageModel? = helper.get(KEY_CARD_CACHE + menu[position].title)
-        if (menu[position].title.contains("推荐")) {
-            pageModel = null
+        val title = menu[position].title
+        val vh = VH(item, menu[position], title)
+        thread {
+            val helper = PageListCacheHelper(container?.context?.filesDir?.absolutePath)
+            var pageModel: PageModel? = helper.get(KEY_CARD_CACHE + menu[position].title)
+            if (title.contains("推荐")) {
+                pageModel = null
+            }
+            vh.itemView.post {
+                vh.load(pageModel)
+            }
         }
-        mViewStub.put(menu[position].title, VH(item, menu[position], pageModel, menu[position].title))
+        mViewStub.put(menu[position].title, vh)
         return item
     }
 
     override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
         container?.removeView(`object` as View)
-        val vh: VH? = mViewStub.remove(menu[position].title)
-        onStop(container?.context!!, menu[position].url, vh?.recyclerView, vh?.getPageModel())
+        val vh: VH? = mViewStub.remove(getPageTitle(position))
+        onStop(container?.context!!, getPageTitle(position).toString(), vh?.recyclerView, vh?.getPageModel())
         (vh?.recyclerView?.adapter as CardListAdapter?)?.onRelease()
     }
 
@@ -104,15 +113,19 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         }
     }
 
-    private class VH(val itemView: View, private val menu: MenuModel, pageModel: PageModel?, key: String) {
+    private class VH(val itemView: View, private val menu: MenuModel, val key: String) {
         val recyclerView = itemView.findViewById(R.id.recycler_view) as RecyclerView?
-        private var mPageModel: PageModel? = pageModel
+        private var mPageModel: PageModel? = null
         private val mRefreshLayout = if (itemView is SwipeRefreshLayout) itemView else null
 
         init {
             recyclerView?.layoutManager = LinearLayoutManager(recyclerView?.context, LinearLayoutManager.VERTICAL, false)
-            loadCache(itemView.context, key)
             initRefreshLayout()
+        }
+
+        fun load(pageModel: PageModel?) {
+            mPageModel = pageModel
+            loadCache(itemView.context, key)
             requestUrl()
         }
 
@@ -153,6 +166,15 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
                     val values = SoupFactory.parseHtml(PageSoup::class.java, response)
                     if (values != null) {
                         val soups = values[PageSoup::class.java.simpleName] as PageModel
+                        val impl = ClassPageTableImpl()
+                        val db = DatabaseManager.getInstance(mRefreshLayout?.context)?.getDatabase()
+                        db?.let {
+                            db.beginTransaction()
+                            impl.addPage(db, soups)
+                            db.setTransactionSuccessful()
+                            db.endTransaction()
+                        }
+                        db?.close()
                         recyclerView?.post {
                             if (mPageModel == null) {
                                 recyclerView.adapter = CardListAdapter(soups)

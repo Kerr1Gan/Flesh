@@ -12,13 +12,15 @@ import java.util.*
 class LikeTableImplV2 : BaseTableImpl() {
     override val sql: String
         get() = "CREATE TABLE tb_like_v2 (\n" +
-                "    _id            INTEGER PRIMARY KEY,\n" +
-                "    id_detail_page INTEGER REFERENCES tb_detail_page (_id) ON DELETE CASCADE\n" +
-                "                                                           ON UPDATE CASCADE,\n" +
-                "    time           STRING\n" +
+                "    _id                  INTEGER PRIMARY KEY,\n" +
+                "    href_class_page_list STRING  REFERENCES tb_class_page_list (href) ON DELETE CASCADE\n" +
+                "                                                                      ON UPDATE CASCADE,\n" +
+                "    time                 STRING\n" +
                 ");\n"
 
-    private val mTableName = "tb_like_v2"
+    companion object {
+        const val TABLE_NAME = "tb_like_v2"
+    }
 
     override fun createTable(sqLiteDatabase: SQLiteDatabase) {
         sqLiteDatabase.execSQL(sql)
@@ -32,28 +34,28 @@ class LikeTableImplV2 : BaseTableImpl() {
         createTable(sqLiteDatabase)
     }
 
-    fun addLike(sqLiteDatabase: SQLiteDatabase, detailPageId: Int) {
+    fun addLike(sqLiteDatabase: SQLiteDatabase, href: String) {
         val contentValues = ContentValues()
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
-        contentValues.put("id_detail_page", detailPageId)
+        contentValues.put("href_class_page_list", href)
         contentValues.put("time", dateFormat.format(Date()))
-        sqLiteDatabase.insert(mTableName, null, contentValues)
+        sqLiteDatabase.insert(TABLE_NAME, null, contentValues)
     }
 
-    fun deleteLike(sqLiteDatabase: SQLiteDatabase, detailPageId: Int) {
-        sqLiteDatabase.delete(mTableName, "id_detail_page=?", arrayOf(detailPageId.toString()))
+    fun deleteLike(sqLiteDatabase: SQLiteDatabase, href: String) {
+        sqLiteDatabase.delete(TABLE_NAME, "href_class_page_list=?", arrayOf(href))
     }
 
-    fun isLike(sqLiteDatabase: SQLiteDatabase, detailPageId: Int): Boolean {
+    fun isLike(sqLiteDatabase: SQLiteDatabase, href: String): Boolean {
         var ret = false
-        val cursor = sqLiteDatabase.rawQuery("SELECT page_url FROM $mTableName WHERE id_detail_page=?", arrayOf(detailPageId.toString()))
+        val cursor = sqLiteDatabase.rawQuery("SELECT $TABLE_NAME.href_class_page_list FROM $TABLE_NAME,${ClassPageListTableImpl.TABLE_NAME} WHERE $TABLE_NAME.href_class_page_list=${ClassPageListTableImpl.TABLE_NAME}.href and ${ClassPageListTableImpl.TABLE_NAME}.href=?", arrayOf(href))
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast) {
-//                val id = cursor.getString(0)
-//                if (id == pageUrl) {
-//                    ret = true
-//                    break
-//                }
+                val id = cursor.getString(0)
+                if (id == href) {
+                    ret = true
+                    break
+                }
                 cursor.moveToNext()
             }
         }
@@ -63,10 +65,10 @@ class LikeTableImplV2 : BaseTableImpl() {
 
     fun getAllLikes(sqLiteDatabase: SQLiteDatabase): List<PageModel.ItemModel> {
         val ret = ArrayList<PageModel.ItemModel>()
-        val cursor = sqLiteDatabase.rawQuery("SELECT * FROM $mTableName", arrayOf())
+        val cursor = sqLiteDatabase.rawQuery("SELECT tb2.href,tb2.description,tb2.image_url FROM $TABLE_NAME tb1,${ClassPageListTableImpl.TABLE_NAME} tb2 where tb1.href_class_page_list = tb2.href", arrayOf())
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast) {
-                val model = PageModel.ItemModel(cursor.getString(2), cursor.getString(3), cursor.getString(4))
+                val model = PageModel.ItemModel(cursor.getString(0), cursor.getString(1), cursor.getString(2))
                 ret.add(model)
                 cursor.moveToNext()
             }

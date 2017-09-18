@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.db.DatabaseManager
-import com.ecjtu.heaven.db.table.impl.LikeTableImpl
+import com.ecjtu.heaven.db.table.impl.LikeTableImplV2
 import com.ecjtu.heaven.presenter.PageLikeActivityDelegate
 
 class PageLikeActivity : AppCompatActivity() {
@@ -17,7 +17,7 @@ class PageLikeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_page_like)
         val db = DatabaseManager.getInstance(this)?.getDatabase()
         if (db != null) {
-            val impl = LikeTableImpl()
+            val impl = LikeTableImplV2()
             val list = impl.getAllLikes(db)
             db.close()
             mDelegate = PageLikeActivityDelegate(this, list)

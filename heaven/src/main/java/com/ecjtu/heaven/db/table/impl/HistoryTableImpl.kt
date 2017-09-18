@@ -11,12 +11,15 @@ import java.util.*
 class HistoryTableImpl : BaseTableImpl() {
     override val sql: String
         get() = "CREATE TABLE tb_history (\n" +
-                "    _id           INTEGER PRIMARY KEY ASC AUTOINCREMENT,\n" +
-                "    time          STRING,\n" +
-                "    id_class_page INTEGER REFERENCES tb_class_page (_id) ON DELETE CASCADE\n" +
-                "                                                         ON UPDATE CASCADE\n" +
-                ");"
-    private val mTableName = "tb_history"
+                "    _id                  INTEGER PRIMARY KEY ASC AUTOINCREMENT,\n" +
+                "    time                 STRING,\n" +
+                "    href_class_page_list STRING  REFERENCES tb_class_page_list (href) ON DELETE CASCADE\n" +
+                "                                                                      ON UPDATE CASCADE\n" +
+                ");\n"
+
+    companion object {
+        const val TABLE_NAME = "tb_history"
+    }
 
     override fun createTable(sqLiteDatabase: SQLiteDatabase) {
         sqLiteDatabase.execSQL(sql)
@@ -30,20 +33,20 @@ class HistoryTableImpl : BaseTableImpl() {
         createTable(sqLiteDatabase)
     }
 
-    fun addHistory(sqLiteDatabase: SQLiteDatabase, classPageId: Int) {
+    fun addHistory(sqLiteDatabase: SQLiteDatabase, href: String) {
         val value = ContentValues()
-        value.put("id_class_page", classPageId)
+        value.put("href_class_page_list", href)
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
         value.put("time", dateFormat.format(Date()))
-        sqLiteDatabase.insert(mTableName, null, value)
+        sqLiteDatabase.insert(TABLE_NAME, null, value)
     }
 
-    fun deleteHistory(sqLiteDatabase: SQLiteDatabase, classPageId: Int) {
-        sqLiteDatabase.delete(mTableName, "id_class_page=?", arrayOf(classPageId.toString()))
+    fun deleteHistory(sqLiteDatabase: SQLiteDatabase, href: String) {
+        sqLiteDatabase.delete(TABLE_NAME, "href_class_page_list=?", arrayOf(href))
     }
 
     fun deleteAllHistory(sqLiteDatabase: SQLiteDatabase) {
-        sqLiteDatabase.delete(mTableName, null, null)
+        sqLiteDatabase.delete(TABLE_NAME, null, null)
     }
 
 }

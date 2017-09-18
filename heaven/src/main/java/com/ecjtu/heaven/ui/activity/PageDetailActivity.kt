@@ -11,6 +11,7 @@ import android.widget.Toast
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.db.DatabaseManager
 import com.ecjtu.heaven.db.table.impl.LikeTableImpl
+import com.ecjtu.heaven.db.table.impl.LikeTableImplV2
 import com.ecjtu.heaven.presenter.PageDetailActivityDelegate
 
 /**
@@ -95,17 +96,17 @@ class PageDetailActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == R.id.item) {
-            val impl = LikeTableImpl()
+            val impl = LikeTableImplV2()
             mDatabase?.let {
                 val isLike = impl.isLike(mDatabase!!, mUrl!!)
                 if (isLike) {
                     item.title = "收藏"
                     impl.deleteLike(mDatabase!!, mUrl!!)
-                    Toast.makeText(this,"取消收藏",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "取消收藏", Toast.LENGTH_SHORT).show()
                 } else {
                     item.title = "取消收藏"
-                    impl.addLike(mDatabase!!, mUrl!!, mHref!!, mDescription!!, mImgUrl!!)
-                    Toast.makeText(this,"收藏成功",Toast.LENGTH_SHORT).show()
+                    impl.addLike(mDatabase!!, mUrl!!)
+                    Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show()
                 }
             }
             return true
@@ -114,5 +115,10 @@ class PageDetailActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mDatabase?.close()
     }
 }

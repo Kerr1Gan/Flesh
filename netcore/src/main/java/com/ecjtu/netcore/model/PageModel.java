@@ -44,6 +44,7 @@ public class PageModel {
     }
 
     public static class ItemModel {
+        int id;
         String href;
         String description;
         String imgUrl;
@@ -76,6 +77,14 @@ public class PageModel {
 
         public void setImgUrl(String imgUrl) {
             this.imgUrl = imgUrl;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
         }
 
         @Override

@@ -2,20 +2,24 @@ package com.ecjtu.heaven.db.table.impl
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
+import android.text.TextUtils
 
 /**
  * Created by Ethan_Xiang on 2017/9/15.
  */
 class DetailPageUrlsTableImpl : BaseTableImpl() {
     override val sql: String
-        get() = "CREATE TABLE tb_detail_page_image_list (\n" +
-                "    _id       INTEGER PRIMARY KEY,\n" +
-                "    page_id   INTEGER REFERENCES tb_detail_page (_id) ON DELETE CASCADE\n" +
-                "                                                      ON UPDATE CASCADE,\n" +
-                "    image_url STRING\n" +
+        get() = "CREATE TABLE tb_detail_page_list (\n" +
+                "    _id            INTEGER PRIMARY KEY ASC AUTOINCREMENT,\n" +
+                "    image_url      STRING,\n" +
+                "    [index]        INTEGER,\n" +
+                "    id_detail_page INTEGER REFERENCES tb_detail_page (_id) ON DELETE CASCADE\n" +
+                "                                                           ON UPDATE CASCADE\n" +
                 ");\n"
 
-    private val mTableName = "tb_image_url_with_detail_page_id"
+    companion object {
+        const val TABLE_NAME = "tb_detail_page_list"
+    }
 
     override fun createTable(sqLiteDatabase: SQLiteDatabase) {
         sqLiteDatabase.execSQL(sql)
@@ -29,14 +33,19 @@ class DetailPageUrlsTableImpl : BaseTableImpl() {
         createTable(sqLiteDatabase)
     }
 
-    fun addPageUrls(sqLiteDatabase: SQLiteDatabase, pageId: Int, imageUrl: String) {
-        val value = ContentValues()
-        value.put("page_id", pageId)
-        value.put("image_url", imageUrl)
-        sqLiteDatabase.insert(mTableName, null, value)
+    fun addPageUrls(sqLiteDatabase: SQLiteDatabase, pageId: Int, imageUrl: List<String>) {
+        for (item in imageUrl) {
+            if (!TextUtils.isEmpty(item)) {
+                val value = ContentValues()
+                value.put("id_detail_page", pageId)
+                value.put("image_url", item)
+                value.put("[index]", imageUrl.indexOf(item))
+                sqLiteDatabase.insert(TABLE_NAME, null, value)
+            }
+        }
     }
 
     fun deletePageUrls(sqLiteDatabase: SQLiteDatabase, pageId: Int) {
-        sqLiteDatabase.delete(mTableName, "page_id=?", arrayOf(pageId.toString()))
+        sqLiteDatabase.delete(TABLE_NAME, "id_detail_page=?", arrayOf(pageId.toString()))
     }
 }
