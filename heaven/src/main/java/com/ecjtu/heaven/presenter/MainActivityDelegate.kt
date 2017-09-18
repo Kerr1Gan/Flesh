@@ -85,7 +85,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 }
             }
         })
-
+    
         initView()
     }
 

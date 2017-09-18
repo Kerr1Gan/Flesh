@@ -186,9 +186,14 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
                 val db = DatabaseManager.getInstance(v.context)?.getDatabase() as SQLiteDatabase
                 val impl = HistoryTableImpl()
                 impl.addHistory(db, item.href)
+                db.close()
             } else {
                 FullScreenImageActivity.newInstance(v.context, item.imgUrl).apply {
                     v.context.startActivity(this)
+                    val db = DatabaseManager.getInstance(v.context)?.getDatabase() as SQLiteDatabase
+                    val impl = HistoryTableImpl()
+                    impl.addHistory(db, item.href)
+                    db.close()
                 }
             }
             mLastClickPosition = position
