@@ -1,6 +1,5 @@
 package com.ecjtu.heaven.presenter
 
-import android.content.Intent
 import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.TabLayout
@@ -14,10 +13,11 @@ import android.view.Gravity
 import android.widget.TextView
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.cache.MenuListCacheHelper
+import com.ecjtu.heaven.ui.activity.AppThemeActivity
 import com.ecjtu.heaven.ui.activity.MainActivity
-import com.ecjtu.heaven.ui.activity.PageHistoryActivity
-import com.ecjtu.heaven.ui.activity.PageLikeActivity
 import com.ecjtu.heaven.ui.adapter.TabPagerAdapter
+import com.ecjtu.heaven.ui.fragment.PageHistoryFragment
+import com.ecjtu.heaven.ui.fragment.PageLikeFragment
 import com.ecjtu.heaven.util.file.FileUtil
 import com.ecjtu.netcore.Constants
 import com.ecjtu.netcore.jsoup.SoupFactory
@@ -107,7 +107,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         }
 
         findViewById(R.id.like)?.setOnClickListener {
-            val intent = Intent(owner, PageLikeActivity::class.java)
+            val intent = AppThemeActivity.newInstance(owner,PageLikeFragment::class.java)
             owner.startActivity(intent)
             val drawerLayout = findViewById(R.id.drawer_layout) as DrawerLayout
             drawerLayout.closeDrawer(Gravity.START)
@@ -134,8 +134,10 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         }
 
         findViewById(R.id.history)?.setOnClickListener {
-            val intent = Intent(owner,PageHistoryActivity::class.java)
+            val intent = AppThemeActivity.newInstance(owner,PageHistoryFragment::class.java)
             owner.startActivity(intent)
+            val drawerLayout = findViewById(R.id.drawer_layout) as DrawerLayout
+            drawerLayout.closeDrawer(Gravity.START)
         }
     }
 

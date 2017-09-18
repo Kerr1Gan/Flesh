@@ -3,6 +3,7 @@ package com.ecjtu.heaven;
 import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
@@ -39,6 +40,7 @@ public class MainApplication extends Application {
 
         initDb();
         initSDK();
+        init();
     }
 
     private void initDb() {
@@ -50,12 +52,15 @@ public class MainApplication extends Application {
         manager.registerTable(new DetailPageUrlsTableImpl());
         manager.registerTable(new HistoryTableImpl());
         manager.registerTable(new LikeTableImplV2());
-        manager.getHelper(this,"heaven",2).getWritableDatabase();
+        manager.getHelper(this, "heaven", 2).getWritableDatabase();
     }
 
-    private void initSDK(){
+    private void initSDK() {
 //        CrashReport.initCrashReport(getApplicationContext(), "bea4125c41", true);
         Bugly.init(getApplicationContext(), "bea4125c41", false);
+    }
+
+    private void init() {
     }
 
     private static class SimpleGlideModule extends AppGlideModule {
@@ -65,7 +70,7 @@ public class MainApplication extends Application {
             //提高图片质量
             builder.setDecodeFormat(DecodeFormat.PREFER_ARGB_8888);
             //自定义磁盘缓存:这种缓存只有自己的app才能访问到
-            builder.setDiskCache(new InternalCacheDiskCacheFactory(context,(int) diskCacheSize));
+            builder.setDiskCache(new InternalCacheDiskCacheFactory(context, (int) diskCacheSize));
             //Memory Cache
             builder.setMemoryCache(new LruResourceCache(24 * 1024 * 1024));
         }

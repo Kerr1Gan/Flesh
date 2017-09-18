@@ -31,8 +31,7 @@
             android:process=":child"
             android:theme="@style/ImageStatusBarStyle" />
 
-        <activity android:name=".ui.activity.PageLikeActivity" />
-        <activity android:name=".ui.activity.PageHistoryActivity" />
+        <activity android:name=".ui.activity.AppThemeActivity" />
     </application>
 
 </manifest>
