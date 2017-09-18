@@ -2,6 +2,7 @@ package com.ecjtu.heaven.db.table.impl
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
+import com.ecjtu.netcore.model.PageModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -39,6 +40,20 @@ class HistoryTableImpl : BaseTableImpl() {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
         value.put("time", dateFormat.format(Date()))
         sqLiteDatabase.insert(TABLE_NAME, null, value)
+    }
+
+    fun getAllHistory(sqLiteDatabase: SQLiteDatabase): List<PageModel.ItemModel> {
+        val ret = ArrayList<PageModel.ItemModel>()
+        val cursor = sqLiteDatabase.rawQuery("SELECT tb2.href,tb2.description,tb2.image_url FROM $TABLE_NAME tb1,${ClassPageListTableImpl.TABLE_NAME} tb2 where tb1.href_class_page_list = tb2.href", arrayOf())
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast) {
+                val model = PageModel.ItemModel(cursor.getString(0), cursor.getString(1), cursor.getString(2))
+                ret.add(model)
+                cursor.moveToNext()
+            }
+        }
+        cursor.close()
+        return ret
     }
 
     fun deleteHistory(sqLiteDatabase: SQLiteDatabase, href: String) {

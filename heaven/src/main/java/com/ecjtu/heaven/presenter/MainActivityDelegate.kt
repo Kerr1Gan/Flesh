@@ -15,6 +15,7 @@ import android.widget.TextView
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.cache.MenuListCacheHelper
 import com.ecjtu.heaven.ui.activity.MainActivity
+import com.ecjtu.heaven.ui.activity.PageHistoryActivity
 import com.ecjtu.heaven.ui.activity.PageLikeActivity
 import com.ecjtu.heaven.ui.adapter.TabPagerAdapter
 import com.ecjtu.heaven.util.file.FileUtil
@@ -130,6 +131,11 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             AlertDialog.Builder(owner).setTitle("声明").setMessage("所有资源均来自www.mzitu.com，如有侵权请联系mnsync@outlook.com，将会尽快删除。")
                     .setPositiveButton("确定", null)
                     .create().show()
+        }
+
+        findViewById(R.id.history)?.setOnClickListener {
+            val intent = Intent(owner,PageHistoryActivity::class.java)
+            owner.startActivity(intent)
         }
     }
 

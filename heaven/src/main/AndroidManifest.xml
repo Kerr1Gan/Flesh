@@ -3,16 +3,17 @@
     package="com.ecjtu.heaven">
 
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:largeHeap="true">
+        android:theme="@style/AppTheme">
         <activity
             android:name=".ui.activity.MainActivity"
             android:theme="@style/AppThemeNoActionBar">
@@ -30,7 +31,8 @@
             android:process=":child"
             android:theme="@style/ImageStatusBarStyle" />
 
-        <activity android:name=".ui.activity.PageLikeActivity"/>
+        <activity android:name=".ui.activity.PageLikeActivity" />
+        <activity android:name=".ui.activity.PageHistoryActivity" />
     </application>
 
 </manifest>
