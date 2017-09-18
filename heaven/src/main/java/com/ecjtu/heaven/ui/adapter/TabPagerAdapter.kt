@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.cache.PageListCacheHelper
 import com.ecjtu.heaven.db.DatabaseManager
+import com.ecjtu.heaven.db.table.impl.ClassPageListTableImpl
 import com.ecjtu.heaven.db.table.impl.ClassPageTableImpl
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.jsoup.impl.PageSoup
@@ -91,11 +92,33 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
     fun onStop(context: Context) {
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         for (entry in mViewStub) {
+            val recyclerView = entry.value.recyclerView
+
             val helper = PageListCacheHelper(context.filesDir.absolutePath)
             if (entry.value.getPageModel() != null) {
-                helper.put(KEY_CARD_CACHE + entry.key, entry.value.getPageModel())
+                val pageModel = entry.value.getPageModel()
+                if (recyclerView != null) {
+                    val lastPosition = findLastVisiblePosition(recyclerView)
+                    val href = pageModel?.itemList?.get(lastPosition)?.href ?: ""
+                    val db = DatabaseManager.getInstance(context)?.getDatabase()
+                    if (db != null) {
+                        val impl = ClassPageListTableImpl()
+                        val ret = impl.findNextPageAndLastHref(db, href)
+                        if (!TextUtils.isEmpty(ret[0])) {
+                            pageModel?.nextPage = ret[0]
+                            val list = ArrayList<PageModel.ItemModel>()
+                            for(item in pageModel?.itemList!!){
+                                if(item.href == ret[1]){
+                                    break
+                                }
+                                list.add(item)
+                            }
+                            pageModel.itemList = list
+                        }
+                    }
+                }
+                helper.put(KEY_CARD_CACHE + entry.key, pageModel)
             }
-            val recyclerView = entry.value.recyclerView
             if (recyclerView != null) {
                 editor.putInt(KEY_LAST_POSITION + entry.key,
                         getScrollYPosition(recyclerView)).
@@ -227,6 +250,11 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         val position = layoutManager.findFirstVisibleItemPosition()
         val firstVisibleChildView = layoutManager.findViewByPosition(position)
         return firstVisibleChildView?.top ?: 0
+    }
+
+    fun findLastVisiblePosition(recyclerView: RecyclerView): Int {
+        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+        return layoutManager.findLastVisibleItemPosition()
     }
 
     override fun getItemPosition(`object`: Any?): Int {

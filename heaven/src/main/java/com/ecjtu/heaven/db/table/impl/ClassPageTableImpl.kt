@@ -17,7 +17,9 @@ class ClassPageTableImpl : BaseTableImpl() {
             "    time      STRING\n" +
             ");\n"
 
-    private val mTableName = "tb_class_page"
+    companion object {
+        const val TABLE_NAME = "tb_class_page"
+    }
     override fun createTable(sqLiteDatabase: SQLiteDatabase) {
         sqLiteDatabase.execSQL(sql)
     }
@@ -33,15 +35,20 @@ class ClassPageTableImpl : BaseTableImpl() {
     fun addPage(sqLiteDatabase: SQLiteDatabase, pageModel: PageModel) {
         val value = ContentValues()
         val format = SimpleDateFormat("yyyy-MM-dd")
+        if (TextUtils.isEmpty(pageModel.nextPage)) {
+            pageModel.nextPage = ""
+        }
         value.put("next_page", pageModel.nextPage)
         value.put("time", format.format(Date()))
-        val id = sqLiteDatabase.insert(mTableName, null, value)
+        val id = sqLiteDatabase.insert(TABLE_NAME, null, value)
         pageModel.id = id.toInt()
         val pageListTable = ClassPageListTableImpl()
         pageListTable.addPageList(sqLiteDatabase, pageModel)
     }
 
     fun deletePage(sqLiteDatabase: SQLiteDatabase, id: Int) {
-        sqLiteDatabase.delete(mTableName, "_id=?", arrayOf(id.toString()))
+        sqLiteDatabase.delete(TABLE_NAME, "_id=?", arrayOf(id.toString()))
     }
+
+
 }

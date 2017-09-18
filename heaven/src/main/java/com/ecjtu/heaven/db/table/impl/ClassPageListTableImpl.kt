@@ -46,4 +46,19 @@ class ClassPageListTableImpl : BaseTableImpl() {
             item.id = id.toInt()
         }
     }
+
+    fun findNextPageAndLastHref(sqLiteDatabase: SQLiteDatabase, href: String): Array<String> {
+        val sql = "SELECT tb2.next_page,tb1.href FROM $TABLE_NAME tb1,${ClassPageTableImpl.TABLE_NAME} tb2 WHERE tb1.id_class_page = tb2._id and tb1.href = \"$href\""
+        var ret = arrayOf("","")
+        val cursor = sqLiteDatabase.rawQuery(sql, arrayOf())
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast) {
+                ret[0] = cursor.getString(0)
+                ret[1] = cursor.getString(1)
+                cursor.moveToNext()
+            }
+        }
+        cursor.close()
+        return ret
+    }
 }
