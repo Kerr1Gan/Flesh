@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat
 class HistoryCardListAdapter(pageModel: PageModel) : CardListAdapter(pageModel) {
 
     private val mDateFormat1 = SimpleDateFormat("yyyy-MM-dd")
-    private val mDateFormat2 = SimpleDateFormat("yyyy年MM月dd日")
+    private val mDateFormat2 = SimpleDateFormat("yyyy年M月d日")
 
     override fun onBindViewHolder(holder: VH?, position: Int) {
         super.onBindViewHolder(holder, position)

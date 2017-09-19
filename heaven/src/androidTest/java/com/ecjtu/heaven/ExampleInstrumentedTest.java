@@ -80,9 +80,12 @@ public class ExampleInstrumentedTest {
 
         File[] list = new File(appContext.getFilesDir().getAbsolutePath()).listFiles();
         for (File child : list) {
-            if (child.getName().endsWith("性感妹子")) {
+//            if (child.getName().endsWith("性感妹子")) {
+//                child.delete();
+//                break;
+//            }
+            if(child.getName().contains("card_cache_")){
                 child.delete();
-                break;
             }
         }
     }
