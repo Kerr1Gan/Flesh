@@ -76,17 +76,19 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
     }
 
     fun onStop(context: Context, key: String, recyclerView: RecyclerView?, pageModel: PageModel?) {
-        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-        val helper = PageListCacheHelper(context.filesDir.absolutePath)
-        if (pageModel != null) {
-            helper.put(KEY_CARD_CACHE + key, pageModel)
+        thread {
+            val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+            val helper = PageListCacheHelper(context.filesDir.absolutePath)
+            if (pageModel != null) {
+                helper.put(KEY_CARD_CACHE + key, pageModel)
+            }
+            if (recyclerView != null) {
+                editor.putInt(KEY_LAST_POSITION + key,
+                        getScrollYPosition(recyclerView)).
+                        putInt(KEY_LAST_POSITION_OFFSET + key, getScrollYOffset(recyclerView))
+            }
+            editor.apply()
         }
-        if (recyclerView != null) {
-            editor.putInt(KEY_LAST_POSITION + key,
-                    getScrollYPosition(recyclerView)).
-                    putInt(KEY_LAST_POSITION_OFFSET + key, getScrollYOffset(recyclerView))
-        }
-        editor.apply()
     }
 
     fun onStop(context: Context) {
@@ -104,14 +106,14 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
                     if (db != null) {
                         val impl = ClassPageListTableImpl()
                         val ret = impl.findNextPageAndLastHref(db, href)
-                        if (!TextUtils.isEmpty(ret[0])) {
+                        if (ret != null && !TextUtils.isEmpty(ret[0])) {
                             pageModel?.nextPage = ret[0]
                             val list = ArrayList<PageModel.ItemModel>()
-                            for(item in pageModel?.itemList!!){
-                                if(item.href == ret[1]){
+                            for (item in pageModel?.itemList!!) {
+                                list.add(item)
+                                if (item.href == ret[1]) {
                                     break
                                 }
-                                list.add(item)
                             }
                             pageModel.itemList = list
                         }
@@ -189,15 +191,6 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
                     val values = SoupFactory.parseHtml(PageSoup::class.java, response)
                     if (values != null) {
                         val soups = values[PageSoup::class.java.simpleName] as PageModel
-                        val impl = ClassPageTableImpl()
-                        val db = DatabaseManager.getInstance(mRefreshLayout?.context)?.getDatabase()
-                        db?.let {
-                            db.beginTransaction()
-                            impl.addPage(db, soups)
-                            db.setTransactionSuccessful()
-                            db.endTransaction()
-                        }
-                        db?.close()
                         recyclerView?.post {
                             if (mPageModel == null) {
                                 recyclerView.adapter = CardListAdapter(soups)
@@ -217,6 +210,15 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
                                 }
                             }
                         }
+                        val impl = ClassPageTableImpl()
+                        val db = DatabaseManager.getInstance(mRefreshLayout?.context)?.getDatabase()
+                        db?.let {
+                            db.beginTransaction()
+                            impl.addPage(db, soups)
+                            db.setTransactionSuccessful()
+                            db.endTransaction()
+                        }
+                        db?.close()
                     }
                     mRefreshLayout?.post {
                         mRefreshLayout.setRefreshing(false)

@@ -80,7 +80,7 @@ public class ExampleInstrumentedTest {
 
         File[] list = new File(appContext.getFilesDir().getAbsolutePath()).listFiles();
         for (File child : list) {
-            if (child.getName().endsWith("妹子自拍")) {
+            if (child.getName().endsWith("性感妹子")) {
                 child.delete();
                 break;
             }

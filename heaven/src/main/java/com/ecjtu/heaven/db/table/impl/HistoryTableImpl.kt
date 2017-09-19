@@ -56,6 +56,22 @@ class HistoryTableImpl : BaseTableImpl() {
         return ret
     }
 
+    /**
+     *  @return yyyy-MM-dd
+     */
+    fun getHistoryTime(sqLiteDatabase: SQLiteDatabase,href: String):String{
+        var ret = ""
+        val cursor = sqLiteDatabase.rawQuery("SELECT tb1.time FROM $TABLE_NAME tb1,${ClassPageListTableImpl.TABLE_NAME} tb2 WHERE tb1.href_class_page_list = tb2.href AND tb1.href_class_page_list = \"$href\"", arrayOf())
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast) {
+                ret = cursor.getString(0)
+                cursor.moveToNext()
+            }
+        }
+        cursor.close()
+        return ret
+    }
+
     fun deleteHistory(sqLiteDatabase: SQLiteDatabase, href: String) {
         sqLiteDatabase.delete(TABLE_NAME, "href_class_page_list=?", arrayOf(href))
     }

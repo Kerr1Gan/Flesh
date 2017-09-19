@@ -22,15 +22,23 @@ abstract class BasePageActivityDelegate(owner: Activity, protected val itemList:
 
         mRecyclerView.layoutManager = LinearLayoutManager(owner, LinearLayoutManager.VERTICAL, false)
         if (mPageModel != null) {
-            mRecyclerView.adapter = CardListAdapter(mPageModel!!)
+            mRecyclerView.adapter = getCardListAdapter(mPageModel!!)
         }
     }
 
-    fun onRelease() {
+    open protected fun getCardListAdapter(pageModel: PageModel):CardListAdapter{
+        return CardListAdapter(pageModel)
+    }
+
+    open fun onRelease() {
         (mRecyclerView.adapter as CardListAdapter?)?.onRelease()
     }
 
-    fun onResume() {
+    open fun onResume() {
         (mRecyclerView.adapter as CardListAdapter?)?.onResume()
+    }
+
+    protected fun getRecyclerView():RecyclerView{
+        return mRecyclerView
     }
 }

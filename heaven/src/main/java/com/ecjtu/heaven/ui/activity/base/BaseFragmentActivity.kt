@@ -16,7 +16,7 @@ import com.ecjtu.heaven.R
 open class BaseFragmentActivity : BaseActionActivity() {
 
     companion object {
-
+        private const val TAG = "BaseFragmentActivity"
         private const val EXTRA_FRAGMENT_NAME = "extra_fragment_name"
         private const val EXTRA_FRAGMENT_ARG = "extra_fragment_arguments"
 
@@ -57,10 +57,12 @@ open class BaseFragmentActivity : BaseActionActivity() {
 
         if (fragment == null) return
 
-        supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .commit()
+        if (supportFragmentManager.findFragmentByTag(TAG) == null) {
+            supportFragmentManager
+                    .beginTransaction()
+                    .add(R.id.fragment_container, fragment, TAG)
+                    .commit()
+        }
     }
 
     fun makeFragment(name: String): Fragment? {

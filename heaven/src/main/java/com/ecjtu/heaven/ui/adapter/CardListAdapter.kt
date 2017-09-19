@@ -23,6 +23,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.ecjtu.heaven.R
 import com.ecjtu.heaven.db.DatabaseManager
+import com.ecjtu.heaven.db.table.impl.ClassPageTableImpl
 import com.ecjtu.heaven.db.table.impl.HistoryTableImpl
 import com.ecjtu.heaven.db.table.impl.LikeTableImpl
 import com.ecjtu.heaven.db.table.impl.LikeTableImplV2
@@ -38,7 +39,7 @@ import java.net.HttpURLConnection
 /**
  * Created by Ethan_Xiang on 2017/9/8.
  */
-class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
+open class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
 
     private val mListHeight = ArrayList<Int>()
 
@@ -120,6 +121,15 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
                                 notifyItemChanged(position + 1)
                             }
                         }
+                        val impl = ClassPageTableImpl()
+                        val db = DatabaseManager.getInstance(holder?.itemView?.context)?.getDatabase()
+                        db?.let {
+                            db.beginTransaction()
+                            impl.addPage(db, soups)
+                            db.setTransactionSuccessful()
+                            db.endTransaction()
+                        }
+                        db?.close()
                     }
                 }
             })
@@ -215,11 +225,11 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         mListHeight.set(position, height)
     }
 
-    fun onRelease() {
+    open fun onRelease() {
         mDatabase?.close()
     }
 
-    fun onResume() {
+    open fun onResume() {
         if (mLastClickPosition >= 0) {
             notifyItemChanged(mLastClickPosition)
         }
@@ -231,7 +241,7 @@ class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListA
         val imageView = itemView.findViewById(R.id.image) as ImageView
         val textView = itemView.findViewById(R.id.title) as TextView
         val heart = itemView.findViewById(R.id.heart) as ImageView
-
+        val description = itemView.findViewById(R.id.description) as TextView
         init {
             imageView.adjustViewBounds = true
             heart.setOnClickListener { v: View? ->

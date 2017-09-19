@@ -1,8 +1,10 @@
 package com.ecjtu.heaven.db.table.impl
 
 import android.content.ContentValues
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.ecjtu.netcore.model.PageModel
+import java.lang.Exception
 
 /**
  * Created by KerriGan on 2017/9/16.
@@ -47,18 +49,38 @@ class ClassPageListTableImpl : BaseTableImpl() {
         }
     }
 
-    fun findNextPageAndLastHref(sqLiteDatabase: SQLiteDatabase, href: String): Array<String> {
-        val sql = "SELECT tb2.next_page,tb1.href FROM $TABLE_NAME tb1,${ClassPageTableImpl.TABLE_NAME} tb2 WHERE tb1.id_class_page = tb2._id and tb1.href = \"$href\""
-        var ret = arrayOf("","")
-        val cursor = sqLiteDatabase.rawQuery(sql, arrayOf())
-        if (cursor.moveToFirst()) {
-            while (!cursor.isAfterLast) {
-                ret[0] = cursor.getString(0)
-                ret[1] = cursor.getString(1)
-                cursor.moveToNext()
+    /**
+     *  @return an array. array[0] is next_page and array[1] is the last href
+     */
+    fun findNextPageAndLastHref(sqLiteDatabase: SQLiteDatabase, href: String): Array<String>? {
+        var cursor: Cursor? = null
+        try {
+            var sql = "SELECT tb2.next_page FROM $TABLE_NAME tb1,${ClassPageTableImpl.TABLE_NAME} tb2 WHERE tb1.id_class_page = tb2._id AND tb1.href = \"$href\""
+            val ret = arrayOf("", "")
+            cursor = sqLiteDatabase.rawQuery(sql, arrayOf())
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast) {
+                    ret[0] = cursor.getString(0)
+                    cursor.moveToNext()
+                }
             }
+            cursor.close()
+            sql = "SELECT tb1.href FROM $TABLE_NAME tb1,${ClassPageTableImpl.TABLE_NAME} tb2 WHERE tb1.id_class_page = tb2._id AND tb2.next_page = \"${ret[0]}\""
+            cursor = sqLiteDatabase.rawQuery(sql, arrayOf())
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast) {
+                    ret[1] = cursor.getString(0)
+                    cursor.moveToNext()
+                }
+            }
+            cursor.close()
+            return ret
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            if (cursor != null) {
+                cursor.close()
+            }
+            return null
         }
-        cursor.close()
-        return ret
     }
 }
