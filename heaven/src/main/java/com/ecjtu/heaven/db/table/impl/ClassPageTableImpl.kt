@@ -20,6 +20,7 @@ class ClassPageTableImpl : BaseTableImpl() {
     companion object {
         const val TABLE_NAME = "tb_class_page"
     }
+
     override fun createTable(sqLiteDatabase: SQLiteDatabase) {
         sqLiteDatabase.execSQL(sql)
     }
@@ -41,7 +42,12 @@ class ClassPageTableImpl : BaseTableImpl() {
         value.put("next_page", pageModel.nextPage)
         value.put("time", format.format(Date()))
         val id = sqLiteDatabase.insert(TABLE_NAME, null, value)
-        pageModel.id = id.toInt()
+        if (id.toInt() > 0) {
+            pageModel.id = id.toInt()
+        }
+        if (pageModel.id <= 0) {
+            pageModel.id = getIdByNextPage(sqLiteDatabase, pageModel.nextPage)
+        }
         val pageListTable = ClassPageListTableImpl()
         pageListTable.addPageList(sqLiteDatabase, pageModel)
     }
@@ -50,5 +56,16 @@ class ClassPageTableImpl : BaseTableImpl() {
         sqLiteDatabase.delete(TABLE_NAME, "_id=?", arrayOf(id.toString()))
     }
 
-
+    fun getIdByNextPage(sqLiteDatabase: SQLiteDatabase, nextPage: String): Int {
+        var ret = 1
+        val cursor = sqLiteDatabase.rawQuery("SELECT _id FROM $TABLE_NAME WHERE next_page=\"$nextPage\"", arrayOf())
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast) {
+                ret = cursor.getInt(0)
+                cursor.moveToNext()
+            }
+        }
+        cursor.close()
+        return ret
+    }
 }

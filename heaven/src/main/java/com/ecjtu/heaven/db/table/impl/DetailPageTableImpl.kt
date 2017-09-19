@@ -43,9 +43,11 @@ class DetailPageTableImpl : BaseTableImpl() {
         value.put("img_url", pageDetailModel.imgUrl)
         value.put("time", dateFormat.format(Date()))
         val id = sqLiteDatabase.insert(TABLE_NAME, null, value)
-        pageDetailModel.id = id.toInt()
-        val pageUrlsImpl = DetailPageUrlsTableImpl()
-        pageUrlsImpl.addPageUrls(sqLiteDatabase, id.toInt(), pageDetailModel.backupImgUrl)
+        if (id >= 0) {
+            pageDetailModel.id = id.toInt()
+            val pageUrlsImpl = DetailPageUrlsTableImpl()
+            pageUrlsImpl.addPageUrls(sqLiteDatabase, id.toInt(), pageDetailModel.backupImgUrl)
+        }
     }
 
     fun deleteDetailPage(sqLiteDatabase: SQLiteDatabase, href: String) {

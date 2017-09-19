@@ -21,6 +21,8 @@ public class PageListCacheHelper extends ParcelableFileCacheHelper {
     protected <T> T readParcel(Parcel parcel) {
         PageModel pageModel = new PageModel();
         String nextPage = parcel.readString();
+        int id = parcel.readInt();
+        pageModel.setId(id);
         pageModel.setNextPage(nextPage);
         int len = parcel.readInt();
         List<PageModel.ItemModel> list = new ArrayList<>();
@@ -43,6 +45,7 @@ public class PageListCacheHelper extends ParcelableFileCacheHelper {
         }
         PageModel local = (PageModel) object;
         parcel.writeString(local.getNextPage());
+        parcel.writeInt(local.getId());
         int len = local.getItemList().size();
         parcel.writeInt(local.getItemList().size());
         for (int i = 0; i < len; i++) {

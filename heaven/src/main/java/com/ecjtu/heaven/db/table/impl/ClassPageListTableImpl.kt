@@ -45,7 +45,9 @@ class ClassPageListTableImpl : BaseTableImpl() {
             value.put("image_url", item.imgUrl)
             value.put("id_class_page", pageModel.id)
             val id = sqLiteDatabase.insert(TABLE_NAME, null, value)
-            item.id = id.toInt()
+            if (id.toInt() >= 0) {
+                item.id = id.toInt()
+            }
         }
     }
 
