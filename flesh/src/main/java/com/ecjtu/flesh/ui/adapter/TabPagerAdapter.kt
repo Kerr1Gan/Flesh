@@ -121,6 +121,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
                             }
                             pageModel.itemList = list
                         }
+                        db.close()
                     }
                 }
                 helper.put(KEY_CARD_CACHE + entry.key, pageModel)

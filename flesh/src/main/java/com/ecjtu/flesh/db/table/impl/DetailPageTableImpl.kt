@@ -3,6 +3,7 @@ package com.ecjtu.flesh.db.table.impl
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import com.ecjtu.netcore.model.PageDetailModel
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,11 +43,15 @@ class DetailPageTableImpl : BaseTableImpl() {
         value.put("max_len", pageDetailModel.maxLen)
         value.put("img_url", pageDetailModel.imgUrl)
         value.put("time", dateFormat.format(Date()))
-        val id = sqLiteDatabase.insertWithOnConflict(TABLE_NAME, null, value,SQLiteDatabase.CONFLICT_REPLACE)
-        if (id >= 0) {
-            pageDetailModel.id = id.toInt()
-            val pageUrlsImpl = DetailPageUrlsTableImpl()
-            pageUrlsImpl.addPageUrls(sqLiteDatabase, id.toInt(), pageDetailModel.backupImgUrl)
+        try {
+            val id = sqLiteDatabase.insertOrThrow(TABLE_NAME, null, value)
+            if (id >= 0) {
+                pageDetailModel.id = id.toInt()
+                val pageUrlsImpl = DetailPageUrlsTableImpl()
+                pageUrlsImpl.addPageUrls(sqLiteDatabase, id.toInt(), pageDetailModel.backupImgUrl)
+            }
+        } catch (ex: Exception) {
+            sqLiteDatabase.update(TABLE_NAME, value, "base_url=?", arrayOf(pageDetailModel.baseUrl))
         }
     }
 

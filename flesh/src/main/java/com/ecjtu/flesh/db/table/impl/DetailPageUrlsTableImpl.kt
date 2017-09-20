@@ -3,6 +3,7 @@ package com.ecjtu.flesh.db.table.impl
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import android.text.TextUtils
+import java.lang.Exception
 
 /**
  * Created by Ethan_Xiang on 2017/9/15.
@@ -40,7 +41,11 @@ class DetailPageUrlsTableImpl : BaseTableImpl() {
                 value.put("id_detail_page", pageId)
                 value.put("image_url", item)
                 value.put("[index]", imageUrl.indexOf(item))
-                sqLiteDatabase.insertWithOnConflict(TABLE_NAME, null, value,SQLiteDatabase.CONFLICT_REPLACE)
+                try {
+                    sqLiteDatabase.insertOrThrow(TABLE_NAME, null, value)
+                } catch (ex: Exception) {
+                    sqLiteDatabase.update(TABLE_NAME, value, "image_url=?", arrayOf(item))
+                }
             }
         }
     }

@@ -3,7 +3,6 @@ package com.ecjtu.flesh.db.table.impl
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import com.ecjtu.netcore.model.PageModel
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -40,10 +39,8 @@ class HistoryTableImpl : BaseTableImpl() {
         value.put("href_class_page_list", href)
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
         value.put("time", dateFormat.format(Date()))
-        try {
-            sqLiteDatabase.insertWithOnConflict(TABLE_NAME, null, value,SQLiteDatabase.CONFLICT_REPLACE)
-        }catch (ex:Exception){
-        }
+        sqLiteDatabase.insert(TABLE_NAME, null, value)
+
     }
 
     fun getAllHistory(sqLiteDatabase: SQLiteDatabase): List<PageModel.ItemModel> {
@@ -63,7 +60,7 @@ class HistoryTableImpl : BaseTableImpl() {
     /**
      *  @return yyyy-MM-dd
      */
-    fun getHistoryTime(sqLiteDatabase: SQLiteDatabase,href: String):String{
+    fun getHistoryTime(sqLiteDatabase: SQLiteDatabase, href: String): String {
         var ret = ""
         val cursor = sqLiteDatabase.rawQuery("SELECT tb1.time FROM $TABLE_NAME tb1,${ClassPageListTableImpl.TABLE_NAME} tb2 WHERE tb1.href_class_page_list = tb2.href AND tb1.href_class_page_list = \"$href\"", arrayOf())
         if (cursor.moveToFirst()) {

@@ -39,7 +39,8 @@ class LikeTableImplV2 : BaseTableImpl() {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
         contentValues.put("href_class_page_list", href)
         contentValues.put("time", dateFormat.format(Date()))
-        sqLiteDatabase.insertWithOnConflict(TABLE_NAME, null, contentValues,SQLiteDatabase.CONFLICT_REPLACE)
+        sqLiteDatabase.insert(TABLE_NAME, null, contentValues)
+
     }
 
     fun deleteLike(sqLiteDatabase: SQLiteDatabase, href: String) {
@@ -65,7 +66,7 @@ class LikeTableImplV2 : BaseTableImpl() {
 
     fun getAllLikes(sqLiteDatabase: SQLiteDatabase): List<PageModel.ItemModel> {
         val ret = ArrayList<PageModel.ItemModel>()
-        val cursor = sqLiteDatabase.rawQuery("SELECT tb2.href,tb2.description,tb2.image_url FROM $TABLE_NAME tb1,${ClassPageListTableImpl.TABLE_NAME} tb2 where tb1.href_class_page_list = tb2.href", arrayOf())
+        val cursor = sqLiteDatabase.rawQuery("SELECT tb2.href,tb2.description,tb2.image_url FROM $TABLE_NAME tb1,${ClassPageListTableImpl.TABLE_NAME} tb2 WHERE tb1.href_class_page_list = tb2.href", arrayOf())
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast) {
                 val model = PageModel.ItemModel(cursor.getString(0), cursor.getString(1), cursor.getString(2))

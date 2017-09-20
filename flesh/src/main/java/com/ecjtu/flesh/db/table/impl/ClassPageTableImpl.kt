@@ -44,11 +44,12 @@ class ClassPageTableImpl : BaseTableImpl() {
         value.put("time", format.format(Date()))
         var id = 0L
         try {
-            id = sqLiteDatabase.insertWithOnConflict(TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE)
+            id = sqLiteDatabase.insertOrThrow(TABLE_NAME, null, value)
             if (id.toInt() > 0) {
                 pageModel.id = id.toInt()
             }
         } catch (ex: Exception) {
+            sqLiteDatabase.update(TABLE_NAME,value,"next_page=?", arrayOf(pageModel.nextPage))
         }
         if (pageModel.id <= 0) {
             pageModel.id = getIdByNextPage(sqLiteDatabase, pageModel.nextPage)
