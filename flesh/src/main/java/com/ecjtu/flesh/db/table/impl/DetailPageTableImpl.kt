@@ -42,7 +42,7 @@ class DetailPageTableImpl : BaseTableImpl() {
         value.put("max_len", pageDetailModel.maxLen)
         value.put("img_url", pageDetailModel.imgUrl)
         value.put("time", dateFormat.format(Date()))
-        val id = sqLiteDatabase.insert(TABLE_NAME, null, value)
+        val id = sqLiteDatabase.insertWithOnConflict(TABLE_NAME, null, value,SQLiteDatabase.CONFLICT_REPLACE)
         if (id >= 0) {
             pageDetailModel.id = id.toInt()
             val pageUrlsImpl = DetailPageUrlsTableImpl()

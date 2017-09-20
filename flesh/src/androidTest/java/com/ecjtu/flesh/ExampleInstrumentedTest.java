@@ -84,9 +84,8 @@ public class ExampleInstrumentedTest {
 //                child.delete();
 //                break;
 //            }
-            if(child.getName().contains("card_cache_")){
-                child.delete();
-            }
+
+            child.delete();
         }
     }
 
@@ -100,5 +99,17 @@ public class ExampleInstrumentedTest {
         File dest = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "heaven.db");
         if (!dest.exists()) dest.createNewFile();
         FileUtil.INSTANCE.copyFile2Path(new File(files, "heaven"), dest);
+    }
+
+    @Test
+    public void copyDb2Internal() throws Exception {
+        // Context of the app under test.
+        final Context appContext = InstrumentationRegistry.getTargetContext();
+        File files = appContext.getFilesDir();
+        files = files.getParentFile();
+        files = new File(files, "databases");
+        File dest = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "heaven.db");
+        if (!dest.exists()) dest.createNewFile();
+        FileUtil.INSTANCE.copyFile2Path(dest, new File(files, "heaven"));
     }
 }

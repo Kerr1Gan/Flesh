@@ -4,7 +4,7 @@ android {
     compileSdkVersion 23
     buildToolsVersion "25.0.0"
     defaultConfig {
-        applicationId "com.ecjtu.heaven"
+        applicationId "com.ecjtu.flesh"
         minSdkVersion 15
         targetSdkVersion 21
         versionCode 1

@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import android.text.TextUtils
 import com.ecjtu.netcore.model.PageModel
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -41,9 +42,13 @@ class ClassPageTableImpl : BaseTableImpl() {
         }
         value.put("next_page", pageModel.nextPage)
         value.put("time", format.format(Date()))
-        val id = sqLiteDatabase.insert(TABLE_NAME, null, value)
-        if (id.toInt() > 0) {
-            pageModel.id = id.toInt()
+        var id = 0L
+        try {
+            id = sqLiteDatabase.insertWithOnConflict(TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE)
+            if (id.toInt() > 0) {
+                pageModel.id = id.toInt()
+            }
+        } catch (ex: Exception) {
         }
         if (pageModel.id <= 0) {
             pageModel.id = getIdByNextPage(sqLiteDatabase, pageModel.nextPage)

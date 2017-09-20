@@ -40,7 +40,7 @@ class DetailPageUrlsTableImpl : BaseTableImpl() {
                 value.put("id_detail_page", pageId)
                 value.put("image_url", item)
                 value.put("[index]", imageUrl.indexOf(item))
-                sqLiteDatabase.insert(TABLE_NAME, null, value)
+                sqLiteDatabase.insertWithOnConflict(TABLE_NAME, null, value,SQLiteDatabase.CONFLICT_REPLACE)
             }
         }
     }

@@ -39,7 +39,7 @@ class LikeTableImplV2 : BaseTableImpl() {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
         contentValues.put("href_class_page_list", href)
         contentValues.put("time", dateFormat.format(Date()))
-        sqLiteDatabase.insert(TABLE_NAME, null, contentValues)
+        sqLiteDatabase.insertWithOnConflict(TABLE_NAME, null, contentValues,SQLiteDatabase.CONFLICT_REPLACE)
     }
 
     fun deleteLike(sqLiteDatabase: SQLiteDatabase, href: String) {

@@ -17,7 +17,8 @@ class ClassPageListTableImpl : BaseTableImpl() {
                 "    description   STRING,\n" +
                 "    image_url     STRING,\n" +
                 "    id_class_page INTEGER REFERENCES tb_class_page (_id) ON DELETE CASCADE\n" +
-                "                                                         ON UPDATE CASCADE\n" +
+                "                                                         ON UPDATE CASCADE,\n" +
+                "    [index]       INTEGER\n" +
                 ");\n"
 
     companion object {
@@ -38,15 +39,20 @@ class ClassPageListTableImpl : BaseTableImpl() {
 
     fun addPageList(sqLiteDatabase: SQLiteDatabase, pageModel: PageModel) {
         val itemList = pageModel.itemList
+        var index = 0
         for (item in itemList) {
             val value = ContentValues()
             value.put("href", item.href)
             value.put("description", item.description)
             value.put("image_url", item.imgUrl)
             value.put("id_class_page", pageModel.id)
-            val id = sqLiteDatabase.insert(TABLE_NAME, null, value)
-            if (id.toInt() >= 0) {
-                item.id = id.toInt()
+            value.put("[index]", index++)
+            try {
+                val id = sqLiteDatabase.insertWithOnConflict(TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE)
+                if (id.toInt() >= 0) {
+                    item.id = id.toInt()
+                }
+            } catch (ex: Exception) {
             }
         }
     }
@@ -67,9 +73,9 @@ class ClassPageListTableImpl : BaseTableImpl() {
                 }
             }
             cursor.close()
-            sql = "SELECT tb1.href FROM $TABLE_NAME tb1,${ClassPageTableImpl.TABLE_NAME} tb2 WHERE tb1.id_class_page = tb2._id AND tb2.next_page = \"${ret[0]}\""
+            sql = "SELECT tb1.href FROM $TABLE_NAME tb1,${ClassPageTableImpl.TABLE_NAME} tb2 WHERE tb1.id_class_page = tb2._id AND tb2.next_page = \"${ret[0]}\" ORDER BY [index]"
             cursor = sqLiteDatabase.rawQuery(sql, arrayOf())
-            if (cursor.moveToFirst()) {
+            if (cursor.moveToLast()) {
                 while (!cursor.isAfterLast) {
                     ret[1] = cursor.getString(0)
                     cursor.moveToNext()

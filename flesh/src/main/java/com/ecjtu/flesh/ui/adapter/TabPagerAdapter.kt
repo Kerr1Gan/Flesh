@@ -8,6 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,19 +49,22 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
     override fun instantiateItem(container: ViewGroup?, position: Int): Any {
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
         container?.addView(item)
-        val title = menu[position].title
+        val title = getPageTitle(position) as String
         val vh = VH(item, menu[position], title)
         thread {
             val helper = PageListCacheHelper(container?.context?.filesDir?.absolutePath)
-            var pageModel: PageModel? = helper.get(KEY_CARD_CACHE + menu[position].title)
-            if (title.contains("推荐")) {
-                pageModel = null
-            }
-            vh.itemView.post {
-                vh.load(pageModel)
+            if (!title.contains("推荐")) {
+                var pageModel: PageModel? = helper.get(KEY_CARD_CACHE + getPageTitle(position))
+                vh.itemView.post {
+                    vh.load(pageModel)
+                }
+            } else {
+                vh.itemView.post {
+                    vh.load(null)
+                }
             }
         }
-        mViewStub.put(menu[position].title, vh)
+        mViewStub.put(getPageTitle(position).toString(), vh)
         return item
     }
 
