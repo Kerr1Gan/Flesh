@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Heaven.iml" filepath="$PROJECT_DIR$/Heaven.iml" />
-      <module fileurl="file://$PROJECT_DIR$/heaven/heaven.iml" filepath="$PROJECT_DIR$/heaven/heaven.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Flesh.iml" filepath="$PROJECT_DIR$/Flesh.iml" />
+      <module fileurl="file://$PROJECT_DIR$/flesh/flesh.iml" filepath="$PROJECT_DIR$/flesh/flesh.iml" />
       <module fileurl="file://$PROJECT_DIR$/netcore/netcore.iml" filepath="$PROJECT_DIR$/netcore/netcore.iml" />
     </modules>
   </component>
