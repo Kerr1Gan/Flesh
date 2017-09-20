@@ -54,7 +54,7 @@ public class MainApplication extends Application {
 
     private void initSDK() {
 //        CrashReport.initCrashReport(getApplicationContext(), "bea4125c41", true);
-        Bugly.init(getApplicationContext(), "bea4125c41", false);
+        Bugly.init(getApplicationContext(), "cf90f27bcb", false);
     }
 
     private void init() {
