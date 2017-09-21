@@ -1,5 +1,6 @@
 package com.ecjtu.flesh;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 
@@ -19,6 +20,8 @@ import com.ecjtu.flesh.db.table.impl.LikeTableImpl;
 import com.ecjtu.flesh.db.table.impl.LikeTableImplV2;
 import com.tencent.bugly.Bugly;
 
+import java.util.List;
+
 /**
  * Created by Ethan_Xiang on 2017/9/7.
  */
@@ -29,15 +32,24 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        SimpleGlideModule module = new SimpleGlideModule();
-        GlideBuilder builder = new GlideBuilder();
-        module.applyOptions(this, builder);
-        Glide glide = builder.build(this);
-        Glide.init(glide);
+        if (isAppMainProcess("com.ecjtu.flesh")) {
+            SimpleGlideModule module = new SimpleGlideModule();
+            GlideBuilder builder = new GlideBuilder();
+            module.applyOptions(this, builder);
+            Glide glide = builder.build(this);
+            Glide.init(glide);
 
-        initDb();
-        initSDK();
-        init();
+            initDb();
+            initSDK();
+            init();
+        } else {
+            //child process
+            SimpleGlideModule module = new SimpleGlideModule();
+            GlideBuilder builder = new GlideBuilder();
+            module.applyOptions(this, builder);
+            Glide glide = builder.build(this);
+            Glide.init(glide);
+        }
     }
 
     private void initDb() {
@@ -71,5 +83,47 @@ public class MainApplication extends Application {
             //Memory Cache
             builder.setMemoryCache(new LruResourceCache(24 * 1024 * 1024));
         }
+    }
+
+    /**
+     * 判断是不是UI主进程，因为有些东西只能在UI主进程初始化
+     */
+    public boolean isAppMainProcess(String packageName) {
+        int pid = android.os.Process.myPid();
+        String process = getAppNameByPID(this, pid);
+        return packageName.equals(process);
+    }
+
+    /**
+     * 根据Pid得到进程名
+     */
+    public String getAppNameByPID(Context context, int pid) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningAppProcessInfo processInfo : manager.getRunningAppProcesses()) {
+            if (processInfo.pid == pid) {
+                return processInfo.processName;
+            }
+        }
+        return "";
+    }
+
+    /**
+     * 程序是否在前台运行
+     */
+    public boolean isAppOnForeground(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getApplicationContext()
+                .getSystemService(Context.ACTIVITY_SERVICE);
+        String packageName = context.getApplicationContext().getPackageName();
+        /**
+         * 获取Android设备中所有正在运行的App
+         */
+        List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+            // The name of the process that this object is associated with.
+            if (appProcess.processName.equals(packageName) && appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                return true;
+            }
+        }
+        return false;
     }
 }
