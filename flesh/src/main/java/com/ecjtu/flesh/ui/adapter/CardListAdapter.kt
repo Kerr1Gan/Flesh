@@ -113,7 +113,15 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<Card
                     val values = SoupFactory.parseHtml(PageSoup::class.java, response)
                     if (values != null) {
                         val soups = values[PageSoup::class.java.simpleName] as PageModel
-                        pageModel.itemList.addAll(soups.itemList)
+                        val list = pageModel.itemList
+                        for (item in soups.itemList) {
+                            val index = list.indexOf(item)
+                            if (index < 0) {
+                                list.add(0, item)
+                            } else {
+                                list.set(index, item)
+                            }
+                        }
                         pageModel.nextPage = soups.nextPage
                         holder?.itemView?.post {
                             if (position + 1 < itemCount) {
@@ -241,6 +249,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<Card
         val textView = itemView.findViewById(R.id.title) as TextView
         val heart = itemView.findViewById(R.id.heart) as ImageView
         val description = itemView.findViewById(R.id.description) as TextView
+
         init {
             imageView.adjustViewBounds = true
             heart.setOnClickListener { v: View? ->

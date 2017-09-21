@@ -8,7 +8,6 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -204,9 +203,12 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
                                 val list = mPageModel!!.itemList
                                 var needUpdate = false
                                 for (item in soups.itemList) {
-                                    if (list.indexOf(item) < 0) {
+                                    val index = list.indexOf(item)
+                                    if (index < 0) {
                                         list.add(0, item)
                                         needUpdate = true
+                                    } else {
+                                        list.set(index, item)
                                     }
                                 }
                                 (recyclerView.adapter as CardListAdapter).pageModel = mPageModel!!
