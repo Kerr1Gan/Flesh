@@ -70,6 +70,7 @@ public class MainApplication extends Application {
     }
 
     private void init() {
+
     }
 
     private static class SimpleGlideModule extends AppGlideModule {
@@ -126,4 +127,5 @@ public class MainApplication extends Application {
         }
         return false;
     }
+
 }

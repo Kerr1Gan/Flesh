@@ -14,4 +14,9 @@ object Constants {
     @JvmField
     val DEFAULT_GLIDE_CACHE_SIZE = 500 * 1024 * 1024L
 
+    @JvmField
+    val PREF_ZERO = "constants_pref_is_zero"
+
+    @JvmField
+    val PREF_NOTIFICATION_URL = "constants_pref_notification_url"
 }

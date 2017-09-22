@@ -40,6 +40,12 @@ abstract class BaseNetwork {
 
     private var mOutputStream: OutputStream? = null
 
+    private var mHeaders: HashMap<String, String>? = null
+
+    private var mDoInput = true
+
+    private var mDoOutput = true
+
     fun setRequestCallback(callback: IRequestCallback) {
         mCallback = callback
     }
@@ -74,23 +80,46 @@ abstract class BaseNetwork {
 
     open fun setupRequest(httpURLConnection: HttpURLConnection) {
         httpURLConnection.apply {
-            doInput = true
-            doOutput = true
+            doInput = mDoInput
+            doOutput = mDoOutput
             requestMethod = Method.GET
             connectTimeout = TIME_OUT
             readTimeout = TIME_OUT
             setRequestProperty("Content-Type", "*/*")
             setRequestProperty(HEADER_CONTENT_ENCODING, CHARSET)
+            mHeaders?.apply {
+                for (entry in this) {
+                    setRequestProperty(entry.key, entry.value)
+                }
+            }
         }
+
+    }
+
+    open fun setHeaders(values: HashMap<String, String>): BaseNetwork {
+        if (mHeaders == null) {
+            mHeaders = HashMap<String, String>()
+        }
+        for (entry in values) {
+            setHeader(entry.key, entry.value)
+        }
+        return this
+    }
+
+
+    open fun setHeader(key: String, value: String): BaseNetwork {
+        if (mHeaders == null) {
+            mHeaders = HashMap<String, String>()
+        }
+        mHeaders?.put(key, value)
+        return this
     }
 
     open fun setParams(httpURLConnection: HttpURLConnection, mutableMap: MutableMap<String, String>? = null): String {
         var ret = ""
         mutableMap?.let {
             httpURLConnection.requestMethod = Method.POST
-
-            var param: String = ""
-
+            var param = ""
             for (obj in mutableMap.entries) {
                 if (!TextUtils.isEmpty(param)) {
                     param += "&"
@@ -103,6 +132,7 @@ abstract class BaseNetwork {
         return ret
     }
 
+    @Throws(IOException::class)
     open fun connect() {
         try {
             mHttpUrlConnection?.connect()
@@ -114,19 +144,19 @@ abstract class BaseNetwork {
     open fun getContent(httpURLConnection: HttpURLConnection): String {
         var ret = ""
         try {
-            if (httpURLConnection.responseCode == HttpURLConnection.HTTP_OK) {
-                var os = ByteArrayOutputStream()
-                var temp = ByteArray(CACHE_SIZE, { index -> 0 })
-                var `is` = httpURLConnection.inputStream
-                mInputStream = `is`
-                var len: Int
+//            if (httpURLConnection.responseCode == HttpURLConnection.HTTP_OK) {
+            var os = ByteArrayOutputStream()
+            var temp = ByteArray(CACHE_SIZE, { index -> 0 })
+            var `is` = httpURLConnection.inputStream
+            mInputStream = `is`
+            var len: Int
+            len = `is`.read(temp)
+            while (len > 0) {
+                os.write(temp, 0, len)
                 len = `is`.read(temp)
-                while (len > 0) {
-                    os.write(temp, 0, len)
-                    len = `is`.read(temp)
-                }
-                ret = String(os.toByteArray())
             }
+            ret = String(os.toByteArray())
+//            }
         } catch (ex: Exception) {
             ex.printStackTrace()
             throw ex
@@ -153,5 +183,11 @@ abstract class BaseNetwork {
                 mOutputStream?.flush()
             }
         }
+    }
+
+    fun setDoInputOutput(input: Boolean?, output: Boolean?): BaseNetwork {
+        input?.let { mDoInput = input }
+        output?.let { mDoOutput = output }
+        return this
     }
 }
