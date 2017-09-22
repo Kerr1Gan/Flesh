@@ -208,6 +208,8 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
                                     if (index < 0) {
                                         list.add(0, item)
                                         needUpdate = true
+                                    } else {
+                                        list.set(index, item)
                                     }
                                 }
                                 (recyclerView.adapter as CardListAdapter).pageModel = mPageModel!!

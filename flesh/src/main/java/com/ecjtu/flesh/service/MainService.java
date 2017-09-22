@@ -75,7 +75,7 @@ public class MainService extends Service {
 
                 switch (msg.what) {
                     case MSG_REQUEST:
-                        mBaseRequest.request("https://kerr1gan.github.io/flesh/config");
+                        mBaseRequest.request(Constants.CONFIG_URL);
                         mNotificationRequest.request(mNotifyUrl);
                         mHandler.sendEmptyMessageDelayed(MSG_REQUEST, DELAY_TIME);
                         break;
@@ -121,7 +121,7 @@ public class MainService extends Service {
     private void initRequest() {
         mBaseRequest = new AsyncNetwork();
         mBaseRequest.setDoInputOutput(true, false);
-        mBaseRequest.request("https://kerr1gan.github.io/flesh/config");
+        mBaseRequest.request(Constants.CONFIG_URL);
         mBaseRequest.setRequestCallback(new IRequestCallback() {
             @Override
             public void onSuccess(HttpURLConnection httpURLConnection, String response) {

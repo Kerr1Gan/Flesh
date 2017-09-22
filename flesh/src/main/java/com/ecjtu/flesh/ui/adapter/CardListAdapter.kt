@@ -114,11 +114,12 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<Card
                     if (values != null) {
                         val soups = values[PageSoup::class.java.simpleName] as PageModel
                         val list = pageModel.itemList
-                        list.reverse()
                         for (item in soups.itemList) {
                             val index = list.indexOf(item)
                             if (index < 0) {
-                                list.add(0, item)
+                                list.add(item)
+                            } else {
+                                list.set(index, item)
                             }
                         }
                         pageModel.nextPage = soups.nextPage

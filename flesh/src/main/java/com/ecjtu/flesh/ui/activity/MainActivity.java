@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private void checkZero() {
         AsyncNetwork request = new AsyncNetwork();
         request.setDoInputOutput(true, false);
-        request.request("https://kerr1gan.github.io/flesh/config");
+        request.request(Constants.CONFIG_URL);
         request.setRequestCallback(new IRequestCallback() {
             @Override
             public void onSuccess(HttpURLConnection httpURLConnection, String response) {
