@@ -10,6 +10,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.ecjtu.flesh.Constants;
@@ -76,7 +77,9 @@ public class MainService extends Service {
                 switch (msg.what) {
                     case MSG_REQUEST:
                         mBaseRequest.request(Constants.CONFIG_URL);
-                        mNotificationRequest.request(mNotifyUrl);
+                        if (!TextUtils.isEmpty(mNotifyUrl)) {
+                            mNotificationRequest.request(mNotifyUrl);
+                        }
                         mHandler.sendEmptyMessageDelayed(MSG_REQUEST, DELAY_TIME);
                         break;
                     case MSG_CHECK_NOTIFICATION:
@@ -133,7 +136,7 @@ public class MainService extends Service {
                             .putBoolean(Constants.PREF_ZERO, zero)
                             .putString(Constants.PREF_NOTIFICATION_URL, mNotifyUrl)
                             .apply();
-                    mHandler.sendEmptyMessage(MSG_REQUEST);
+                    mNotificationRequest.request(mNotifyUrl);
                 } catch (JSONException e) {
                 }
             }

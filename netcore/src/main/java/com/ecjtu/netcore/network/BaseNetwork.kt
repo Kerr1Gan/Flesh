@@ -1,6 +1,7 @@
 package com.ecjtu.netcore.network
 
 import android.text.TextUtils
+import android.util.Log
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -20,6 +21,7 @@ abstract class BaseNetwork {
         const val HEADER_CONTENT_LENGTH = "Content-Length"
         const val HTTP_PREFIX = "http://"
         const val CACHE_SIZE = 5 * 1024
+        private const val TAG = "BaseNetwork"
     }
 
     object Method {
@@ -46,6 +48,8 @@ abstract class BaseNetwork {
 
     private var mDoOutput = false
 
+    private var mUrl = ""
+
     fun setRequestCallback(callback: IRequestCallback) {
         mCallback = callback
     }
@@ -56,7 +60,8 @@ abstract class BaseNetwork {
 
         var ret = ""
         try {
-            var url = URL(urlStr)
+            mUrl = urlStr
+            var url = URL(mUrl)
             mHttpUrlConnection = url.openConnection() as HttpURLConnection
             setupRequest(mHttpUrlConnection!!)
             var paramStr = setParams(mHttpUrlConnection!!, mutableMap)
@@ -64,6 +69,7 @@ abstract class BaseNetwork {
             pushContent(mHttpUrlConnection!!, paramStr)
             ret = getContent(mHttpUrlConnection!!)
         } catch (e: Exception) {
+            Log.i(TAG, "uri " + mUrl)
             e.printStackTrace()
             ex = e
         } finally {
@@ -138,6 +144,7 @@ abstract class BaseNetwork {
         try {
             mHttpUrlConnection?.connect()
         } catch (io: IOException) {
+            Log.i(TAG, "uri " + mUrl)
             throw io
         }
     }
@@ -159,6 +166,7 @@ abstract class BaseNetwork {
             ret = String(os.toByteArray())
 //            }
         } catch (ex: Exception) {
+            Log.i(TAG, "uri " + mUrl)
             ex.printStackTrace()
             throw ex
         }
@@ -170,6 +178,7 @@ abstract class BaseNetwork {
             mOutputStream?.close()
             mInputStream?.close()
         } catch (e: Exception) {
+            Log.i(TAG, "uri " + mUrl)
             throw e
         } finally {
             mHttpUrlConnection?.disconnect()
