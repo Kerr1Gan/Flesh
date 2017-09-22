@@ -65,7 +65,7 @@ class NotificationTableImpl : BaseTableImpl() {
             while (!cursor.isAfterLast) {
                 val model = ModelManager.getNotificationModel(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3),
                         cursor.getInt(4),
-                        cursor.getString(5), cursor.getString(6), cursor.getString(7))
+                        cursor.getString(5), cursor.getString(6), cursor.getString(7), cursor.getString(9))
                 model.occurs = cursor.getInt(8)
                 ret.add(model)
                 cursor.moveToNext()

@@ -44,14 +44,16 @@ class DetailPageTableImpl : BaseTableImpl() {
         value.put("img_url", pageDetailModel.imgUrl)
         value.put("time", dateFormat.format(Date()))
         try {
-            val id = sqLiteDatabase.insertOrThrow(TABLE_NAME, null, value)
+            var id = sqLiteDatabase.update(TABLE_NAME, value, "base_url=?", arrayOf(pageDetailModel.baseUrl)) * 1L
+            if (id <= 0) {
+                id = sqLiteDatabase.insertOrThrow(TABLE_NAME, null, value)
+            }
             if (id >= 0) {
                 pageDetailModel.id = id.toInt()
                 val pageUrlsImpl = DetailPageUrlsTableImpl()
                 pageUrlsImpl.addPageUrls(sqLiteDatabase, id.toInt(), pageDetailModel.backupImgUrl)
             }
         } catch (ex: Exception) {
-            sqLiteDatabase.update(TABLE_NAME, value, "base_url=?", arrayOf(pageDetailModel.baseUrl))
         }
     }
 

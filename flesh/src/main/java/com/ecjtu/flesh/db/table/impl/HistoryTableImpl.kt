@@ -40,7 +40,6 @@ class HistoryTableImpl : BaseTableImpl() {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
         value.put("time", dateFormat.format(Date()))
         sqLiteDatabase.insert(TABLE_NAME, null, value)
-
     }
 
     fun getAllHistory(sqLiteDatabase: SQLiteDatabase): List<PageModel.ItemModel> {

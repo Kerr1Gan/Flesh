@@ -42,9 +42,11 @@ class DetailPageUrlsTableImpl : BaseTableImpl() {
                 value.put("image_url", item)
                 value.put("[index]", imageUrl.indexOf(item))
                 try {
-                    sqLiteDatabase.insertOrThrow(TABLE_NAME, null, value)
+                    val id = sqLiteDatabase.update(TABLE_NAME, value, "image_url=?", arrayOf(item))
+                    if (id <= 0) {
+                        sqLiteDatabase.insertOrThrow(TABLE_NAME, null, value)
+                    }
                 } catch (ex: Exception) {
-                    sqLiteDatabase.update(TABLE_NAME, value, "image_url=?", arrayOf(item))
                 }
             }
         }

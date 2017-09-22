@@ -202,6 +202,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
                             } else {
                                 val list = mPageModel!!.itemList
                                 var needUpdate = false
+                                soups.itemList.reverse()
                                 for (item in soups.itemList) {
                                     val index = list.indexOf(item)
                                     if (index < 0) {

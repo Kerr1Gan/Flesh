@@ -48,14 +48,15 @@ class ClassPageListTableImpl : BaseTableImpl() {
             value.put("id_class_page", pageModel.id)
             value.put("[index]", index++)
             try {
-                val id = sqLiteDatabase.insertOrThrow(TABLE_NAME, null, value)
+                var id = sqLiteDatabase.update(TABLE_NAME, value, "href=?", arrayOf(item.href)) * 1L
+                if (id <= 0) {
+                    id = sqLiteDatabase.insertOrThrow(TABLE_NAME, null, value)
+                }
                 if (id.toInt() >= 0) {
                     item.id = id.toInt()
                 }
-            }catch (ex:Exception){
-                sqLiteDatabase.update(TABLE_NAME,value,"href=?", arrayOf(item.href))
+            } catch (ex: Exception) {
             }
-
         }
     }
 

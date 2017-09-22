@@ -1,6 +1,5 @@
 package com.ecjtu.flesh.ui.activity;
 
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,7 +12,6 @@ import android.view.View;
 import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.R;
 import com.ecjtu.flesh.presenter.MainActivityDelegate;
-import com.ecjtu.flesh.service.MainService;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallback;
 
