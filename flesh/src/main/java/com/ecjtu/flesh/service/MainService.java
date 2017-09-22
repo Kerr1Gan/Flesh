@@ -95,7 +95,7 @@ public class MainService extends Service {
                                 db.beginTransaction();
                                 NotificationTableImpl impl = new NotificationTableImpl();
                                 for (NotificationModel item : notify) {
-                                    impl.addNotification(db, item);
+                                    impl.updateNotification(db, item);
                                 }
                                 db.setTransactionSuccessful();
                                 db.endTransaction();
@@ -109,19 +109,19 @@ public class MainService extends Service {
             }
         };
         initRequest();
-        mHandler.sendEmptyMessageDelayed(MSG_REQUEST, DELAY_TIME);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "onStartCommand");
+        mHandler.sendEmptyMessage(MSG_REQUEST);
         return START_STICKY;
     }
 
     private void initRequest() {
         mBaseRequest = new AsyncNetwork();
         mBaseRequest.setDoInputOutput(true, false);
-        mBaseRequest.request("https://kerr1gan.github.io/flesh/config.json");
+        mBaseRequest.request("https://kerr1gan.github.io/flesh/config");
         mBaseRequest.setRequestCallback(new IRequestCallback() {
             @Override
             public void onSuccess(HttpURLConnection httpURLConnection, String response) {
@@ -133,13 +133,13 @@ public class MainService extends Service {
                             .putBoolean(Constants.PREF_ZERO, zero)
                             .putString(Constants.PREF_NOTIFICATION_URL, mNotifyUrl)
                             .apply();
+                    mHandler.sendEmptyMessage(MSG_REQUEST);
                 } catch (JSONException e) {
                 }
             }
         });
 
         mNotificationRequest = new AsyncNetwork();
-        mNotificationRequest.request(mNotifyUrl);
         mNotificationRequest.setRequestCallback(new IRequestCallback() {
             @Override
             public void onSuccess(HttpURLConnection httpURLConnection, String response) {
@@ -149,8 +149,9 @@ public class MainService extends Service {
                     for (int i = 0; i < arr.length(); i++) {
                         JSONObject obj = arr.getJSONObject(i);
                         NotificationModel model = ModelManager.getNotificationModel(obj.getInt("id"), obj.getString("title"),
-                                obj.getString("ticker"), obj.getString("content"),
-                                obj.getInt("limit"), obj.getString("time"), obj.getString("timeLimit"), obj.getString("actionDetailUrl"));
+                                obj.getString("content"), obj.getString("ticker"),
+                                obj.getInt("limit"), obj.getString("time"), obj.getString("timeLimit"), obj.getString("actionDetailUrl"),
+                                obj.getString("h5Page"));
                         models.add(model);
                     }
                 } catch (JSONException e) {

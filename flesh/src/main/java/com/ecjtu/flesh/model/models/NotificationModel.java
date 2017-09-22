@@ -14,17 +14,20 @@ public class NotificationModel {
     String timeLimit = "";
     String actionDetailUrl = "";
     int occurs = 0;
+    String h5Page = "";
 
     public NotificationModel() {
     }
 
-    public NotificationModel(int id, String title, String content, String ticker, int limit, String time, String timeLimit) {
+    public NotificationModel(int id, String title, String content, String ticker, int limit, String time, String timeLimit, String h5Page) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.limit = limit;
         this.time = time;
         this.timeLimit = timeLimit;
+        this.ticker = ticker;
+        this.h5Page = h5Page;
     }
 
     public int getId() {
@@ -97,6 +100,14 @@ public class NotificationModel {
 
     public void setTicker(String ticker) {
         this.ticker = ticker;
+    }
+
+    public String getH5Page() {
+        return h5Page;
+    }
+
+    public void setH5Page(String h5Page) {
+        this.h5Page = h5Page;
     }
 
     @Override

@@ -21,7 +21,8 @@ class NotificationTableImpl : BaseTableImpl() {
                 "    time              STRING,\n" +
                 "    time_limit        STRING,\n" +
                 "    action_detail_url STRING,\n" +
-                "    occurs            INTEGER\n" +
+                "    occurs            INTEGER,\n" +
+                "    h5_page           STRING\n" +
                 ");\n"
 
     companion object {
@@ -50,11 +51,10 @@ class NotificationTableImpl : BaseTableImpl() {
         content.put("time", model.time)
         content.put("time_limit", model.timeLimit)
         content.put("action_detail_url", model.actionDetailUrl)
-        content.put("occurs", 0)
+        content.put("occurs", model.occurs)
         try {
             sqLiteDatabase.insertOrThrow(TABLE_NAME, null, content)
         } catch (ex: Exception) {
-            sqLiteDatabase.update(TABLE_NAME, content, "_id=?", arrayOf(model.id.toString()))
         }
     }
 
@@ -63,9 +63,12 @@ class NotificationTableImpl : BaseTableImpl() {
         val cursor = sqLiteDatabase.rawQuery("SELECT * FROM $TABLE_NAME", arrayOf())
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast) {
-                ret.add(ModelManager.getNotificationModel(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3),
-                        cursor.getInt(3),
-                        cursor.getString(4), cursor.getString(5), cursor.getString(6)))
+                val model = ModelManager.getNotificationModel(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3),
+                        cursor.getInt(4),
+                        cursor.getString(5), cursor.getString(6), cursor.getString(7))
+                model.occurs = cursor.getInt(8)
+                ret.add(model)
+                cursor.moveToNext()
             }
         }
         cursor.close()

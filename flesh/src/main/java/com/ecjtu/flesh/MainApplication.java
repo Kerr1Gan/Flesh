@@ -19,6 +19,7 @@ import com.ecjtu.flesh.db.table.impl.DetailPageUrlsTableImpl;
 import com.ecjtu.flesh.db.table.impl.HistoryTableImpl;
 import com.ecjtu.flesh.db.table.impl.LikeTableImpl;
 import com.ecjtu.flesh.db.table.impl.LikeTableImplV2;
+import com.ecjtu.flesh.db.table.impl.NotificationTableImpl;
 import com.ecjtu.flesh.service.MainService;
 import com.tencent.bugly.Bugly;
 
@@ -63,6 +64,7 @@ public class MainApplication extends Application {
         manager.registerTable(new DetailPageUrlsTableImpl());
         manager.registerTable(new HistoryTableImpl());
         manager.registerTable(new LikeTableImplV2());
+        manager.registerTable(new NotificationTableImpl());
         manager.getHelper(this, "heaven", 2).getWritableDatabase();
     }
 
@@ -72,7 +74,7 @@ public class MainApplication extends Application {
     }
 
     private void init() {
-
+        startService(new Intent(getApplicationContext(),MainService.class));
     }
 
     private static class SimpleGlideModule extends AppGlideModule {

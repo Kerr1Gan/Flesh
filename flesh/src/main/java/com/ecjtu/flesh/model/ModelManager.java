@@ -8,7 +8,7 @@ import com.ecjtu.flesh.model.models.NotificationModel;
 
 public class ModelManager {
 
-    public static NotificationModel getNotificationModel(int id, String title, String content, String ticker, int limit, String time, String timeLimit, String actionDetailUrl) {
+    public static NotificationModel getNotificationModel(int id, String title, String content, String ticker, int limit, String time, String timeLimit, String actionDetailUrl, String h5Page) {
         NotificationModel model = new NotificationModel();
         model.setId(id);
         model.setTitle(title);
@@ -18,6 +18,7 @@ public class ModelManager {
         model.setTime(time);
         model.setTimeLimit(timeLimit);
         model.setActionDetailUrl(actionDetailUrl);
+        model.setH5Page(h5Page);
         return model;
     }
 
