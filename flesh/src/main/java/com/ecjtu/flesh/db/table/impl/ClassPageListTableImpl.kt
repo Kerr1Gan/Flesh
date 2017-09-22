@@ -79,7 +79,7 @@ class ClassPageListTableImpl : BaseTableImpl() {
             cursor.close()
             sql = "SELECT tb1.href FROM $TABLE_NAME tb1,${ClassPageTableImpl.TABLE_NAME} tb2 WHERE tb1.id_class_page = tb2._id AND tb2.next_page = \"${ret[0]}\" ORDER BY [index]"
             cursor = sqLiteDatabase.rawQuery(sql, arrayOf())
-            if (cursor.moveToLast()) {
+            if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast) {
                     ret[1] = cursor.getString(0)
                     cursor.moveToNext()

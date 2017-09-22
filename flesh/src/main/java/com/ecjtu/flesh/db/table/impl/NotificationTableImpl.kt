@@ -52,6 +52,7 @@ class NotificationTableImpl : BaseTableImpl() {
         content.put("time_limit", model.timeLimit)
         content.put("action_detail_url", model.actionDetailUrl)
         content.put("occurs", model.occurs)
+        content.put("h5_page", model.h5Page)
         try {
             sqLiteDatabase.insertOrThrow(TABLE_NAME, null, content)
         } catch (ex: Exception) {
