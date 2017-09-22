@@ -62,7 +62,14 @@ public class MainActivity extends AppCompatActivity {
                             .putString(Constants.PREF_NOTIFICATION_URL, json.getString("notification"))
                             .apply();
                     if (!zero && mDelegate == null) {
-                        mDelegate = new MainActivityDelegate(MainActivity.this);
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mDelegate == null) {
+                                    mDelegate = new MainActivityDelegate(MainActivity.this);
+                                }
+                            }
+                        });
                     }
                 } catch (JSONException e) {
                 }

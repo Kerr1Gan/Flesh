@@ -32,6 +32,10 @@
             android:theme="@style/ImageStatusBarStyle" />
 
         <activity android:name="com.ecjtu.flesh.ui.activity.AppThemeActivity" />
+
+        <service
+            android:name=".service.MainService"
+            android:process="notify" />
     </application>
 
 </manifest>

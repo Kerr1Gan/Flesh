@@ -44,7 +44,7 @@ abstract class BaseNetwork {
 
     private var mDoInput = true
 
-    private var mDoOutput = true
+    private var mDoOutput = false
 
     fun setRequestCallback(callback: IRequestCallback) {
         mCallback = callback
@@ -119,6 +119,7 @@ abstract class BaseNetwork {
         var ret = ""
         mutableMap?.let {
             httpURLConnection.requestMethod = Method.POST
+            setDoInputOutput(null, true)
             var param = ""
             for (obj in mutableMap.entries) {
                 if (!TextUtils.isEmpty(param)) {
