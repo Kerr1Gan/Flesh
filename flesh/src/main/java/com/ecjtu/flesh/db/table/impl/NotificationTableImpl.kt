@@ -16,6 +16,7 @@ class NotificationTableImpl : BaseTableImpl() {
                 "    _id               INTEGER PRIMARY KEY ASC AUTOINCREMENT,\n" +
                 "    title             STRING,\n" +
                 "    content           STRING,\n" +
+                "    ticker            STRING,\n" +
                 "    [limit]           INTEGER,\n" +
                 "    time              STRING,\n" +
                 "    time_limit        STRING,\n" +
@@ -44,6 +45,7 @@ class NotificationTableImpl : BaseTableImpl() {
         content.put("_id", model.id)
         content.put("title", model.title)
         content.put("content", model.content)
+        content.put("ticker", model.ticker)
         content.put("[limit]", model.limit)
         content.put("time", model.time)
         content.put("time_limit", model.timeLimit)
@@ -51,7 +53,7 @@ class NotificationTableImpl : BaseTableImpl() {
         content.put("occurs", 0)
         try {
             sqLiteDatabase.insertOrThrow(TABLE_NAME, null, content)
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             sqLiteDatabase.update(TABLE_NAME, content, "_id=?", arrayOf(model.id.toString()))
         }
     }
@@ -61,7 +63,8 @@ class NotificationTableImpl : BaseTableImpl() {
         val cursor = sqLiteDatabase.rawQuery("SELECT * FROM $TABLE_NAME", arrayOf())
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast) {
-                ret.add(ModelManager.getNotificationModel(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getInt(3),
+                ret.add(ModelManager.getNotificationModel(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3),
+                        cursor.getInt(3),
                         cursor.getString(4), cursor.getString(5), cursor.getString(6)))
             }
         }
@@ -72,12 +75,12 @@ class NotificationTableImpl : BaseTableImpl() {
     fun updateNotification(sqLiteDatabase: SQLiteDatabase, model: NotificationModel) {
         val content = ContentValues()
         content.put("_id", model.id)
-        content.put("title", model.title)
         content.put("content", model.content)
         content.put("[limit]", model.limit)
         content.put("time", model.time)
         content.put("time_limit", model.timeLimit)
         content.put("action_detail_url", model.actionDetailUrl)
+        content.put("title", model.title)
         content.put("occurs", model.occurs)
         sqLiteDatabase.update(TABLE_NAME, content, "_id=?", arrayOf(model.id.toString()))
     }

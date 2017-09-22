@@ -35,7 +35,8 @@
 
         <service
             android:name=".service.MainService"
-            android:process="notify" />
+            android:exported="true"
+            android:process=":child" />
     </application>
 
 </manifest>

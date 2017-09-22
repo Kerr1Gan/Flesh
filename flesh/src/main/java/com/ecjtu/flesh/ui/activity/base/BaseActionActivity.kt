@@ -20,7 +20,7 @@ import android.view.ViewConfiguration
 /**
  * Created by KeriGan on 2017/6/25.
  */
-abstract class BaseActionActivity : AppCompatActivity(), MemoryUnLeakHandler.IHandleMessage {
+abstract class BaseActionActivity : AppCompatActivity(), WeakHandler.IHandleMessage {
 
     private var mLocalBroadcastManger: LocalBroadcastManager? = null
 
@@ -99,7 +99,7 @@ abstract class BaseActionActivity : AppCompatActivity(), MemoryUnLeakHandler.IHa
     }
 
     class SimpleHandler(host: BaseActionActivity) :
-            MemoryUnLeakHandler<BaseActionActivity>(host)
+            WeakHandler<BaseActionActivity>(host)
 
     fun isNavigationBarShow(activity: Activity): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {

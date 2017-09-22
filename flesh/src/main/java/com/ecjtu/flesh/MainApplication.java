@@ -3,6 +3,7 @@ package com.ecjtu.flesh;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
@@ -18,6 +19,7 @@ import com.ecjtu.flesh.db.table.impl.DetailPageUrlsTableImpl;
 import com.ecjtu.flesh.db.table.impl.HistoryTableImpl;
 import com.ecjtu.flesh.db.table.impl.LikeTableImpl;
 import com.ecjtu.flesh.db.table.impl.LikeTableImplV2;
+import com.ecjtu.flesh.service.MainService;
 import com.tencent.bugly.Bugly;
 
 import java.util.List;

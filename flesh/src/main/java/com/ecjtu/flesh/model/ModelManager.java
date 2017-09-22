@@ -8,11 +8,12 @@ import com.ecjtu.flesh.model.models.NotificationModel;
 
 public class ModelManager {
 
-    public static NotificationModel getNotificationModel(int id,String title,String content,int limit,String time,String timeLimit,String actionDetailUrl){
+    public static NotificationModel getNotificationModel(int id, String title, String content, String ticker, int limit, String time, String timeLimit, String actionDetailUrl) {
         NotificationModel model = new NotificationModel();
         model.setId(id);
         model.setTitle(title);
         model.setContent(content);
+        model.setTicker(ticker);
         model.setLimit(limit);
         model.setTime(time);
         model.setTimeLimit(timeLimit);

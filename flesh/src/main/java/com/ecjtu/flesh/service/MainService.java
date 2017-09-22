@@ -17,6 +17,7 @@ import com.ecjtu.flesh.db.DatabaseManager;
 import com.ecjtu.flesh.db.table.impl.NotificationTableImpl;
 import com.ecjtu.flesh.model.ModelManager;
 import com.ecjtu.flesh.model.models.NotificationModel;
+import com.ecjtu.flesh.notification.SimpleNotificationBuilder;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallback;
 
@@ -49,6 +50,10 @@ public class MainService extends Service {
 
     private final long DELAY_TIME = 10 * 60 * 1000;
 
+    private static final int MSG_REQUEST = 0x10;
+
+    private static final int MSG_CHECK_NOTIFICATION = 0x11;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -67,13 +72,44 @@ public class MainService extends Service {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                mBaseRequest.request("https://kerr1gan.github.io/flesh/config.json");
-                mNotificationRequest.request(mNotifyUrl);
-                mHandler.sendEmptyMessageDelayed(0, DELAY_TIME);
+
+                switch (msg.what) {
+                    case MSG_REQUEST:
+                        mBaseRequest.request("https://kerr1gan.github.io/flesh/config");
+                        mNotificationRequest.request(mNotifyUrl);
+                        mHandler.sendEmptyMessageDelayed(MSG_REQUEST, DELAY_TIME);
+                        break;
+                    case MSG_CHECK_NOTIFICATION:
+                        List<NotificationModel> notify = hasNotification();
+                        if (notify != null) {
+                            for (int i = 0; i < notify.size(); i++) {
+                                NotificationModel model = notify.get(i);
+                                SimpleNotificationBuilder builder = new SimpleNotificationBuilder(MainService.this);
+                                builder.build(model.getTitle(), model.getContent(), model.getTicker(), model.getActionDetailUrl());
+                                builder.send(null);
+                                model.setOccurs(model.getOccurs() + 1);
+                            }
+
+                            SQLiteDatabase db = DatabaseManager.getInstance(MainService.this).getDatabase();
+                            if (db != null) {
+                                db.beginTransaction();
+                                NotificationTableImpl impl = new NotificationTableImpl();
+                                for (NotificationModel item : notify) {
+                                    impl.addNotification(db, item);
+                                }
+                                db.setTransactionSuccessful();
+                                db.endTransaction();
+                                db.close();
+                            }
+
+                        }
+                        break;
+                }
+
             }
         };
         initRequest();
-        mHandler.sendEmptyMessageDelayed(0, DELAY_TIME);
+        mHandler.sendEmptyMessageDelayed(MSG_REQUEST, DELAY_TIME);
     }
 
     @Override
@@ -112,7 +148,8 @@ public class MainService extends Service {
                     JSONArray arr = new JSONArray(response);
                     for (int i = 0; i < arr.length(); i++) {
                         JSONObject obj = arr.getJSONObject(i);
-                        NotificationModel model = ModelManager.getNotificationModel(obj.getInt("id"), obj.getString("title"), obj.getString("content"),
+                        NotificationModel model = ModelManager.getNotificationModel(obj.getInt("id"), obj.getString("title"),
+                                obj.getString("ticker"), obj.getString("content"),
                                 obj.getInt("limit"), obj.getString("time"), obj.getString("timeLimit"), obj.getString("actionDetailUrl"));
                         models.add(model);
                     }
@@ -130,6 +167,8 @@ public class MainService extends Service {
                     db.endTransaction();
                     db.close();
                 }
+
+                mHandler.sendEmptyMessage(MSG_CHECK_NOTIFICATION);
             }
         });
     }
@@ -143,19 +182,21 @@ public class MainService extends Service {
         mHandler.removeCallbacksAndMessages(null);
     }
 
-    public boolean hasNotification() {
+    public List<NotificationModel> hasNotification() {
         SQLiteDatabase db = DatabaseManager.getInstance(this).getDatabase();
+        List<NotificationModel> ret = null;
         if (db != null) {
             NotificationTableImpl impl = new NotificationTableImpl();
             List<NotificationModel> models = impl.getAllNotification(db);
             db.close();
+            ret = new ArrayList<>();
             for (NotificationModel model : models) {
                 if (model.getOccurs() < model.getLimit() || model.getLimit() < 0) {
-                    return true;
+                    ret.add(model);
                 }
             }
         }
-        return false;
+        return ret;
     }
 
     public static class SimpleServiceStub extends IServiceInterface.Stub {
@@ -167,7 +208,7 @@ public class MainService extends Service {
 
         @Override
         public boolean hasNotification() throws RemoteException {
-            return mService.hasNotification();
+            return mService.hasNotification().size() > 0;
         }
     }
 

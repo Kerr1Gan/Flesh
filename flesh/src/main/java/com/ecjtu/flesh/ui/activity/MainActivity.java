@@ -1,5 +1,6 @@
 package com.ecjtu.flesh.ui.activity;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,6 +13,7 @@ import android.view.View;
 import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.R;
 import com.ecjtu.flesh.presenter.MainActivityDelegate;
+import com.ecjtu.flesh.service.MainService;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallback;
 
@@ -45,12 +47,13 @@ public class MainActivity extends AppCompatActivity {
         if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.PREF_ZERO, false)) {
             mDelegate = new MainActivityDelegate(this);
         }
+
     }
 
     private void checkZero() {
         AsyncNetwork request = new AsyncNetwork();
         request.setDoInputOutput(true, false);
-        request.request("https://kerr1gan.github.io/flesh/config.json");
+        request.request("https://kerr1gan.github.io/flesh/config");
         request.setRequestCallback(new IRequestCallback() {
             @Override
             public void onSuccess(HttpURLConnection httpURLConnection, String response) {

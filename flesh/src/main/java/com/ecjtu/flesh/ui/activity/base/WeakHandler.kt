@@ -7,7 +7,7 @@ import java.lang.ref.WeakReference
 /**
  * Created by Ethan_Xiang on 2017/7/3.
  */
-open class MemoryUnLeakHandler<T : MemoryUnLeakHandler.IHandleMessage>(host: T): Handler(){
+open class WeakHandler<T : WeakHandler.IHandleMessage>(host: T): Handler(){
 
     private var mWeakRef: WeakReference<T>? =null
     init {

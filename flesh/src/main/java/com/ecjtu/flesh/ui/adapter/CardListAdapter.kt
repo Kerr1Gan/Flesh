@@ -118,8 +118,6 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<Card
                             val index = list.indexOf(item)
                             if (index < 0) {
                                 list.add(0, item)
-                            } else {
-                                list.set(index, item)
                             }
                         }
                         pageModel.nextPage = soups.nextPage

@@ -8,6 +8,7 @@ public class NotificationModel {
     int id;
     String title = "";
     String content = "";
+    String ticker = "";
     int limit;
     String time = "";
     String timeLimit = "";
@@ -17,7 +18,7 @@ public class NotificationModel {
     public NotificationModel() {
     }
 
-    public NotificationModel(int id, String title, String content, int limit, String time, String timeLimit) {
+    public NotificationModel(int id, String title, String content, String ticker, int limit, String time, String timeLimit) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -88,6 +89,14 @@ public class NotificationModel {
 
     public void setOccurs(int occurs) {
         this.occurs = occurs;
+    }
+
+    public String getTicker() {
+        return ticker;
+    }
+
+    public void setTicker(String ticker) {
+        this.ticker = ticker;
     }
 
     @Override
