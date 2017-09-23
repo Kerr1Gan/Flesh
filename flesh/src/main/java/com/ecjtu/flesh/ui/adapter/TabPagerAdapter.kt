@@ -102,27 +102,28 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
             val helper = PageListCacheHelper(context.filesDir.absolutePath)
             if (entry.value.getPageModel() != null) {
                 val pageModel = entry.value.getPageModel()
-                if (recyclerView != null) {
-                    val lastPosition = findLastVisiblePosition(recyclerView)
-                    val href = pageModel?.itemList?.get(lastPosition)?.href ?: ""
-                    val db = DatabaseManager.getInstance(context)?.getDatabase()
-                    if (db != null) {
-                        val impl = ClassPageListTableImpl()
-                        val ret = impl.findNextPageAndLastHref(db, href)
-                        if (ret != null && !TextUtils.isEmpty(ret[0])) {
-                            pageModel?.nextPage = ret[0]
-                            val list = ArrayList<PageModel.ItemModel>()
-                            for (item in pageModel?.itemList!!) {
-                                list.add(item)
-                                if (item.href == ret[1]) {
-                                    break
-                                }
-                            }
-                            pageModel.itemList = list
-                        }
-                        db.close()
-                    }
-                }
+                //todo 无法正确获取到当前位置对应的nextPageUrl
+//                if (recyclerView != null) {
+//                    val lastPosition = findLastVisiblePosition(recyclerView)
+//                    val href = pageModel?.itemList?.get(lastPosition)?.href ?: ""
+//                    val db = DatabaseManager.getInstance(context)?.getDatabase()
+//                    if (db != null) {
+//                        val impl = ClassPageListTableImpl()
+//                        val ret = impl.findNextPageAndLastHref(db, href)
+//                        if (ret != null && !TextUtils.isEmpty(ret[0])) {
+//                            pageModel?.nextPage = ret[0]
+//                            val list = ArrayList<PageModel.ItemModel>()
+//                            for (item in pageModel?.itemList!!) {
+//                                list.add(item)
+//                                if (item.href == ret[1]) {
+//                                    break
+//                                }
+//                            }
+//                            pageModel.itemList = list
+//                        }
+//                        db.close()
+//                    }
+//                }
                 helper.put(KEY_CARD_CACHE + entry.key, pageModel)
             }
             if (recyclerView != null) {
