@@ -46,10 +46,7 @@ class ClassPageTableImpl : BaseTableImpl() {
         try {
             id = sqLiteDatabase.update(TABLE_NAME, value, "next_page=?", arrayOf(pageModel.nextPage)) * 1L
             if (id <= 0) {
-                id = sqLiteDatabase.insertOrThrow(TABLE_NAME, null, value)
-            }
-            if (id.toInt() > 0) {
-                pageModel.id = id.toInt()
+                sqLiteDatabase.insertOrThrow(TABLE_NAME, null, value)
             }
         } catch (ex: Exception) {
         }

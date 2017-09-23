@@ -132,7 +132,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<Card
                         val db = DatabaseManager.getInstance(holder?.itemView?.context)?.getDatabase()
                         db?.let {
                             db.beginTransaction()
-                            impl.addPage(db, soups)
+                            impl.addPage(db, pageModel)
                             db.setTransactionSuccessful()
                             db.endTransaction()
                         }

@@ -53,7 +53,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         thread {
             val helper = PageListCacheHelper(container?.context?.filesDir?.absolutePath)
             if (!title.contains("推荐")) {
-                var pageModel: PageModel? = helper.get(KEY_CARD_CACHE + getPageTitle(position))
+                val pageModel: PageModel? = helper.get(KEY_CARD_CACHE + getPageTitle(position))
                 vh.itemView.post {
                     vh.load(pageModel)
                 }
@@ -195,25 +195,29 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
                     val values = SoupFactory.parseHtml(PageSoup::class.java, response)
                     if (values != null) {
                         val soups = values[PageSoup::class.java.simpleName] as PageModel
+
+                        var needUpdate = false
+                        if (mPageModel != null) {
+                            val list = mPageModel!!.itemList
+                            soups.itemList.reverse()
+                            for (item in soups.itemList) {
+                                val index = list.indexOf(item)
+                                if (index < 0) {
+                                    list.add(0, item)
+                                    needUpdate = true
+                                } else {
+                                    list.set(index, item)
+                                }
+                            }
+                        }
+                        val finalNeedUpdate = needUpdate
                         recyclerView?.post {
                             if (mPageModel == null) {
                                 recyclerView.adapter = CardListAdapter(soups)
                                 mPageModel = soups
                             } else {
-                                val list = mPageModel!!.itemList
-                                var needUpdate = false
-                                soups.itemList.reverse()
-                                for (item in soups.itemList) {
-                                    val index = list.indexOf(item)
-                                    if (index < 0) {
-                                        list.add(0, item)
-                                        needUpdate = true
-                                    } else {
-                                        list.set(index, item)
-                                    }
-                                }
                                 (recyclerView.adapter as CardListAdapter).pageModel = mPageModel!!
-                                if (needUpdate) {
+                                if (finalNeedUpdate) {
                                     recyclerView.adapter.notifyDataSetChanged()
                                 }
                             }
@@ -222,7 +226,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
                         val db = DatabaseManager.getInstance(mRefreshLayout?.context)?.getDatabase()
                         db?.let {
                             db.beginTransaction()
-                            impl.addPage(db, soups)
+                            impl.addPage(db, if (mPageModel == null) soups else mPageModel!!)
                             db.setTransactionSuccessful()
                             db.endTransaction()
                         }
