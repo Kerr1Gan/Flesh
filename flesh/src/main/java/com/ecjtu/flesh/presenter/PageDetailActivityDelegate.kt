@@ -50,7 +50,7 @@ class PageDetailActivityDelegate(owner: PageDetailActivity, val url: String) : D
                     }
                     val db = DatabaseManager.getInstance(owner)?.getDatabase() as SQLiteDatabase
                     val impl = DetailPageTableImpl()
-                    //todo 获取到畸形缓存列表加入数据库
+                    //todo 获取到高度缓存加入数据库
                     impl.addDetailPage(db,local)
                     db.close()
                 }

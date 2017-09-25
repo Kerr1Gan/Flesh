@@ -34,4 +34,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
 //    compile 'com.tencent.bugly:crashreport:latest.release'
     compile 'com.tencent.bugly:crashreport_upgrade:latest.release'
+//    compile project(path: ':fastscroll')
 }

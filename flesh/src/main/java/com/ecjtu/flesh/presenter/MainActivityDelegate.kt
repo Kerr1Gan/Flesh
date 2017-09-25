@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView
 import android.text.format.Formatter
 import android.view.Gravity
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.MenuListCacheHelper
 import com.ecjtu.flesh.ui.activity.AppThemeActivity
@@ -27,6 +28,7 @@ import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
 import java.io.File
 import java.net.HttpURLConnection
+import kotlin.concurrent.thread
 
 
 /**
@@ -85,7 +87,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 }
             }
         })
-    
+
         initView()
     }
 
@@ -107,7 +109,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         }
 
         findViewById(R.id.like)?.setOnClickListener {
-            val intent = AppThemeActivity.newInstance(owner,PageLikeFragment::class.java)
+            val intent = AppThemeActivity.newInstance(owner, PageLikeFragment::class.java)
             owner.startActivity(intent)
             val drawerLayout = findViewById(R.id.drawer_layout) as DrawerLayout
             drawerLayout.closeDrawer(Gravity.START)
@@ -122,7 +124,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             }
             val size = Formatter.formatFileSize(owner, ret)
             AlertDialog.Builder(owner).setTitle("缓存大小").setMessage("已缓存${size}数据,是否清理？")
-                    .setPositiveButton("确定", { dialog, which -> for (child in list) child.delete() })
+                    .setPositiveButton("确定", { dialog, which -> thread { Glide.get(owner).clearDiskCache() } })
                     .setNegativeButton("取消", null)
                     .create().show()
         }
@@ -134,7 +136,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         }
 
         findViewById(R.id.history)?.setOnClickListener {
-            val intent = AppThemeActivity.newInstance(owner,PageHistoryFragment::class.java)
+            val intent = AppThemeActivity.newInstance(owner, PageHistoryFragment::class.java)
             owner.startActivity(intent)
             val drawerLayout = findViewById(R.id.drawer_layout) as DrawerLayout
             drawerLayout.closeDrawer(Gravity.START)

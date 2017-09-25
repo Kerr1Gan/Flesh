@@ -47,11 +47,13 @@ public class MainApplication extends Application {
             init();
         } else {
             //child process
-            SimpleGlideModule module = new SimpleGlideModule();
-            GlideBuilder builder = new GlideBuilder();
-            module.applyOptions(this, builder);
-            Glide glide = builder.build(this);
-            Glide.init(glide);
+            if (!getAppNameByPID(this, android.os.Process.myPid()).endsWith("msg")) {
+                SimpleGlideModule module = new SimpleGlideModule();
+                GlideBuilder builder = new GlideBuilder();
+                module.applyOptions(this, builder);
+                Glide glide = builder.build(this);
+                Glide.init(glide);
+            }
         }
     }
 
@@ -74,7 +76,19 @@ public class MainApplication extends Application {
     }
 
     private void init() {
-        startService(new Intent(getApplicationContext(),MainService.class));
+        startService(new Intent(getApplicationContext(), MainService.class));
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Glide.get(this).onLowMemory();
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        Glide.get(this).onTrimMemory(level);
     }
 
     private static class SimpleGlideModule extends AppGlideModule {

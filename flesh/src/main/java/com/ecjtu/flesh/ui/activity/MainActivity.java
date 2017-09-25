@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
 import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.R;
 import com.ecjtu.flesh.presenter.MainActivityDelegate;
@@ -91,6 +92,12 @@ public class MainActivity extends AppCompatActivity {
         if (mDelegate != null) {
             mDelegate.onResume();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Glide.get(this).clearMemory();
     }
 
     protected int getStatusBarHeight() {

@@ -17,6 +17,7 @@ allprojects {
     repositories {
         jcenter()
         mavenCentral() // jcenter() works as well because it pulls from Maven Central
+//        maven { url 'http://maven.google.com' }
     }
 }
 

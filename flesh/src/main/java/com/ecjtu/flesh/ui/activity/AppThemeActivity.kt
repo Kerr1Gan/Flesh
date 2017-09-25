@@ -15,7 +15,7 @@ class AppThemeActivity : BaseFragmentActivity() {
         @JvmStatic
         fun newInstance(context: Context, fragment: Class<*>, bundle: Bundle? = null,
                         clazz: Class<out Activity> = getActivityClazz()): Intent {
-            return BaseFragmentActivity.newInstance(context, fragment, bundle, getActivityClazz())
+            return BaseFragmentActivity.newInstance(context, fragment, bundle, clazz)
         }
 
         protected fun getActivityClazz(): Class<out Activity> {

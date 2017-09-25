@@ -14,7 +14,6 @@ import android.view.ViewGroup
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.PageListCacheHelper
 import com.ecjtu.flesh.db.DatabaseManager
-import com.ecjtu.flesh.db.table.impl.ClassPageListTableImpl
 import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.jsoup.impl.PageSoup
@@ -133,6 +132,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
             }
         }
         editor.apply()
+        mViewStub.clear()
     }
 
     fun onResume() {
@@ -166,6 +166,8 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         private fun loadCache(context: Context, key: String) {
             if (mPageModel != null) {
                 recyclerView?.adapter = CardListAdapter(mPageModel!!)
+//                val fastScroller = itemView.findViewById(R.id.fast_scroll) as FastScroller
+//                fastScroller.setRecyclerView(recyclerView)
                 val lastPosition = PreferenceManager.getDefaultSharedPreferences(context).getInt(KEY_LAST_POSITION + key, -1)
                 if (lastPosition >= 0) {
                     val yOffset = PreferenceManager.getDefaultSharedPreferences(context).getInt(KEY_LAST_POSITION_OFFSET + key, 0)
@@ -215,6 +217,8 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
                         recyclerView?.post {
                             if (mPageModel == null) {
                                 recyclerView.adapter = CardListAdapter(soups)
+//                                val fastScroller = itemView.findViewById(R.id.fast_scroll) as FastScroller
+//                                fastScroller.setRecyclerView(recyclerView)
                                 mPageModel = soups
                             } else {
                                 (recyclerView.adapter as CardListAdapter).pageModel = mPageModel!!

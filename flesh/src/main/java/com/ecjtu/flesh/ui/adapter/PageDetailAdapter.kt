@@ -157,7 +157,7 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<P
     private fun setHeight(position: Int, height: Int) {
         if (position >= mListHeight.size) {
             val diff = position - mListHeight.size + 1
-            mListHeight.addAll(Array<Int>(diff, { 0 }))
+            mListHeight.addAll(Array<Int>(diff, { height }))
         }
         mListHeight.set(position, height)
     }
