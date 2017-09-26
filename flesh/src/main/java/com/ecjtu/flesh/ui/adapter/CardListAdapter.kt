@@ -38,7 +38,7 @@ import java.net.HttpURLConnection
 /**
  * Created by Ethan_Xiang on 2017/9/8.
  */
-open class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener{
+open class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
 
     private val mListHeight = ArrayList<Int>()
 
@@ -56,14 +56,19 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<Card
         if (getHeight(position) != 0) {
             params?.height = getHeight(position)/*mLastHeight*/ // 防止上滑时 出现跳动的情况
         } else {
-            val next = getHeight(position + 1)
-            val last = getHeight(position - 1)
-            if (next != 0) {
-                params?.height = next
-            } else if (last != 0) {
-                params?.height = last
+            val cache = pageModel.itemList[position].height
+            if (cache != 0) {
+                params?.height = cache
             } else {
-                params?.height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300f, context?.resources?.displayMetrics).toInt()
+                val next = getHeight(position + 1)
+                val last = getHeight(position - 1)
+                if (next != 0) {
+                    params?.height = next
+                } else if (last != 0) {
+                    params?.height = last
+                } else {
+                    params?.height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300f, context?.resources?.displayMetrics).toInt()
+                }
             }
         }
 
@@ -230,6 +235,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<Card
             mListHeight.addAll(Array<Int>(diff, { height }))
         }
         mListHeight.set(position, height)
+        pageModel.itemList[position].height = height
     }
 
     open fun onRelease() {

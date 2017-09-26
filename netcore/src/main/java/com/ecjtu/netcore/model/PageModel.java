@@ -48,6 +48,7 @@ public class PageModel {
         String href;
         String description;
         String imgUrl;
+        int height;
 
         public ItemModel(String href, String description, String imgUrl) {
             this.href = href;
@@ -85,6 +86,14 @@ public class PageModel {
 
         public void setId(int id) {
             this.id = id;
+        }
+
+        public void setHeight(int height){
+            this.height = height;
+        }
+
+        public int getHeight(){
+            return this.height;
         }
 
         @Override

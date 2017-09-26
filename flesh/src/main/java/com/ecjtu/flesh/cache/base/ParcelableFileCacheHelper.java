@@ -30,7 +30,13 @@ public abstract class ParcelableFileCacheHelper extends FileCacheHelper {
         buf = mByteArrayOutputStream.toByteArray();
         parcel.unmarshall(buf, 0, buf.length);
         parcel.setDataPosition(0);
-
+        int version = parcel.readInt();
+        if (version != getVersion()) {
+            if (getVersion() <= 0) {
+                throw new IllegalStateException("getVersion() must be >0");
+            }
+            return null;
+        }
         //read parcel
         T ret = readParcel(parcel);
 
@@ -42,9 +48,13 @@ public abstract class ParcelableFileCacheHelper extends FileCacheHelper {
 
     @Override
     protected <T> void writeObjectFromStream(FileOutputStream os, T object) throws IOException, ClassNotFoundException {
-        Parcel parcel = writeParcel(Parcel.obtain(),object);
-        os.write(parcel.marshall());
-        parcel.recycle();
+        Parcel parcel = Parcel.obtain();
+        parcel.writeInt(getVersion());
+        parcel = writeParcel(parcel, object);
+        if (parcel != null) {
+            os.write(parcel.marshall());
+            parcel.recycle();
+        }
         gc();
     }
 
@@ -61,6 +71,11 @@ public abstract class ParcelableFileCacheHelper extends FileCacheHelper {
         return ret;
     }
 
+    @Override
+    protected <T> boolean persistObject(String key, T object) {
+        return super.persistObject(key, object);
+    }
+
     private void gc() {
         System.gc();
         System.runFinalization();
@@ -70,4 +85,8 @@ public abstract class ParcelableFileCacheHelper extends FileCacheHelper {
     protected abstract <T> T readParcel(Parcel parcel);
 
     protected abstract <T> Parcel writeParcel(Parcel parcel, T object);
+
+    public int getVersion() {
+        return 1;
+    }
 }

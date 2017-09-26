@@ -32,6 +32,7 @@ public class PageListCacheHelper extends ParcelableFileCacheHelper {
             String imageUrl = parcel.readString();
             PageModel.ItemModel item = new PageModel.ItemModel(href, description, imageUrl);
             item.setId(parcel.readInt());
+            item.setHeight(parcel.readInt());
             list.add(item);
         }
         pageModel.setItemList(list);
@@ -54,7 +55,13 @@ public class PageListCacheHelper extends ParcelableFileCacheHelper {
             parcel.writeString(item.getDescription());
             parcel.writeString(item.getImgUrl());
             parcel.writeInt(item.getId());
+            parcel.writeInt(item.getHeight());
         }
         return parcel;
+    }
+
+    @Override
+    public int getVersion() {
+        return super.getVersion();
     }
 }

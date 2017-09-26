@@ -60,7 +60,11 @@ public class FileCacheHelper {
     }
 
     protected <T> boolean persistObject(String key, T object) {
-        File file = new File(mPath, key + "@@@@");
+        return persistObject(key, object, mPath, key + "@@@@");
+    }
+
+    protected <T> boolean persistObject(String key, T object, String path, String tempName) {
+        File file = new File(path, tempName);
         if (file.exists()) file.delete();
         FileOutputStream fos = null;
         boolean ret = false;
@@ -70,7 +74,7 @@ public class FileCacheHelper {
             fileLock = fos.getChannel().lock();
             writeObjectFromStream(fos, object);
             ret = true;
-            file.renameTo(new File(mPath, key));
+            file.renameTo(new File(path, key));
         } catch (Exception e) {
             e.printStackTrace();
             ret = false;
@@ -92,7 +96,11 @@ public class FileCacheHelper {
     }
 
     protected <T> T readObject(String key) {
-        File file = new File(mPath, key);
+        return readObject(key, mPath);
+    }
+
+    protected <T> T readObject(String key, String path) {
+        File file = new File(path, key);
         if (!file.exists()) return null;
 
         T ret = null;
