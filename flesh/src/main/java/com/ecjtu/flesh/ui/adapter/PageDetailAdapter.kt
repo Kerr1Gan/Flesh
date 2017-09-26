@@ -31,7 +31,7 @@ import java.net.HttpURLConnection
 /**
  * Created by Ethan_Xiang on 2017/9/11.
  */
-class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<PageDetailAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
+class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerViewWrapAdapter<PageDetailAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
     private val mListHeight = ArrayList<Int>()
 
     override fun getItemCount(): Int {
@@ -145,21 +145,6 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerView.Adapter<P
 
     override fun getItemViewType(position: Int): Int {
         return 0
-    }
-
-    private fun getHeight(position: Int): Int {
-        if (position >= mListHeight.size || position < 0) {
-            return 0
-        }
-        return mListHeight[position]
-    }
-
-    private fun setHeight(position: Int, height: Int) {
-        if (position >= mListHeight.size) {
-            val diff = position - mListHeight.size + 1
-            mListHeight.addAll(Array<Int>(diff, { height }))
-        }
-        mListHeight.set(position, height)
     }
 
     override fun onClick(v: View?) {

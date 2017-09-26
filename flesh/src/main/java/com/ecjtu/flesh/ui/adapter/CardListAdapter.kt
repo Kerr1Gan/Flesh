@@ -38,7 +38,7 @@ import java.net.HttpURLConnection
 /**
  * Created by Ethan_Xiang on 2017/9/8.
  */
-open class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<CardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
+open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<CardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
 
     private val mListHeight = ArrayList<Int>()
 
@@ -222,19 +222,8 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerView.Adapter<Card
         }
     }
 
-    private fun getHeight(position: Int): Int {
-        if (position >= mListHeight.size || position < 0) {
-            return 0
-        }
-        return mListHeight[position]
-    }
-
-    private fun setHeight(position: Int, height: Int) {
-        if (position >= mListHeight.size) {
-            val diff = position - mListHeight.size + 1
-            mListHeight.addAll(Array<Int>(diff, { height }))
-        }
-        mListHeight.set(position, height)
+    override fun setHeight(position: Int, height: Int) {
+        super.setHeight(position, height)
         pageModel.itemList[position].height = height
     }
 
