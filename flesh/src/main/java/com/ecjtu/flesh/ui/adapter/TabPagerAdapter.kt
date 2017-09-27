@@ -132,7 +132,6 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
             }
         }
         editor.apply()
-        mViewStub.clear()
     }
 
     fun onResume() {

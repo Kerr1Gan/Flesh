@@ -1,6 +1,7 @@
 package com.ecjtu.flesh.presenter
 
 import android.preference.PreferenceManager
+import android.support.design.widget.AppBarLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
@@ -38,11 +39,14 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 
     companion object {
         private const val KEY_LAST_TAB_ITEM = "key_last_tab_item"
+        private const val KEY_APPBAR_LAYOUT_COLLAPSED = "key_appbar_layout_collapse"
     }
 
     private val mFloatButton = owner.findViewById(R.id.float_button) as FloatingActionButton
     private val mViewPager = owner.findViewById(R.id.view_pager) as ViewPager
     private val mTabLayout = owner.findViewById(R.id.tab_layout) as TabLayout
+    private val mAppbarLayout = owner.findViewById(R.id.app_bar) as AppBarLayout
+    private var mAppbarExpand = true
 
     init {
         val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
@@ -141,6 +145,21 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             val drawerLayout = findViewById(R.id.drawer_layout) as DrawerLayout
             drawerLayout.closeDrawer(Gravity.START)
         }
+
+        mAppbarExpand = PreferenceManager.getDefaultSharedPreferences(owner).getBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, false)
+        val expand = isAppbarLayoutExpand()
+        if (expand) {
+            mAppbarLayout.setExpanded(true)
+        } else {
+            mAppbarLayout.setExpanded(false)
+        }
+        mAppbarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+            if (verticalOffset == 0) {
+                mAppbarExpand = true
+            } else if (verticalOffset == -(appBarLayout.height - mTabLayout.height)) {
+                mAppbarExpand = false
+            }
+        }
     }
 
     fun onStop() {
@@ -152,6 +171,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 
         PreferenceManager.getDefaultSharedPreferences(owner).edit().
                 putInt(KEY_LAST_TAB_ITEM, mTabLayout.selectedTabPosition).
+                putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isAppbarLayoutExpand()).
                 apply()
     }
 
@@ -161,5 +181,5 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         }
     }
 
-
+    fun isAppbarLayoutExpand(): Boolean = mAppbarExpand
 }

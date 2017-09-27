@@ -13,7 +13,4 @@ class PageLikeFragmentDelegate(owner: Activity, itemList: List<PageModel.ItemMod
         return LikeCardListAdapter(pageModel)
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
 }
