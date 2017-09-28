@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="30dp"
-            android:src="@drawable/ic_arrow_up"
+            android:src="@drawable/ic_float_button"
             app:fabSize="mini"
             app:layout_anchor="@+id/view_pager"
             app:layout_anchorGravity="bottom|right"

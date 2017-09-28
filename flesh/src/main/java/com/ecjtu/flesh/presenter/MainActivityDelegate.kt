@@ -263,26 +263,31 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             val pos = layout.findViewById(R.id.position) as TextView
 
             val listener = { v: View ->
-                when (v.id) {
-                    R.id.top -> {
-                        recyclerView?.let {
-                            (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                if (position != mTabLayout.selectedTabPosition) {
+                    snake.dismiss()
+                } else {
+                    when (v.id) {
+                        R.id.top -> {
+                            recyclerView?.let {
+                                (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                            }
                         }
-                    }
 
-                    R.id.mid -> {
-                        recyclerView?.let {
-                            var jumpPos = Integer.valueOf(pos.text.toString()) - 2
-                            if (jumpPos < 0) jumpPos = 0
-                            (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(jumpPos)
+                        R.id.mid -> {
+                            recyclerView?.let {
+                                var jumpPos = Integer.valueOf(pos.text.toString()) - 2
+                                if (jumpPos < 0) jumpPos = 0
+                                (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(jumpPos)
+                            }
                         }
-                    }
 
-                    R.id.bottom -> {
-                        recyclerView?.let {
-                            (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(size - 2)
+                        R.id.bottom -> {
+                            recyclerView?.let {
+                                (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(size - 2)
+                            }
                         }
                     }
+                    snake.dismiss()
                 }
                 Unit
             }

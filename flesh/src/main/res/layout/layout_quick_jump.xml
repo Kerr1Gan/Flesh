@@ -11,12 +11,14 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
             android:padding="8dp"
             android:text="跳转到顶部"
-            android:textColor="@android:color/white"
-            android:textSize="18dp" />
+            android:textAppearance="@style/TextAppearance.Design.Snackbar.Message"
+            android:textColor="@android:color/white" />
 
         <ImageButton
             android:id="@+id/top"
@@ -45,9 +47,11 @@
         <TextView
             android:id="@+id/position"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
+            android:ellipsize="end"
             android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Design.Snackbar.Message"
             android:textColor="@android:color/white" />
 
         <Button
@@ -69,12 +73,14 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
             android:padding="8dp"
             android:text="跳转到底部"
-            android:textColor="@android:color/white"
-            android:textSize="18dp" />
+            android:textAppearance="@style/TextAppearance.Design.Snackbar.Message"
+            android:textColor="@android:color/white" />
 
         <ImageButton
             android:id="@+id/bottom"
