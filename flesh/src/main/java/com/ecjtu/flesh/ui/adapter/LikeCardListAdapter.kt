@@ -1,5 +1,6 @@
 package com.ecjtu.flesh.ui.adapter
 
+import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.HistoryTableImpl
 import com.ecjtu.netcore.model.PageModel
@@ -30,7 +31,7 @@ class LikeCardListAdapter(pageModel: PageModel) : CardListAdapter(pageModel) {
                     index++
                 }
             }
-            holder?.description?.text = "查看${index}次"
+            holder?.description?.text = holder?.itemView?.resources?.getString(R.string.open_times, index)
         }
     }
 

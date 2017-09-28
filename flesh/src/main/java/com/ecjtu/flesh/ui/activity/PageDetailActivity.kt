@@ -85,9 +85,9 @@ class PageDetailActivity : AppCompatActivity() {
             val isLike = impl.isLike(mDatabase!!, mUrl!!)
             val item = menu?.findItem(R.id.item)
             if (isLike) {
-                item?.title = "取消收藏"
+                item?.title = getString(R.string.delete_collection)
             } else {
-                item?.title = "收藏"
+                item?.title = getString(R.string.collection)
             }
         }
         return super.onCreateOptionsMenu(menu)
@@ -99,13 +99,13 @@ class PageDetailActivity : AppCompatActivity() {
             mDatabase?.let {
                 val isLike = impl.isLike(mDatabase!!, mUrl!!)
                 if (isLike) {
-                    item.title = "收藏"
+                    item.title = getString(R.string.collection)
                     impl.deleteLike(mDatabase!!, mUrl!!)
-                    Toast.makeText(this, "取消收藏", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.delete_collection, Toast.LENGTH_SHORT).show()
                 } else {
-                    item.title = "取消收藏"
+                    item.title = getString(R.string.delete_collection)
                     impl.addLike(mDatabase!!, mUrl!!)
-                    Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.collect_success, Toast.LENGTH_SHORT).show()
                 }
             }
             return true

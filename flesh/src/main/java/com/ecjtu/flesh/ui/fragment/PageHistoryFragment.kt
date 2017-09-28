@@ -33,7 +33,7 @@ class PageHistoryFragment : Fragment() {
         }
         val actionBar = (activity as AppCompatActivity).supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
-        actionBar?.setTitle("历史")
+        actionBar?.setTitle(R.string.history)
         setHasOptionsMenu(true)
     }
 

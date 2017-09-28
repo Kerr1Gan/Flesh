@@ -137,15 +137,15 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 ret += child.length()
             }
             val size = Formatter.formatFileSize(owner, ret)
-            AlertDialog.Builder(owner).setTitle("缓存大小").setMessage("已缓存${size}数据,是否清理？")
-                    .setPositiveButton("确定", { dialog, which -> thread { Glide.get(owner).clearDiskCache() } })
-                    .setNegativeButton("取消", null)
+            AlertDialog.Builder(owner).setTitle(R.string.cache_size).setMessage(owner.getString(R.string.cached_data_cleaned_or_not, size))
+                    .setPositiveButton(R.string.ok, { dialog, which -> thread { Glide.get(owner).clearDiskCache() } })
+                    .setNegativeButton(R.string.cancel, null)
                     .create().show()
         }
 
         findViewById(R.id.disclaimer)?.setOnClickListener {
-            AlertDialog.Builder(owner).setTitle("声明").setMessage("所有资源均来自www.mzitu.com，如有侵权请联系mnsync@outlook.com，将会尽快删除。")
-                    .setPositiveButton("确定", null)
+            AlertDialog.Builder(owner).setTitle(R.string.statement).setMessage(R.string.statement_content)
+                    .setPositiveButton(R.string.ok, null)
                     .create().show()
         }
 

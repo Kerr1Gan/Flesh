@@ -88,7 +88,7 @@ class FullScreenImageActivity : AppCompatActivity(), RequestListener<Bitmap> {
             thread {
                 WallpaperManager.getInstance(this).setBitmap(mWallpaper)
                 runOnUiThread {
-                    Toast.makeText(this, "设为壁纸", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.set_wallpaper, Toast.LENGTH_SHORT).show()
                 }
             }
             return true

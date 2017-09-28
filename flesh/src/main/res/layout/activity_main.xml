@@ -101,7 +101,7 @@
                         android:layout_height="wrap_content"
                         android:layout_above="@+id/size"
                         android:layout_margin="10dp"
-                        android:text="已缓存"
+                        android:text="@string/cached"
                         android:textColor="@android:color/white"
                         android:textSize="18dp" />
                 </RelativeLayout>
@@ -114,7 +114,7 @@
                     android:drawablePadding="12dp"
                     android:gravity="center_vertical"
                     android:padding="20dp"
-                    android:text="收藏"
+                    android:text="@string/collection"
                     android:textColor="@android:color/black"
                     android:textSize="16dp" />
 
@@ -127,7 +127,7 @@
                     android:drawablePadding="12dp"
                     android:gravity="center_vertical"
                     android:padding="20dp"
-                    android:text="历史"
+                    android:text="@string/history"
                     android:textColor="@android:color/black"
                     android:textSize="16dp" />
 
@@ -140,7 +140,7 @@
                     android:drawablePadding="12dp"
                     android:gravity="center_vertical"
                     android:padding="20dp"
-                    android:text="缓存"
+                    android:text="@string/cache"
                     android:textColor="@android:color/black"
                     android:textSize="16dp" />
 
@@ -152,7 +152,7 @@
                     android:drawablePadding="12dp"
                     android:gravity="center_vertical"
                     android:padding="20dp"
-                    android:text="声明"
+                    android:text="@string/statement"
                     android:textColor="@android:color/black"
                     android:textSize="16dp" />
             </LinearLayout>

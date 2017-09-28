@@ -34,7 +34,7 @@ class PageLikeFragment : Fragment() {
         }
         val actionBar = (activity as AppCompatActivity).supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
-        actionBar?.setTitle("收藏")
+        actionBar?.setTitle(R.string.collection)
         setHasOptionsMenu(true)
     }
 
