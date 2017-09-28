@@ -1,6 +1,6 @@
 # Flesh（果肉）
 
-果肉一款福利满满的app，图源来自mzitu，MD风格的界面。
+果肉一款福利满满的app，图源来自[mzitu][3]，MD风格的界面。
 
 组成
 --------
@@ -44,7 +44,8 @@ BSD
 
 Disclaimer
 ---------
-Only available for study and communication.
+Only available for study and communication.If the flesh violate your rights,we can delete immediately violate to your rights and interests content.
 
 [1]: https://github.com/bumptech/glide
 [2]: https://bugly.qq.com/v2/
+[3]: http://www.mzitu.com
