@@ -49,4 +49,4 @@ Only available for study and communication.If the flesh violate your rights,we c
 [1]: https://github.com/bumptech/glide
 [2]: https://bugly.qq.com/v2/
 [3]: http://www.mzitu.com
-[4]: https://github.com/Kerr1Gan/Flesh/blob/master/README.md
+[4]: https://github.com/Kerr1Gan/Flesh/blob/master/LICENSE
