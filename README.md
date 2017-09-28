@@ -1,6 +1,6 @@
 # Flesh（果肉）
 
-果肉一款福利满满的app，图源来自[mzitu][3]，MD风格的界面。
+果肉一款福利满满的app，数据源[mzitu][3]，MD风格的界面。
 
 组成
 --------
@@ -40,7 +40,7 @@ KerriGan - mnsync@outlook.com or ethanxiang95@gmail.com
 
 License
 -------
-BSD
+Apache2
 
 Disclaimer
 ---------
