@@ -10,6 +10,29 @@
 4. 数据源：Jsoup
 5. 第三方库：Glide
 
+概述
+--------
+网络请求  
+get
+```java
+val request = AsyncNetwork()
+request.request(Constants.HOST_MOBILE_URL, null)
+request.setRequestCallback(object : IRequestCallback {
+    override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
+        //todo
+    }
+})
+```
+post
+```java
+val request = AsyncNetwork()
+request.request(Constants.HOST_MOBILE_URL, mutableMapOf())
+request.setRequestCallback(object : IRequestCallback {
+    override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
+        //todo
+    }
+})
+```
 ProGuard
 --------
 ```pro
