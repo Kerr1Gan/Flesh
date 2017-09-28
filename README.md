@@ -31,7 +31,7 @@ contributors submmit pull requests.
 Thanks
 ------
 * The **Glide** [image loading framework][1] Flesh's image loader is based on.
-* The **Bugly** [app monitoring tools][2] Flesh's monitoring tools.
+* The **Bugly** [app monitoring tools][2] Flesh's log collector.
 * Everyone who has contributed code and reported issues!
 
 Author
