@@ -15,7 +15,6 @@ import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.PageListCacheHelper
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
-import com.ecjtu.flesh.presenter.MainActivityDelegate
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.jsoup.impl.PageSoup
 import com.ecjtu.netcore.model.MenuModel
@@ -29,7 +28,7 @@ import kotlin.concurrent.thread
 /**
  * Created by Ethan_Xiang on 2017/9/12.
  */
-class TabPagerAdapter(val menu: List<MenuModel>, val delegate: MainActivityDelegate) : PagerAdapter() {
+class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
 
     companion object {
         private const val KEY_CARD_CACHE = "card_cache_"
@@ -49,7 +48,7 @@ class TabPagerAdapter(val menu: List<MenuModel>, val delegate: MainActivityDeleg
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
         container?.addView(item)
         val title = getPageTitle(position) as String
-        val vh = VH(item, menu[position], title, delegate)
+        val vh = VH(item, menu[position], title)
         thread {
             val helper = PageListCacheHelper(container?.context?.filesDir?.absolutePath)
             if (!title.contains("推荐")) {
@@ -143,7 +142,7 @@ class TabPagerAdapter(val menu: List<MenuModel>, val delegate: MainActivityDeleg
         }
     }
 
-    private class VH(val itemView: View, private val menu: MenuModel, val key: String, val delegate: MainActivityDelegate) {
+    private class VH(val itemView: View, private val menu: MenuModel, val key: String) {
         val recyclerView = itemView.findViewById(R.id.recycler_view) as RecyclerView?
         private var mPageModel: PageModel? = null
         private val mRefreshLayout = if (itemView is SwipeRefreshLayout) itemView else null
@@ -166,7 +165,7 @@ class TabPagerAdapter(val menu: List<MenuModel>, val delegate: MainActivityDeleg
         private fun loadCache(context: Context, key: String) {
             if (mPageModel != null) {
                 recyclerView?.adapter = CardListAdapter(mPageModel!!)
-                delegate.hideBg()
+//                delegate.hideBg()
 //                val fastScroller = itemView.findViewById(R.id.fast_scroll) as FastScroller
 //                fastScroller.setRecyclerView(recyclerView)
                 val lastPosition = PreferenceManager.getDefaultSharedPreferences(context).getInt(KEY_LAST_POSITION + key, -1)
@@ -218,7 +217,7 @@ class TabPagerAdapter(val menu: List<MenuModel>, val delegate: MainActivityDeleg
                         recyclerView?.post {
                             if (mPageModel == null) {
                                 recyclerView.adapter = CardListAdapter(soups)
-                                delegate.hideBg()
+//                                delegate.hideBg()
 //                                val fastScroller = itemView.findViewById(R.id.fast_scroll) as FastScroller
 //                                fastScroller.setRecyclerView(recyclerView)
                                 mPageModel = soups

@@ -1,9 +1,7 @@
 package com.ecjtu.flesh.presenter
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.drawable.BitmapDrawable
 import android.preference.PreferenceManager
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.FloatingActionButton
@@ -70,7 +68,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             menuList = helper.get(CACHE_MENU_LIST)
         }
         if (menuList != null) {
-            mViewPager.adapter = TabPagerAdapter(menuList, this)
+            mViewPager.adapter = TabPagerAdapter(menuList)
             mTabLayout.setupWithViewPager(mViewPager)
             mViewPager.setCurrentItem(lastTabItem)
         }
@@ -85,7 +83,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                         if (values[MenuSoup::class.java.simpleName] != null) {
                             localList = values[MenuSoup::class.java.simpleName] as List<MenuModel>
                             if (menuList == null && localList != null) {
-                                mViewPager.adapter = TabPagerAdapter(localList, this@MainActivityDelegate)
+                                mViewPager.adapter = TabPagerAdapter(localList)
                                 mTabLayout.setupWithViewPager(mViewPager)
                                 mViewPager.setCurrentItem(lastTabItem)
                             } else {
@@ -171,14 +169,14 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             }
         }
 
-        val content = findViewById(R.id.drawer_layout)
-        content?.let {
-            showBg()
-            val bitmap = BitmapFactory.decodeFile(owner.filesDir.absolutePath + "/bg.png")
-            if (bitmap != null) {
-                content.setBackgroundDrawable(BitmapDrawable(bitmap))
-            }
-        }
+//        val content = findViewById(R.id.drawer_layout)
+//        content?.let {
+//            showBg()
+//            val bitmap = BitmapFactory.decodeFile(owner.filesDir.absolutePath + "/bg.png")
+//            if (bitmap != null) {
+//                content.setBackgroundDrawable(BitmapDrawable(bitmap))
+//            }
+//        }
     }
 
     fun onStop() {
@@ -228,19 +226,19 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         }
     }
 
-    fun hideBg() {
-        val vg = findViewById(R.id.drawer_layout) as ViewGroup
-        for (i in 0 until vg.childCount) {
-            vg.getChildAt(i).visibility = View.VISIBLE
-        }
-    }
-
-    fun showBg() {
-        val vg = findViewById(R.id.drawer_layout) as ViewGroup
-        for (i in 0 until vg.childCount) {
-            vg.getChildAt(i).visibility = View.INVISIBLE
-        }
-    }
+//    fun hideBg() {
+//        val vg = findViewById(R.id.drawer_layout) as ViewGroup
+//        for (i in 0 until vg.childCount) {
+//            vg.getChildAt(i).visibility = View.VISIBLE
+//        }
+//    }
+//
+//    fun showBg() {
+//        val vg = findViewById(R.id.drawer_layout) as ViewGroup
+//        for (i in 0 until vg.childCount) {
+//            vg.getChildAt(i).visibility = View.INVISIBLE
+//        }
+//    }
 
     fun isAppbarLayoutExpand(): Boolean = mAppbarExpand
 
