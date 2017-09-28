@@ -272,7 +272,9 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 
                     R.id.mid -> {
                         recyclerView?.let {
-                            (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(Integer.valueOf(pos.text.toString()) - 2)
+                            var jumpPos = Integer.valueOf(pos.text.toString()) - 2
+                            if (jumpPos < 0) jumpPos = 0
+                            (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(jumpPos)
                         }
                     }
 
