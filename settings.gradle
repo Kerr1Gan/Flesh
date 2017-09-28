@@ -1,1 +1,1 @@
-include ':flesh', ':netcore', ':fastscroll'
+include ':flesh', ':netcore'
