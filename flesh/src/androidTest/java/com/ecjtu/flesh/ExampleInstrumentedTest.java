@@ -17,6 +17,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,5 +113,12 @@ public class ExampleInstrumentedTest {
         File dest = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "heaven.db");
         if (!dest.exists()) dest.createNewFile();
         FileUtil.INSTANCE.copyFile2Path(dest, new File(files, "heaven"));
+    }
+
+    @Test
+    public void copyBg() throws Exception{
+        final Context appContext = InstrumentationRegistry.getTargetContext();
+        File file =new File(appContext.getFilesDir(), "bg.png");
+        FileUtil.INSTANCE.copyFile2Path(file,new File("/sdcard/bg.png"));
     }
 }

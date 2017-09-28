@@ -1,8 +1,13 @@
 package com.ecjtu.flesh.presenter
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
 import android.preference.PreferenceManager
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.FloatingActionButton
+import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
@@ -11,6 +16,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.format.Formatter
 import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.SeekBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.ecjtu.flesh.R
@@ -28,6 +38,9 @@ import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
 import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
+import java.lang.Exception
 import java.net.HttpURLConnection
 import kotlin.concurrent.thread
 
@@ -40,6 +53,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     companion object {
         private const val KEY_LAST_TAB_ITEM = "key_last_tab_item"
         private const val KEY_APPBAR_LAYOUT_COLLAPSED = "key_appbar_layout_collapse"
+        private const val CACHE_MENU_LIST = "menu_list_cache"
     }
 
     private val mFloatButton = owner.findViewById(R.id.float_button) as FloatingActionButton
@@ -52,11 +66,11 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
         val lastTabItem = PreferenceManager.getDefaultSharedPreferences(owner).getInt(KEY_LAST_TAB_ITEM, 0)
         var menuList: MutableList<MenuModel>? = null
-        if (helper.get<Any>("menu_list_cache") != null) {
-            menuList = helper.get("menu_list_cache")
+        if (helper.get<Any>(CACHE_MENU_LIST) != null) {
+            menuList = helper.get(CACHE_MENU_LIST)
         }
         if (menuList != null) {
-            mViewPager.adapter = TabPagerAdapter(menuList)
+            mViewPager.adapter = TabPagerAdapter(menuList, this)
             mTabLayout.setupWithViewPager(mViewPager)
             mViewPager.setCurrentItem(lastTabItem)
         }
@@ -71,7 +85,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                         if (values[MenuSoup::class.java.simpleName] != null) {
                             localList = values[MenuSoup::class.java.simpleName] as List<MenuModel>
                             if (menuList == null && localList != null) {
-                                mViewPager.adapter = TabPagerAdapter(localList)
+                                mViewPager.adapter = TabPagerAdapter(localList, this@MainActivityDelegate)
                                 mTabLayout.setupWithViewPager(mViewPager)
                                 mViewPager.setCurrentItem(lastTabItem)
                             } else {
@@ -105,11 +119,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             textView.setText(String.format("%s/%s", glideStr, cacheStr))
         }
         mFloatButton.setOnClickListener {
-            val position = mTabLayout.selectedTabPosition
-            val recyclerView = (mViewPager.adapter as TabPagerAdapter).getViewStub(position) as RecyclerView?
-            recyclerView?.let {
-                (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(0)
-            }
+            doFloatButton()
         }
 
         findViewById(R.id.like)?.setOnClickListener {
@@ -160,6 +170,15 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 mAppbarExpand = false
             }
         }
+
+        val content = findViewById(R.id.drawer_layout)
+        content?.let {
+            showBg()
+            val bitmap = BitmapFactory.decodeFile(owner.filesDir.absolutePath + "/bg.png")
+            if (bitmap != null) {
+                content.setBackgroundDrawable(BitmapDrawable(bitmap))
+            }
+        }
     }
 
     fun onStop() {
@@ -167,12 +186,13 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             (mViewPager.adapter as TabPagerAdapter).onStop(owner)
         }
         val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
-        helper.put("menu_list_cache", (mViewPager.adapter as TabPagerAdapter).menu)
+        helper.put(CACHE_MENU_LIST, (mViewPager.adapter as TabPagerAdapter).menu)
 
         PreferenceManager.getDefaultSharedPreferences(owner).edit().
                 putInt(KEY_LAST_TAB_ITEM, mTabLayout.selectedTabPosition).
                 putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isAppbarLayoutExpand()).
                 apply()
+
     }
 
     fun onResume() {
@@ -181,5 +201,112 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         }
     }
 
+    fun onDestroy() {
+        thread {
+            val content = findViewById(R.id.drawer_layout)
+            content?.let {
+                val bitmap = convertView2Bitmap(content, content.width, content.height)
+                val file = File(owner.filesDir, "bg.png")
+                var os: OutputStream? = null
+                try {
+                    os = FileOutputStream(file)
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, os)
+                    bitmap.recycle()
+                    os.close()
+                } catch (ex: Exception) {
+                } finally {
+                    if (os != null) {
+                        try {
+                            os.close()
+                        } catch (ex: Exception) {
+                        }
+                    }
+                    bitmap.recycle()
+                }
+
+            }
+        }
+    }
+
+    fun hideBg() {
+        val vg = findViewById(R.id.drawer_layout) as ViewGroup
+        for (i in 0 until vg.childCount) {
+            vg.getChildAt(i).visibility = View.VISIBLE
+        }
+    }
+
+    fun showBg() {
+        val vg = findViewById(R.id.drawer_layout) as ViewGroup
+        for (i in 0 until vg.childCount) {
+            vg.getChildAt(i).visibility = View.INVISIBLE
+        }
+    }
+
     fun isAppbarLayoutExpand(): Boolean = mAppbarExpand
+
+    fun convertView2Bitmap(view: View, width: Int, height: Int): Bitmap {
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        view.draw(Canvas(bitmap))
+        return bitmap
+    }
+
+    private fun doFloatButton() {
+        val position = mTabLayout.selectedTabPosition
+        val recyclerView = (mViewPager.adapter as TabPagerAdapter).getViewStub(position) as RecyclerView?
+        val size = (mViewPager.adapter as TabPagerAdapter).getListSize(position)
+        val snake = Snackbar.make(findViewById(R.id.content)!!, "", Snackbar.LENGTH_SHORT)
+        if (snake.view is LinearLayout) {
+            val vg = snake.view as LinearLayout
+            val layout = LayoutInflater.from(owner).inflate(R.layout.layout_quick_jump, vg, false) as ViewGroup
+
+            val local = layout.findViewById(R.id.seek_bar) as SeekBar
+            val pos = layout.findViewById(R.id.position) as TextView
+
+            val listener = { v: View ->
+                when (v.id) {
+                    R.id.top -> {
+                        recyclerView?.let {
+                            (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                        }
+                    }
+
+                    R.id.mid -> {
+                        recyclerView?.let {
+                            (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(Integer.valueOf(pos.text.toString()) - 2)
+                        }
+                    }
+
+                    R.id.bottom -> {
+                        recyclerView?.let {
+                            (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(size - 2)
+                        }
+                    }
+                }
+                Unit
+            }
+            layout.findViewById(R.id.top).setOnClickListener(listener)
+            layout.findViewById(R.id.mid).setOnClickListener(listener)
+            layout.findViewById(R.id.bottom).setOnClickListener(listener)
+
+            local.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    pos.setText(progress.toString())
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                }
+            })
+            local.max = size
+            if (recyclerView != null) {
+                val curPos = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                local.progress = curPos
+            }
+            layout.findViewById(R.id.mid).setOnClickListener(listener)
+            vg.addView(layout)
+        }
+        snake.show()
+    }
 }

@@ -1,4 +1,4 @@
-package com.ecjtu.sharebox.notification
+package com.ecjtu.flesh.notification
 
 import android.app.PendingIntent
 import android.content.Context

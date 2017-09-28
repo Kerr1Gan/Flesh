@@ -97,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mDelegate != null) {
+            mDelegate.onDestroy();
+        }
         Glide.get(this).clearMemory();
     }
 
