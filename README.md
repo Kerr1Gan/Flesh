@@ -12,9 +12,9 @@
 
 概述
 --------
-网络请求  
-get
-```java
+**1)** 网络请求  
++ get
+```kotlin
 val request = AsyncNetwork()
 request.request(Constants.HOST_MOBILE_URL, null)
 request.setRequestCallback(object : IRequestCallback {
@@ -23,8 +23,8 @@ request.setRequestCallback(object : IRequestCallback {
     }
 })
 ```
-post
-```java
++ post
+```kotlin
 val request = AsyncNetwork()
 request.request(Constants.HOST_MOBILE_URL, mutableMapOf())
 request.setRequestCallback(object : IRequestCallback {
@@ -33,6 +33,34 @@ request.setRequestCallback(object : IRequestCallback {
     }
 })
 ```
+**2)** 数据库
+```sql
+CREATE TABLE tb_class_page_list ( +
+                    _id           INTEGER PRIMARY KEY ASC AUTOINCREMENT,
+                    href          STRING  UNIQUE,
+                    description   STRING,
+                    image_url     STRING,
+                    id_class_page INTEGER REFERENCES tb_class_page (_id) ON DELETE CASCADE ON UPDATE CASCADE,
+                    [index]       INTEGER);
+```
+**3)** 读写缓存
+```kotlin
+val helper = PageListCacheHelper(context.filesDir.absolutePath)
+helper.put(KEY_CARD_CACHE + entry.key, object)
+
+val helper = PageListCacheHelper(container?.context?.filesDir?.absolutePath)
+val pageModel: Any? = helper.get(KEY_CARD_CACHE + getPageTitle(position))
+```
+
+**4)** jsoup获取数据
+```java
+Document doc = Jsoup.parse(html);
+Elements elements = body.getElementsByTag("a");
+String text = elements.get(0).text();
+String imageUrl = elements.get(0).attr("src");
+...
+```
+
 ProGuard
 --------
 ```pro
