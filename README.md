@@ -2,6 +2,10 @@
 
 果肉一款福利满满的app，数据源[mzitu][3]，MD风格的界面。
 
+国际惯例，先上福利
+
+![fuli](art/fuli.gif)
+
 组成
 --------
 1. 语言：Kotlin，Java
