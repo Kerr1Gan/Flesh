@@ -7,7 +7,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
-import com.ecjtu.flesh.cache.PageListCacheHelper;
+import com.ecjtu.flesh.cache.impl.PageListCacheHelper;
 import com.ecjtu.flesh.db.DatabaseManager;
 import com.ecjtu.flesh.db.table.impl.LikeTableImpl;
 import com.ecjtu.flesh.util.file.FileUtil;
@@ -17,8 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
