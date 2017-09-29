@@ -12,7 +12,8 @@
 
 概述
 --------
-**1)** 网络请求  
+**1)** 网络请求
+
 网络框架并没有使用RxRetrofit等，为了保证精简高效直接使用的HttpUrlConnection
 + get 
 ```kotlin
@@ -35,9 +36,10 @@ request.setRequestCallback(object : IRequestCallback {
 })
 ```
 **2)** 数据库
+
 数据库没有使用第三方框架，直接使用的sql语句。
 ```sql
-CREATE TABLE tb_class_page_list ( +
+CREATE TABLE tb_class_page_list ( 
                     _id           INTEGER PRIMARY KEY ASC AUTOINCREMENT,
                     href          STRING  UNIQUE,
                     description   STRING,
@@ -46,18 +48,25 @@ CREATE TABLE tb_class_page_list ( +
                     [index]       INTEGER);
 ```
 **3)** 读写缓存
+
 由于Serializable的效率远低于Parcelable，所以采用Parcelable实现的缓存机制，速度快了大概7，8倍。
 + 读取缓存
 ```kotlin
 val helper = PageListCacheHelper(container?.context?.filesDir?.absolutePath)
-val pageModel: Any? = helper.get(KEY_CARD_CACHE + getPageTitle(position))
+val pageModel: Any? = helper.get(key)
 ```
 + 写入缓存
 ```kotlin
 val helper = PageListCacheHelper(context.filesDir.absolutePath)
-helper.put(KEY_CARD_CACHE + entry.key, object)
+helper.put(key, object)
+```
++ 删除缓存
+```kotlin
+val helper = PageListCacheHelper(context.filesDir.absolutePath)
+helper.remove(key)
 ```
 **4)** jsoup获取数据
+
 由于数据是用从html页面中提取的，所以速度偏慢，为了不影响体验做了一套缓存机制，来做到流畅体验。
 ```java
 Document doc = Jsoup.parse(html);
