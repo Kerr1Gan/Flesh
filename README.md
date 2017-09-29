@@ -75,6 +75,98 @@ String text = elements.get(0).text();
 String imageUrl = elements.get(0).attr("src");
 ...
 ```
+**5)** 测试
+
+性能测试，为了避免干扰，我们使用AndroidTest进行测试。
+```java
+@Test
+public void useAppContext() throws Exception {
+        // Context of the app under test.
+        final Context appContext = InstrumentationRegistry.getTargetContext();
+        List<PageModel.ItemModel> itemModels = new ArrayList<PageModel.ItemModel>();
+        for (int i = 0; i < 10000; i++) {
+            itemModels.add(new PageModel.ItemModel("", "", ""));
+        }
+        //db begin
+        appContext.deleteDatabase("test4");
+        SQLiteDatabase db = DatabaseManager.getInstance(appContext).getHelper(appContext, "test4").getWritableDatabase();
+        long start = System.currentTimeMillis();
+        db.beginTransaction();
+        LikeTableImpl impl = new LikeTableImpl();
+        for (int i = 0; i < 10000; i++) {
+            impl.addLike(db, "page" + i, "", "", "");
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        Log.e("cache speed", "db save time " + (System.currentTimeMillis() - start));
+
+        start = System.currentTimeMillis();
+        db.beginTransaction();
+        impl.getAllLikes(db);
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        Log.e("cache speed", "db read time " + (System.currentTimeMillis() - start));
+        db.close();
+        //db end
+
+        //parcel begin
+        start = System.currentTimeMillis();
+        PageModel model = new PageModel(itemModels);
+        PageListCacheHelper helper = new PageListCacheHelper(appContext.getCacheDir().getAbsolutePath());
+        helper.put("test", model);
+        Log.e("cache speed", "parcel save time " + (System.currentTimeMillis() - start));
+
+        start = System.currentTimeMillis();
+        helper.get("test");
+        Log.e("cache speed", "parcel read time " + (System.currentTimeMillis() - start));
+        //parcel end
+
+        //Serializable
+        List<TestItemModel> testModels = new ArrayList<TestItemModel>();
+        for (int i = 0; i < 10000; i++) {
+            testModels.add(new TestItemModel("", "", ""));
+        }
+        start = System.currentTimeMillis();
+        ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(new File(appContext.getCacheDir().getAbsolutePath(), "serializable")));
+        os.writeObject(testModels);
+        Log.e("cache speed", "serializable save time " + (System.currentTimeMillis() - start));
+        os.close();
+        start = System.currentTimeMillis();
+        ObjectInputStream is = new ObjectInputStream(new FileInputStream(new File(appContext.getCacheDir().getAbsolutePath(), "serializable")));
+        is.readObject();
+        Log.e("cache speed", "serializable read time " + (System.currentTimeMillis() - start));
+        is.close();
+    }
+```
+测试结果：(单位ms)
+
+1000条数据
+```
+db save time 73
+db read time 9
+parcel save time 76
+parcel read time 59
+serializable save time 150
+serializable read time 96
+```
+10000条数据
+```
+db save time 684
+db read time 100
+parcel save time 141
+parcel read time 136
+serializable save time 1479
+serializable read time 996
+```
+50000条数据
+```
+db save time 3348
+db read time 890
+parcel save time 493
+parcel read time 498
+serializable save time 7571
+serializable read time 4975
+```
 
 ProGuard
 --------
