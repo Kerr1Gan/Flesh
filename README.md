@@ -2,7 +2,7 @@
 
 果肉一款福利满满的app，数据源[mzitu][3]，MD风格的界面。
 
-国际惯例，先上福利
+国际惯例，先上福利。[Release1.0](https://github.com/Kerr1Gan/Flesh/releases/download/170929/flesh-release.apk)
 
 ![fuli](art/fuli.gif)
 
