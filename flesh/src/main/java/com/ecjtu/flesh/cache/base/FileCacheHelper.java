@@ -59,6 +59,39 @@ public class FileCacheHelper {
         return ret;
     }
 
+    public boolean remove(String key) {
+        FileLock fileLock = null;
+        FileInputStream fis = null;
+        File file = null;
+        boolean ret = false;
+        try {
+            mReadLock.lockInterruptibly();
+            file = new File(mPath, key);
+            fis = new FileInputStream(file);
+            fileLock = fis.getChannel().lock(0L, Long.MAX_VALUE, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            mReadLock.unlock();
+            if (fileLock != null) {
+                try {
+                    fileLock.release();
+                } catch (Exception e) {
+                }
+            }
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (Exception e) {
+                }
+            }
+            if (file != null) {
+                ret = file.delete();
+            }
+        }
+        return ret;
+    }
+
     protected <T> boolean persistObject(String key, T object) {
         return persistObject(key, object, mPath, key + "@@@@");
     }
