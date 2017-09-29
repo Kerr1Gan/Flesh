@@ -12,8 +12,9 @@
 
 概述
 --------
-**1)** 网络请求  
-+ get
+**1)** 网络请求  
+网络框架并没有使用RxRetrofit等，为了保证精简高效直接使用的HttpUrlConnection
++ get 
 ```kotlin
 val request = AsyncNetwork()
 request.request(Constants.HOST_MOBILE_URL, null)
@@ -34,6 +35,7 @@ request.setRequestCallback(object : IRequestCallback {
 })
 ```
 **2)** 数据库
+数据库没有使用第三方框架，直接使用的sql语句。
 ```sql
 CREATE TABLE tb_class_page_list ( +
                     _id           INTEGER PRIMARY KEY ASC AUTOINCREMENT,
@@ -44,15 +46,19 @@ CREATE TABLE tb_class_page_list ( +
                     [index]       INTEGER);
 ```
 **3)** 读写缓存
+由于Serializable的效率远低于Parcelable，所以采用Parcelable实现的缓存机制，速度快了大概7，8倍。
++ 读取缓存
 ```kotlin
-val helper = PageListCacheHelper(context.filesDir.absolutePath)
-helper.put(KEY_CARD_CACHE + entry.key, object)
-
 val helper = PageListCacheHelper(container?.context?.filesDir?.absolutePath)
 val pageModel: Any? = helper.get(KEY_CARD_CACHE + getPageTitle(position))
 ```
-
++ 写入缓存
+```kotlin
+val helper = PageListCacheHelper(context.filesDir.absolutePath)
+helper.put(KEY_CARD_CACHE + entry.key, object)
+```
 **4)** jsoup获取数据
+由于数据是用从html页面中提取的，所以速度偏慢，为了不影响体验做了一套缓存机制，来做到流畅体验。
 ```java
 Document doc = Jsoup.parse(html);
 Elements elements = body.getElementsByTag("a");
@@ -72,7 +78,7 @@ ProGuard
 -keep public class com.ecjtu.netcore.network.BaseNetwork{public <methods>;}
 -keep public class * extends com.ecjtu.netcore.network.BaseNetwork{ public <methods>; }
 -keep public interface com.ecjtu.netcore.network.IRequestCallback{*;}
--keep public class * extends com.ecjtu.flesh.ui.widget.ScrollAwareFABBehavior{*;}
+-keep public class * extends android.support.design.widget.CoordinatorLayout$Behavior{*;}
 ```
 
 Contributing
