@@ -173,7 +173,7 @@ parcel read time 498
 serializable save time 7571
 serializable read time 4975
 ```
-从结果上可以看到数据库和parcel的存储各有优劣，而Serializable则是劣势明显。由于项目上的各种原因加上我要直接存储对象，所以最后使用了Parcel的存储方式来实现无网络状态下显示数据。并没有使用数据库，但是数据库应该是最优解，可以用一些对象型数据库框架例如GreenDao等等。
+从结果上可以看到数据库和parcel的存储各有优劣，而Serializable则是劣势明显。由于项目上的各种原因加上我要直接存储对象，所以最后使用了Parcel的存储方式来实现无网络状态下显示数据。并没有使用数据库，但是数据库应该是最优解，可以用一些对象型数据库框架例如[GreenDao][5]等等。
 
 ProGuard
 --------
@@ -215,3 +215,4 @@ Only available for study and communication.If the flesh violate your rights,we c
 [2]: https://bugly.qq.com/v2/
 [3]: http://www.mzitu.com
 [4]: https://github.com/Kerr1Gan/Flesh/blob/master/LICENSE
+[5]: http://greenrobot.org/greendao/
