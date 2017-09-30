@@ -2,7 +2,7 @@
 
 果肉一款福利满满的app，数据源[mzitu][3]，MD风格的界面。
 
-前段时间在体验一个h5的美女网站的时候体验极差，速度慢流量消耗大，所以一怒之下就做了这个app，来增强下体验，顺便给自己爽一下。
+前段时间在体验一个h5的美女网站的时候体验极差，速度慢广告多流量消耗大，所以一怒之下就做了这个app，来增强下体验，顺便给自己爽一下。
 
 国际惯例，先上福利。[Release1.0](https://github.com/Kerr1Gan/Flesh/releases/download/170929/flesh-release.apk)
 
@@ -173,6 +173,7 @@ parcel read time 498
 serializable save time 7571
 serializable read time 4975
 ```
+从结果上可以看到数据库和parcel的存储各有优劣，而Serializable则是劣势明显。由于项目上的各种原因加上我要直接存储对象，所以最后使用了Parcel的存储方式来实现无网络状态下显示数据。并没有使用数据库，但是数据库应该是最优解，可以用一些对象型数据库框架例如GreenDao等等。
 
 ProGuard
 --------
