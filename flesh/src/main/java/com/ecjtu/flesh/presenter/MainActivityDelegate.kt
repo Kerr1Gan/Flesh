@@ -182,15 +182,14 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     fun onStop() {
         mViewPager.adapter?.let {
             (mViewPager.adapter as TabPagerAdapter).onStop(owner)
+            val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
+            helper.put(CACHE_MENU_LIST, (mViewPager.adapter as TabPagerAdapter).menu)
+
+            PreferenceManager.getDefaultSharedPreferences(owner).edit().
+                    putInt(KEY_LAST_TAB_ITEM, mTabLayout.selectedTabPosition).
+                    putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isAppbarLayoutExpand()).
+                    apply()
         }
-        val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
-        helper.put(CACHE_MENU_LIST, (mViewPager.adapter as TabPagerAdapter).menu)
-
-        PreferenceManager.getDefaultSharedPreferences(owner).edit().
-                putInt(KEY_LAST_TAB_ITEM, mTabLayout.selectedTabPosition).
-                putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isAppbarLayoutExpand()).
-                apply()
-
     }
 
     fun onResume() {

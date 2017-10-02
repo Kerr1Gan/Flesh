@@ -40,8 +40,6 @@ import java.net.HttpURLConnection
  */
 open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<CardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
 
-    private val mListHeight = ArrayList<Int>()
-
     private var mDatabase: SQLiteDatabase? = null
 
     private var mLastClickPosition = -1
@@ -77,7 +75,6 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
 
         //db
         if (mDatabase == null) {
-            val context = holder?.itemView?.context as Context
             val manager = DatabaseManager.getInstance(context)
             mDatabase = manager?.getDatabase()
         }
@@ -94,7 +91,8 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
         val url = pageModel.itemList[position].imgUrl /*thumb2OriginalUrl(pageModel.itemList[position].imgUrl)*/
         var host = url.replace("http://", "")
         host = host.substring(0, host.indexOf("/"))
-        val builder = LazyHeaders.Builder().addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Mobile Safari/537.36")
+        val builder = LazyHeaders.Builder()
+                .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E)  Chrome/60.0.3112.90 Mobile Safari/537.36")
                 .addHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8")
                 .addHeader("Accept-Encoding", "gzip, deflate")
                 .addHeader("Accept-Language", "zh-CN,zh;q=0.8")

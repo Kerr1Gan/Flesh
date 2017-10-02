@@ -70,3 +70,5 @@ class PageDetailActivityDelegate(owner: PageDetailActivity, val url: String) : D
         }
     }
 }
+
+

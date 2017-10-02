@@ -151,9 +151,9 @@ abstract class BaseNetwork {
 
     open fun getContent(httpURLConnection: HttpURLConnection): String {
         var ret = ""
+        var os: ByteArrayOutputStream? = null
         try {
-//            if (httpURLConnection.responseCode == HttpURLConnection.HTTP_OK) {
-            var os = ByteArrayOutputStream()
+            os = ByteArrayOutputStream()
             var temp = ByteArray(CACHE_SIZE, { index -> 0 })
             var `is` = httpURLConnection.inputStream
             mInputStream = `is`
@@ -164,9 +164,15 @@ abstract class BaseNetwork {
                 len = `is`.read(temp)
             }
             ret = String(os.toByteArray())
-//            }
+            os.close()
         } catch (ex: Exception) {
             Log.i(TAG, "uri " + mUrl)
+            if (mInputStream != null) {
+                mInputStream?.close()
+            }
+            if (os != null) {
+                os.close()
+            }
             ex.printStackTrace()
             throw ex
         }
