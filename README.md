@@ -2,11 +2,19 @@
 
 果肉一款福利满满的app，数据源[mzitu][3]，MD风格的界面。
 
-前段时间在体验一个h5的美女网站的时候体验极差，速度慢广告多流量消耗大，所以一怒之下就做了这个app，来增强下体验，顺便满足下自己的需求。
+如果你是一位想学习一下Kotlin的同学，那么绝对不要错过Flesh。如Kotlin所说它与Java完美兼容，所以这里有Kotlin调用Java，同时也有Java调用Kotlin。在学习的同时还将有另一种体验。
 
 国际惯例，先上福利。[Release1.0](https://github.com/Kerr1Gan/Flesh/releases/download/170929/flesh-release.apk)
 
 ![fuli](art/fuli.gif)
+
+特点
+--------
+1. 列表显示图片，点击查看更多。
+2. 快速跳转至顶部，底部，指定位置。
+3. 收藏，查看历史记录。
+4. 设置壁纸。
+5. 离线缓存。
 
 组成
 --------
@@ -55,7 +63,7 @@ CREATE TABLE tb_class_page_list (
 ```
 **3)** 读写缓存
 
-由于Serializable的效率远低于Parcelable，所以采用Parcelable实现的缓存机制，速度快了大概7，8倍。
+Serializable的效率远低于Parcelable，所以采用Parcelable实现的缓存机制，速度快了大概7，8倍。
 + 读取缓存
 ```kotlin
 val helper = PageListCacheHelper(container?.context?.filesDir?.absolutePath)
@@ -81,7 +89,77 @@ String text = elements.get(0).text();
 String imageUrl = elements.get(0).attr("src");
 ...
 ```
-**5)** 测试
+**5)** 组件
++ Activity fragment替代activity来显示新界面
+
+    因为activity需要在Manifiest中注册，所以当有多个activity的时候，就需要编写很长的Manifiest文件，严重影响了Manifiest的可读性，界面的风格也比较笨重。所以一个新页面就注册一个activity不太合适，我们通过用activity做为容器添加不同的Fragment来达到注册一个activity启动多个不同页面的效果。生命周期由activity管理，更方便简洁。
+    ```kotlin
+    open class BaseFragmentActivity : BaseActionActivity() {
+
+        companion object {
+
+            private const val EXTRA_FRAGMENT_NAME = "extra_fragment_name"
+            private const val EXTRA_FRAGMENT_ARG = "extra_fragment_arguments"
+
+            @JvmOverloads
+            @JvmStatic
+            fun newInstance(context: Context, fragment: Class<*>, bundle: Bundle? = null,
+                                        clazz: Class<out Activity> = getActivityClazz()): Intent {
+                val intent = Intent(context, clazz)
+                intent.putExtra(EXTRA_FRAGMENT_NAME, fragment.name)
+                intent.putExtra(EXTRA_FRAGMENT_ARG, bundle)
+                return intent
+            }
+
+            protected open fun getActivityClazz(): Class<out Activity> {
+                return BaseFragmentActivity::class.java
+            }
+        }
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.activity_base_fragment)
+            val fragmentName = intent.getStringExtra(EXTRA_FRAGMENT_NAME)
+            var fragment: Fragment? = null
+            if (TextUtils.isEmpty(fragmentName)) {
+                //set default fragment
+    //            fragment = makeFragment(MainFragment::class.java!!.getName())
+            } else {
+                val args = intent.getBundleExtra(EXTRA_FRAGMENT_ARG)
+                try {
+                    fragment = makeFragment(fragmentName)
+                    if (args != null)
+                        fragment!!.arguments = args
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+            }
+
+            if (fragment == null) return
+
+            supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit()
+        }
+
+        fun makeFragment(name: String): Fragment? {
+            try {
+                val fragmentClazz = Class.forName(name)
+                return fragmentClazz.newInstance() as Fragment
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            return null
+        }
+
+    }
+    ```
+
+
+**6)** 测试
 
 性能测试，为了避免干扰，我们使用AndroidTest进行测试。
 ```java
