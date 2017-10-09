@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.ecjtu.flesh.cache.impl.PageListCacheHelper;
 import com.ecjtu.flesh.db.DatabaseManager;
-import com.ecjtu.flesh.db.table.impl.LikeTableImpl;
 import com.ecjtu.flesh.util.file.FileUtil;
 import com.ecjtu.netcore.model.PageModel;
 

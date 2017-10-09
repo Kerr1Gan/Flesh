@@ -18,7 +18,6 @@ import com.ecjtu.flesh.db.table.impl.DetailPageTableImpl;
 import com.ecjtu.flesh.db.table.impl.DetailPageUrlsTableImpl;
 import com.ecjtu.flesh.db.table.impl.HistoryTableImpl;
 import com.ecjtu.flesh.db.table.impl.LikeTableImpl;
-import com.ecjtu.flesh.db.table.impl.LikeTableImplV2;
 import com.ecjtu.flesh.db.table.impl.NotificationTableImpl;
 import com.ecjtu.flesh.service.MainService;
 import com.tencent.bugly.Bugly;
@@ -65,7 +64,7 @@ public class MainApplication extends Application {
         manager.registerTable(new DetailPageTableImpl());
         manager.registerTable(new DetailPageUrlsTableImpl());
         manager.registerTable(new HistoryTableImpl());
-        manager.registerTable(new LikeTableImplV2());
+        manager.registerTable(new LikeTableImpl());
         manager.registerTable(new NotificationTableImpl());
         manager.getHelper(this, "heaven", 2).getWritableDatabase();
     }

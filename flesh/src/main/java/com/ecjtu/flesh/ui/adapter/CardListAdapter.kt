@@ -1,6 +1,5 @@
 package com.ecjtu.flesh.ui.adapter
 
-import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
 import android.support.v7.widget.RecyclerView
@@ -25,7 +24,7 @@ import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
 import com.ecjtu.flesh.db.table.impl.HistoryTableImpl
-import com.ecjtu.flesh.db.table.impl.LikeTableImplV2
+import com.ecjtu.flesh.db.table.impl.LikeTableImpl
 import com.ecjtu.flesh.ui.activity.FullScreenImageActivity
 import com.ecjtu.flesh.ui.activity.PageDetailActivity
 import com.ecjtu.netcore.jsoup.SoupFactory
@@ -81,7 +80,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
 
         val href = pageModel.itemList[position].href
         if (mDatabase != null && mDatabase?.isOpen == true) {
-            val impl = LikeTableImplV2()
+            val impl = LikeTableImpl()
             holder?.heart?.isActivated = impl.isLike(mDatabase!!, href)
         }
 
@@ -249,7 +248,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
                 val db = manager?.getDatabase() as SQLiteDatabase
                 val url = v?.getTag(R.id.extra_tag) as PageModel.ItemModel?
                 if (url != null) {
-                    val impl = LikeTableImplV2()
+                    val impl = LikeTableImpl()
                     if (impl.isLike(db, url.href)) {
                         impl.deleteLike(db, url.href)
                         v?.isActivated = false

@@ -10,7 +10,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
-import com.ecjtu.flesh.db.table.impl.LikeTableImplV2
+import com.ecjtu.flesh.db.table.impl.LikeTableImpl
 import com.ecjtu.flesh.presenter.PageDetailActivityDelegate
 
 /**
@@ -80,7 +80,7 @@ class PageDetailActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_page_detail_activity, menu)
-        val impl = LikeTableImplV2()
+        val impl = LikeTableImpl()
         mDatabase?.let {
             val isLike = impl.isLike(mDatabase!!, mUrl!!)
             val item = menu?.findItem(R.id.item)
@@ -95,7 +95,7 @@ class PageDetailActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == R.id.item) {
-            val impl = LikeTableImplV2()
+            val impl = LikeTableImpl()
             mDatabase?.let {
                 val isLike = impl.isLike(mDatabase!!, mUrl!!)
                 if (isLike) {
