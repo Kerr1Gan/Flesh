@@ -11,7 +11,7 @@ import java.util.*
  */
 class LikeTableImpl : BaseTableImpl() {
     override val sql: String
-        get() = "CREATE TABLE tb_like_v2 (\n" +
+        get() = "CREATE TABLE tb_like (\n" +
                 "    _id                  INTEGER PRIMARY KEY,\n" +
                 "    href_class_page_list STRING  REFERENCES tb_class_page_list (href) ON DELETE CASCADE\n" +
                 "                                                                      ON UPDATE CASCADE,\n" +
@@ -19,7 +19,7 @@ class LikeTableImpl : BaseTableImpl() {
                 ");\n"
 
     companion object {
-        const val TABLE_NAME = "tb_like_v2"
+        const val TABLE_NAME = "tb_like"
     }
 
     override fun createTable(sqLiteDatabase: SQLiteDatabase) {
