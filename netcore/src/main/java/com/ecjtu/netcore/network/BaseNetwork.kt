@@ -9,6 +9,7 @@ import java.io.OutputStream
 import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.charset.Charset
 
 /**
  * Created by Ethan_Xiang on 2017/7/14.
@@ -49,6 +50,8 @@ abstract class BaseNetwork {
     private var mDoOutput = false
 
     private var mUrl = ""
+
+    var charset = Charset.forName("utf-8")
 
     fun setRequestCallback(callback: IRequestCallback) {
         mCallback = callback
@@ -144,7 +147,6 @@ abstract class BaseNetwork {
         try {
             mHttpUrlConnection?.connect()
         } catch (io: IOException) {
-            Log.i(TAG, "uri " + mUrl)
             throw io
         }
     }
@@ -163,7 +165,7 @@ abstract class BaseNetwork {
                 os.write(temp, 0, len)
                 len = `is`.read(temp)
             }
-            ret = String(os.toByteArray())
+            ret = String(os.toByteArray(), charset)
             os.close()
         } catch (ex: Exception) {
             Log.i(TAG, "uri " + mUrl)
@@ -185,7 +187,7 @@ abstract class BaseNetwork {
             mInputStream?.close()
         } catch (e: Exception) {
             Log.i(TAG, "uri " + mUrl)
-            throw e
+            e.printStackTrace()
         } finally {
             mHttpUrlConnection?.disconnect()
         }

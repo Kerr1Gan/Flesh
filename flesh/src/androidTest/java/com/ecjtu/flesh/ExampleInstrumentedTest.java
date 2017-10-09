@@ -9,8 +9,12 @@ import android.util.Log;
 
 import com.ecjtu.flesh.cache.impl.PageListCacheHelper;
 import com.ecjtu.flesh.db.DatabaseManager;
+import com.ecjtu.flesh.db.table.impl.LikeTableImpl;
+import com.ecjtu.flesh.model.ModelManager;
 import com.ecjtu.flesh.util.file.FileUtil;
 import com.ecjtu.netcore.model.PageModel;
+import com.ecjtu.netcore.network.AsyncNetwork;
+import com.ecjtu.netcore.network.IRequestCallbackV2;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,17 +82,17 @@ public class ExampleInstrumentedTest {
             this.id = id;
         }
 
-        public void setHeight(int height){
+        public void setHeight(int height) {
             this.height = height;
         }
 
-        public int getHeight(){
+        public int getHeight() {
             return this.height;
         }
 
         @Override
         public boolean equals(Object o) {
-            if(!(o instanceof TestItemModel)){
+            if (!(o instanceof TestItemModel)) {
                 return false;
             }
             TestItemModel other = (TestItemModel) o;
@@ -114,7 +119,7 @@ public class ExampleInstrumentedTest {
         db.beginTransaction();
         LikeTableImpl impl = new LikeTableImpl();
         for (int i = 0; i < 50000; i++) {
-            impl.addLike(db, "page" + i, "", "", "");
+            impl.addLike(db, "page" + i);
         }
         db.setTransactionSuccessful();
         db.endTransaction();
@@ -203,5 +208,23 @@ public class ExampleInstrumentedTest {
         final Context appContext = InstrumentationRegistry.getTargetContext();
         File file = new File(appContext.getFilesDir(), "bg.png");
         FileUtil.INSTANCE.copyFile2Path(file, new File("/sdcard/bg.png"));
+    }
+
+    @Test
+    public void flsp5Video() throws Exception {
+        AsyncNetwork network = new AsyncNetwork();
+        network.request("http://flsp5.com/xml/xml.php?flid=3&p=1", null);
+//        "http://flsp5.com/vod_list.php?playid=90468&ly=ubosk"
+        network.setRequestCallback(new IRequestCallbackV2() {
+            @Override
+            public void onError(HttpURLConnection httpURLConnection, Exception exception) {
+
+            }
+
+            @Override
+            public void onSuccess(HttpURLConnection httpURLConnection, String response) {
+                ModelManager.getVideoModelByString(response);
+            }
+        });
     }
 }
