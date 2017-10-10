@@ -1,4 +1,4 @@
-package com.ecjtu.componentes
+package com.ecjtu.componentes.activity
 
 import android.app.Activity
 import android.content.Context

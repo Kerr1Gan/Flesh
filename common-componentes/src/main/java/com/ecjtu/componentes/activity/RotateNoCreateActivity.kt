@@ -1,4 +1,4 @@
-package com.ecjtu.componentes
+package com.ecjtu.componentes.activity
 
 import android.app.Activity
 import android.content.Context
@@ -8,7 +8,7 @@ import android.os.Bundle
 /**
  * Created by KerriGan on 2017/8/20.
  */
-class RotateNoCreateActivity:BaseFragmentActivity(){
+class RotateNoCreateActivity: BaseFragmentActivity(){
     companion object {
         @JvmOverloads
         @JvmStatic

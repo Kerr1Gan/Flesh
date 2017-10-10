@@ -23,7 +23,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
-import com.ecjtu.flesh.ui.activity.AppThemeActivity
+import com.ecjtu.componentes.activity.AppThemeActivity
 import com.ecjtu.flesh.ui.activity.MainActivity
 import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
 import com.ecjtu.flesh.ui.fragment.PageHistoryFragment

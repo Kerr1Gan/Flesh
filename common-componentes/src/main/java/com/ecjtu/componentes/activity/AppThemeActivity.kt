@@ -1,4 +1,4 @@
-package com.ecjtu.componentes
+package com.ecjtu.componentes.activity
 
 import android.app.Activity
 import android.content.Context
@@ -6,9 +6,9 @@ import android.content.Intent
 import android.os.Bundle
 
 /**
- * Created by KerriGan on 2017/7/12.
+ * Created by Ethan_Xiang on 2017/9/18.
  */
-open class ImmersiveFragmentActivity : BaseFragmentActivity() {
+class AppThemeActivity : BaseFragmentActivity() {
     companion object {
         @JvmOverloads
         @JvmStatic
@@ -17,6 +17,8 @@ open class ImmersiveFragmentActivity : BaseFragmentActivity() {
             return BaseFragmentActivity.newInstance(context, fragment, bundle, clazz)
         }
 
-        fun getActivityClazz(): Class<out Activity> = ImmersiveFragmentActivity::class.java
+        protected fun getActivityClazz(): Class<out Activity> {
+            return AppThemeActivity::class.java
+        }
     }
 }

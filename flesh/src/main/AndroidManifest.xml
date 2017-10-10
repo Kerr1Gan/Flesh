@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    
+
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
@@ -31,11 +31,12 @@
             android:process=":child"
             android:theme="@style/ImageStatusBarStyle" />
 
-        <activity android:name=".ui.activity.AppThemeActivity" />
-
         <service
             android:name=".service.MainService"
             android:process=":msg" />
+
+        <activity android:name=".ui.activity.TestActivity"
+            android:exported="true"/>
     </application>
 
 </manifest>

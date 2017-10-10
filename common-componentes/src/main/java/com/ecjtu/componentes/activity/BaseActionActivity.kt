@@ -1,4 +1,4 @@
-package com.ecjtu.componentes
+package com.ecjtu.componentes.activity
 
 import android.app.Activity
 import android.content.BroadcastReceiver
@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.view.ViewConfiguration
+import com.ecjtu.componentes.WeakHandler
 
 
 /**

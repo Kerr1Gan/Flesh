@@ -1,15 +1,14 @@
-package com.ecjtu.flesh.ui.activity
+package com.ecjtu.componentes.activity
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.ecjtu.componentes.BaseFragmentActivity
 
 /**
- * Created by Ethan_Xiang on 2017/9/18.
+ * Created by KerriGan on 2017/7/12.
  */
-class AppThemeActivity : BaseFragmentActivity() {
+open class ImmersiveFragmentActivity : BaseFragmentActivity() {
     companion object {
         @JvmOverloads
         @JvmStatic
@@ -18,8 +17,6 @@ class AppThemeActivity : BaseFragmentActivity() {
             return BaseFragmentActivity.newInstance(context, fragment, bundle, clazz)
         }
 
-        protected fun getActivityClazz(): Class<out Activity> {
-            return AppThemeActivity::class.java
-        }
+        fun getActivityClazz(): Class<out Activity> = ImmersiveFragmentActivity::class.java
     }
 }
