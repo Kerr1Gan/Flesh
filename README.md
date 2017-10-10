@@ -104,7 +104,7 @@ String imageUrl = elements.get(0).attr("src");
             @JvmOverloads
             @JvmStatic
             fun newInstance(context: Context, fragment: Class<*>, bundle: Bundle? = null,
-                                        clazz: Class<out Activity> = getActivityClazz()): Intent {
+                                          clazz: Class<out Activity> = getActivityClazz()): Intent {
                 val intent = Intent(context, clazz)
                 intent.putExtra(EXTRA_FRAGMENT_NAME, fragment.name)
                 intent.putExtra(EXTRA_FRAGMENT_ARG, bundle)
@@ -118,18 +118,18 @@ String imageUrl = elements.get(0).attr("src");
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            setContentView(R.layout.activity_base_fragment)
+            setContentView(R.layout.cc_activity_base_fragment)
             val fragmentName = intent.getStringExtra(EXTRA_FRAGMENT_NAME)
             var fragment: Fragment? = null
             if (TextUtils.isEmpty(fragmentName)) {
                 //set default fragment
-    //            fragment = makeFragment(MainFragment::class.java!!.getName())
+                //fragment = makeFragment(MainFragment::class.java!!.getName())
             } else {
                 val args = intent.getBundleExtra(EXTRA_FRAGMENT_ARG)
                 try {
                     fragment = makeFragment(fragmentName)
                     if (args != null)
-                        fragment!!.arguments = args
+                        fragment?.arguments = args
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
