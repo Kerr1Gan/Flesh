@@ -1,25 +1,24 @@
-package com.ecjtu.flesh.ui.activity
+package com.ecjtu.componentes
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.ecjtu.componentes.BaseFragmentActivity
 
 /**
- * Created by Ethan_Xiang on 2017/9/18.
+ * Created by KerriGan on 2017/8/20.
  */
-class AppThemeActivity : BaseFragmentActivity() {
+class RotateNoCreateActivity:BaseFragmentActivity(){
     companion object {
         @JvmOverloads
         @JvmStatic
         fun newInstance(context: Context, fragment: Class<*>, bundle: Bundle? = null,
-                        clazz: Class<out Activity> = getActivityClazz()): Intent {
+                                      clazz: Class<out Activity> = getActivityClazz()): Intent {
             return BaseFragmentActivity.newInstance(context, fragment, bundle, clazz)
         }
 
-        protected fun getActivityClazz(): Class<out Activity> {
-            return AppThemeActivity::class.java
+        protected open fun getActivityClazz(): Class<out Activity> {
+            return RotateNoCreateActivity::class.java
         }
     }
 }

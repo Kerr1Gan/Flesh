@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="ImageStatusBarStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
+        <item name="android:windowTranslucentNavigation" tools:targetApi="kitkat">true</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@android:color/transparent</item>
+        <item name="android:colorControlHighlight" tools:targetApi="lollipop">@color/colorDark</item>
+        <item name="android:colorAccent" tools:targetApi="lollipop">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="drawerArrowStyle">@style/AppTheme.DrawerArrowToggle</item>
+    </style>
+
+    <style name="AppTheme.DrawerArrowToggle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@android:color/white</item>
+    </style>
+
+    <style name="AppPreferenceTheme" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="drawerArrowStyle">@style/AppTheme.DrawerArrowToggle</item>
+        <item name="titleTextColor">@android:color/white</item>
+        <item name="actionBarTheme">@style/WhiteToolbar</item>
+        <item name="toolbarStyle">@style/NoSpaceNavigationToolbar</item>
+
+        <item name="android:actionModeBackground">@color/colorPrimary</item>
+    </style>
+
+    <style name="WhiteToolbar" parent="Base.Widget.AppCompat.Light.ActionBar">
+        <item name="android:colorControlNormal" tools:targetApi="lollipop">@android:color/white</item>
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
+        <item name="colorControlHighlight">@android:color/white</item>
+
+        <item name="titleTextColor">@android:color/white</item>
+        <item name="contentInsetStartWithNavigation">0dp</item>
+        <item name="contentInsetStart">0dp</item>
+        <item name="contentInsetEnd">0dp</item>
+    </style>
+
+    <style name="NoSpaceNavigationToolbar" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="contentInsetStart">0dp</item>
+        <item name="contentInsetStartWithNavigation">0dp</item>
+    </style>
+</resources>

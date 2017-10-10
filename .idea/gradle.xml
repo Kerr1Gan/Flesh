@@ -8,6 +8,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/common-componentes" />
             <option value="$PROJECT_DIR$/flesh" />
             <option value="$PROJECT_DIR$/netcore" />
           </set>

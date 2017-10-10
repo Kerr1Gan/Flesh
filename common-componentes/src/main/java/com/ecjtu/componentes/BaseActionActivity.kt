@@ -1,4 +1,4 @@
-package com.ecjtu.flesh.ui.activity.base
+package com.ecjtu.componentes
 
 import android.app.Activity
 import android.content.BroadcastReceiver
