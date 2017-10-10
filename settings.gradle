@@ -1,1 +1,1 @@
-include ':flesh', ':netcore', ':common-componentes'
+include ':flesh', ':netcore', ':common-componentes', ':parcel'

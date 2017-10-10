@@ -17,12 +17,10 @@ class DataBaseHelper : SQLiteOpenHelper {
 
     private var mTables: List<BaseTable>? = null
 
-    constructor(context: Context, name: String, factory: SQLiteDatabase.CursorFactory?, version: Int) : super(context, name, factory, version) {
-    }
+    constructor(context: Context, name: String, factory: SQLiteDatabase.CursorFactory?, version: Int) : super(context, name, factory, version)
 
     constructor(context: Context, name: String, factory: SQLiteDatabase.CursorFactory?, version: Int,
-                errorHandler: DatabaseErrorHandler?) : super(context, name, factory, version, errorHandler) {
-    }
+                errorHandler: DatabaseErrorHandler?) : super(context, name, factory, version, errorHandler)
 
     fun setTables(tables: List<BaseTable>) {
         mTables = tables

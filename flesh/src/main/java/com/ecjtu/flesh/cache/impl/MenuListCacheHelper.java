@@ -2,8 +2,8 @@ package com.ecjtu.flesh.cache.impl;
 
 import android.os.Parcel;
 
-import com.ecjtu.flesh.cache.base.ParcelableFileCacheHelper;
 import com.ecjtu.netcore.model.MenuModel;
+import com.ecjtu.parcel.base.ParcelableFileCacheHelper;
 
 import java.util.ArrayList;
 import java.util.List;

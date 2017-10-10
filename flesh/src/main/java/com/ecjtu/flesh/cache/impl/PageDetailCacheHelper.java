@@ -2,8 +2,8 @@ package com.ecjtu.flesh.cache.impl;
 
 import android.os.Parcel;
 
-import com.ecjtu.flesh.cache.base.ParcelableFileCacheHelper;
 import com.ecjtu.netcore.model.PageDetailModel;
+import com.ecjtu.parcel.base.ParcelableFileCacheHelper;
 
 /**
  * Created by Ethan_Xiang on 2017/9/11.

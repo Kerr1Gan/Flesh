@@ -37,4 +37,5 @@ dependencies {
     compile 'com.tencent.bugly:crashreport_upgrade:latest.release'
     //    compile project(path: ':fastscroll')
     compile project(':common-componentes')
+    compile project(':parcel')
 }

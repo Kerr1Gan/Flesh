@@ -12,6 +12,7 @@ class AsyncNetwork : BaseNetwork() {
 
     companion object {
         private const val TAG = "AsyncNetwork"
+
         private var sThreadsCount: AtomicInteger = AtomicInteger(0)
     }
 

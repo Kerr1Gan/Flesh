@@ -1,4 +1,4 @@
-package com.ecjtu.flesh.cache.base;
+package com.ecjtu.parcel.base;
 
 import android.os.Parcel;
 
