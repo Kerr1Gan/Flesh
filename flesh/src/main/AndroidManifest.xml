@@ -35,8 +35,9 @@
             android:name=".service.MainService"
             android:process=":msg" />
 
-        <activity android:name=".ui.activity.TestActivity"
-            android:exported="true"/>
+        <activity
+            android:name=".ui.activity.TestActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

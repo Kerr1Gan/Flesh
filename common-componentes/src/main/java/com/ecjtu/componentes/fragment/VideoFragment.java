@@ -19,6 +19,8 @@ public class VideoFragment extends Fragment {
 
     private String mVideoUrl = "http://sp.9ky.cc/vlook.php?id=YklkPTQ5NDcyMjY=";
     private MediaController mMediaController;
+    private VideoView mVideoView;
+    private int mLastPosition = 0;
 
     @Nullable
     @Override
@@ -30,10 +32,30 @@ public class VideoFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mMediaController = new MediaController(getContext());
-        VideoView video = (VideoView) view.findViewById(R.id.video);
-        video.setVideoPath(mVideoUrl);
-        video.setMediaController(mMediaController);
-        video.requestFocus();
-        video.start();
+        mVideoView = (VideoView) view.findViewById(R.id.video);
+        mVideoView.setVideoPath(mVideoUrl);
+        mVideoView.setMediaController(mMediaController);
+        mVideoView.requestFocus();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mVideoView.start();
+        mVideoView.seekTo(mLastPosition);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mVideoView.pause();
+        mLastPosition = mVideoView.getCurrentPosition();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mVideoView.stopPlayback();
+    }
+
 }
