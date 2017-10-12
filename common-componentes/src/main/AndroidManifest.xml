@@ -19,7 +19,9 @@
             android:configChanges="orientation|keyboardHidden|screenSize|mcc|mnc"
             android:theme="@style/ImageStatusBarStyle" />
 
-        <activity android:name="com.ecjtu.componentes.activity.AppThemeActivity" />
+        <activity android:name=".activity.AppThemeActivity" />
+
+        <activity android:name=".activity.RotateByOrientationActivity" />
 
     </application>
 

@@ -9,7 +9,8 @@
     <ImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:background="@android:color/transparent"
         android:scaleType="centerCrop" />
 
@@ -18,7 +19,7 @@
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:theme="@style/WhiteToolbar"
         app:title=""
-        app:titleTextColor="@android:color/white"
-        app:theme="@style/WhiteToolbar"/>
+        app:titleTextColor="@android:color/white" />
 </RelativeLayout>

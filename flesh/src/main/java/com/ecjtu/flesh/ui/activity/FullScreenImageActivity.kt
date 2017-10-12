@@ -7,7 +7,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.Menu
@@ -22,13 +21,14 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
+import com.ecjtu.componentes.activity.RotateByOrientationActivity
 import com.ecjtu.flesh.R
 import kotlin.concurrent.thread
 
 /**
  * Created by KerriGan on 2017/9/11.
  */
-class FullScreenImageActivity : AppCompatActivity(), RequestListener<Bitmap> {
+class FullScreenImageActivity : RotateByOrientationActivity(), RequestListener<Bitmap> {
 
     companion object {
         private const val EXTRA_URI = "full_screen_extra_uri"
@@ -105,11 +105,5 @@ class FullScreenImageActivity : AppCompatActivity(), RequestListener<Bitmap> {
         supportActionBar?.title = ""
 
         toolbar?.setPadding(toolbar.paddingLeft, toolbar.paddingTop + getStatusBarHeight(), toolbar.paddingRight, toolbar.paddingBottom)
-    }
-
-    private fun getStatusBarHeight(): Int {
-        val resources = resources
-        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        return resources.getDimensionPixelSize(resourceId)
     }
 }
