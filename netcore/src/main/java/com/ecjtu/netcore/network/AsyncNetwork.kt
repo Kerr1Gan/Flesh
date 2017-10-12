@@ -2,6 +2,7 @@ package com.ecjtu.netcore.network
 
 import android.util.Log
 import java.lang.Exception
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
 
 /**
@@ -11,37 +12,26 @@ class AsyncNetwork : BaseNetwork() {
 
     companion object {
         private const val TAG = "AsyncNetwork"
+
+        private var sThreadsCount: AtomicInteger = AtomicInteger(0)
     }
 
     private var mThread: Thread? = null
 
     override fun request(urlStr: String, mutableMap: MutableMap<String, String>?) {
         mThread = thread {
-            Log.e(TAG, "thread begin " + toString())
+            Log.e(TAG, "thread begin " + toString() + " threads count:" + sThreadsCount.incrementAndGet())
             try {
                 super.request(urlStr, mutableMap)
             } catch (e: Exception) {
                 Log.e(TAG, "thread exception " + e.toString())
             }
-            Log.e(TAG, "thread end " + toString())
+            Log.e(TAG, "thread end " + toString() + " threads count:" + sThreadsCount.decrementAndGet())
         }
     }
 
     override fun cancel() {
         super.cancel()
         mThread?.interrupt()
-    }
-
-    fun requestDeviceInfo(url: String, listener: IRequestCallback): AsyncNetwork {
-        var map = mutableMapOf<String, String>()
-        map.put("param", "info")
-        return AsyncNetwork().apply {
-            setRequestCallback(listener)
-            var localUrl = url
-            if (!localUrl.startsWith(HTTP_PREFIX)) {
-                localUrl = "${HTTP_PREFIX}${localUrl}";
-            }
-            request("${localUrl}/API/Info", map)
-        }
     }
 }

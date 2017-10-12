@@ -4,7 +4,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.cache.PageDetailCacheHelper
+import com.ecjtu.flesh.cache.impl.PageDetailCacheHelper
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.DetailPageTableImpl
 import com.ecjtu.flesh.ui.activity.PageDetailActivity
@@ -70,3 +70,5 @@ class PageDetailActivityDelegate(owner: PageDetailActivity, val url: String) : D
         }
     }
 }
+
+

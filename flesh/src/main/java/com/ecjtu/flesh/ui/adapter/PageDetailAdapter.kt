@@ -32,7 +32,6 @@ import java.net.HttpURLConnection
  * Created by Ethan_Xiang on 2017/9/11.
  */
 class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerViewWrapAdapter<PageDetailAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
-    private val mListHeight = ArrayList<Int>()
 
     override fun getItemCount(): Int {
         return pageModel.maxLen

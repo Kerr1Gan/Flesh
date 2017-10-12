@@ -1,6 +1,5 @@
 package com.ecjtu.flesh.ui.adapter
 
-import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
 import android.support.v7.widget.RecyclerView
@@ -25,7 +24,7 @@ import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
 import com.ecjtu.flesh.db.table.impl.HistoryTableImpl
-import com.ecjtu.flesh.db.table.impl.LikeTableImplV2
+import com.ecjtu.flesh.db.table.impl.LikeTableImpl
 import com.ecjtu.flesh.ui.activity.FullScreenImageActivity
 import com.ecjtu.flesh.ui.activity.PageDetailActivity
 import com.ecjtu.netcore.jsoup.SoupFactory
@@ -39,8 +38,6 @@ import java.net.HttpURLConnection
  * Created by Ethan_Xiang on 2017/9/8.
  */
 open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<CardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
-
-    private val mListHeight = ArrayList<Int>()
 
     private var mDatabase: SQLiteDatabase? = null
 
@@ -77,14 +74,13 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
 
         //db
         if (mDatabase == null) {
-            val context = holder?.itemView?.context as Context
             val manager = DatabaseManager.getInstance(context)
             mDatabase = manager?.getDatabase()
         }
 
         val href = pageModel.itemList[position].href
         if (mDatabase != null && mDatabase?.isOpen == true) {
-            val impl = LikeTableImplV2()
+            val impl = LikeTableImpl()
             holder?.heart?.isActivated = impl.isLike(mDatabase!!, href)
         }
 
@@ -94,7 +90,8 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
         val url = pageModel.itemList[position].imgUrl /*thumb2OriginalUrl(pageModel.itemList[position].imgUrl)*/
         var host = url.replace("http://", "")
         host = host.substring(0, host.indexOf("/"))
-        val builder = LazyHeaders.Builder().addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Mobile Safari/537.36")
+        val builder = LazyHeaders.Builder()
+                .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E)  Chrome/60.0.3112.90 Mobile Safari/537.36")
                 .addHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8")
                 .addHeader("Accept-Encoding", "gzip, deflate")
                 .addHeader("Accept-Language", "zh-CN,zh;q=0.8")
@@ -251,7 +248,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
                 val db = manager?.getDatabase() as SQLiteDatabase
                 val url = v?.getTag(R.id.extra_tag) as PageModel.ItemModel?
                 if (url != null) {
-                    val impl = LikeTableImplV2()
+                    val impl = LikeTableImpl()
                     if (impl.isLike(db, url.href)) {
                         impl.deleteLike(db, url.href)
                         v?.isActivated = false

@@ -12,7 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.cache.PageListCacheHelper
+import com.ecjtu.flesh.cache.impl.PageListCacheHelper
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
 import com.ecjtu.netcore.jsoup.SoupFactory

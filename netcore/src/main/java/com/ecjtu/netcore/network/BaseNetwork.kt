@@ -9,6 +9,7 @@ import java.io.OutputStream
 import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.charset.Charset
 
 /**
  * Created by Ethan_Xiang on 2017/7/14.
@@ -49,6 +50,8 @@ abstract class BaseNetwork {
     private var mDoOutput = false
 
     private var mUrl = ""
+
+    var charset = Charset.forName("utf-8")
 
     fun setRequestCallback(callback: IRequestCallback) {
         mCallback = callback
@@ -144,16 +147,15 @@ abstract class BaseNetwork {
         try {
             mHttpUrlConnection?.connect()
         } catch (io: IOException) {
-            Log.i(TAG, "uri " + mUrl)
             throw io
         }
     }
 
     open fun getContent(httpURLConnection: HttpURLConnection): String {
         var ret = ""
+        var os: ByteArrayOutputStream? = null
         try {
-//            if (httpURLConnection.responseCode == HttpURLConnection.HTTP_OK) {
-            var os = ByteArrayOutputStream()
+            os = ByteArrayOutputStream()
             var temp = ByteArray(CACHE_SIZE, { index -> 0 })
             var `is` = httpURLConnection.inputStream
             mInputStream = `is`
@@ -163,10 +165,16 @@ abstract class BaseNetwork {
                 os.write(temp, 0, len)
                 len = `is`.read(temp)
             }
-            ret = String(os.toByteArray())
-//            }
+            ret = String(os.toByteArray(), charset)
+            os.close()
         } catch (ex: Exception) {
             Log.i(TAG, "uri " + mUrl)
+            if (mInputStream != null) {
+                mInputStream?.close()
+            }
+            if (os != null) {
+                os.close()
+            }
             ex.printStackTrace()
             throw ex
         }
@@ -179,7 +187,7 @@ abstract class BaseNetwork {
             mInputStream?.close()
         } catch (e: Exception) {
             Log.i(TAG, "uri " + mUrl)
-            throw e
+            e.printStackTrace()
         } finally {
             mHttpUrlConnection?.disconnect()
         }

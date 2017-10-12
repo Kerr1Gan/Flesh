@@ -26,13 +26,16 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
+
     compile project(':netcore')
     compile 'com.github.bumptech.glide:glide:4.0.0'
     compile 'com.android.support:cardview-v7:23.1.1'
     compile 'com.android.support:recyclerview-v7:23.2.0'
     compile 'com.android.support:design:24.2.0'
     testCompile 'junit:junit:4.12'
-//    compile 'com.tencent.bugly:crashreport:latest.release'
+    //    compile 'com.tencent.bugly:crashreport:latest.release'
     compile 'com.tencent.bugly:crashreport_upgrade:latest.release'
-//    compile project(path: ':fastscroll')
+    //    compile project(path: ':fastscroll')
+    compile project(':common-componentes')
+    compile project(':parcel')
 }

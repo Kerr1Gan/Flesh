@@ -1,0 +1,28 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ecjtu.componentes">
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:supportsRtl="true">
+        <activity
+            android:name=".activity.ImmersiveFragmentActivity"
+            android:theme="@style/ImageStatusBarStyle" />
+
+        <activity
+            android:name=".activity.ActionBarFragmentActivity"
+            android:exported="true"
+            android:theme="@style/AppPreferenceTheme" />
+
+        <activity
+            android:name=".activity.RotateNoCreateActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|mcc|mnc"
+            android:theme="@style/ImageStatusBarStyle" />
+
+        <activity android:name=".activity.AppThemeActivity" />
+
+        <activity android:name=".activity.RotateByOrientationActivity" />
+
+    </application>
+
+</manifest>

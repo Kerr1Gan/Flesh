@@ -92,7 +92,7 @@
 -keep public class com.ecjtu.netcore.network.BaseNetwork{public <methods>;}
 -keep public class * extends com.ecjtu.netcore.network.BaseNetwork{ public <methods>; }
 -keep public interface com.ecjtu.netcore.network.IRequestCallback{*;}
--keep public class * extends com.ecjtu.flesh.ui.widget.ScrollAwareFABBehavior{*;}
+-keep public class * extends android.support.design.widget.CoordinatorLayout$Behavior{*;}
 
 # 不混淆 Bugly
 -dontwarn com.tencent.bugly.**

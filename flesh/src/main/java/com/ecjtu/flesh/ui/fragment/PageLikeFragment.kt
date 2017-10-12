@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
-import com.ecjtu.flesh.db.table.impl.LikeTableImplV2
+import com.ecjtu.flesh.db.table.impl.LikeTableImpl
 import com.ecjtu.flesh.presenter.PageLikeFragmentDelegate
 
 /**
@@ -27,7 +27,7 @@ class PageLikeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val db = DatabaseManager.getInstance(activity)?.getDatabase()
         if (db != null) {
-            val impl = LikeTableImplV2()
+            val impl = LikeTableImpl()
             val list = impl.getAllLikes(db)
             db.close()
             mDelegate = PageLikeFragmentDelegate(activity, list)

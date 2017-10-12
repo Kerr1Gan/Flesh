@@ -22,8 +22,8 @@ import android.widget.SeekBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.cache.MenuListCacheHelper
-import com.ecjtu.flesh.ui.activity.AppThemeActivity
+import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
+import com.ecjtu.componentes.activity.AppThemeActivity
 import com.ecjtu.flesh.ui.activity.MainActivity
 import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
 import com.ecjtu.flesh.ui.fragment.PageHistoryFragment
@@ -182,15 +182,14 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     fun onStop() {
         mViewPager.adapter?.let {
             (mViewPager.adapter as TabPagerAdapter).onStop(owner)
+            val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
+            helper.put(CACHE_MENU_LIST, (mViewPager.adapter as TabPagerAdapter).menu)
+
+            PreferenceManager.getDefaultSharedPreferences(owner).edit().
+                    putInt(KEY_LAST_TAB_ITEM, mTabLayout.selectedTabPosition).
+                    putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isAppbarLayoutExpand()).
+                    apply()
         }
-        val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
-        helper.put(CACHE_MENU_LIST, (mViewPager.adapter as TabPagerAdapter).menu)
-
-        PreferenceManager.getDefaultSharedPreferences(owner).edit().
-                putInt(KEY_LAST_TAB_ITEM, mTabLayout.selectedTabPosition).
-                putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isAppbarLayoutExpand()).
-                apply()
-
     }
 
     fun onResume() {
