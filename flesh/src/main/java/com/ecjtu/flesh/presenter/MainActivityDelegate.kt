@@ -199,30 +199,30 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     }
 
     fun onDestroy() {
-        thread {
-            val content = findViewById(R.id.drawer_layout)
-            content?.let {
-                val bitmap = convertView2Bitmap(content, content.width, content.height)
-                val file = File(owner.filesDir, "bg.png")
-                var os: OutputStream? = null
-                try {
-                    os = FileOutputStream(file)
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, os)
-                    bitmap.recycle()
-                    os.close()
-                } catch (ex: Exception) {
-                } finally {
-                    if (os != null) {
-                        try {
-                            os.close()
-                        } catch (ex: Exception) {
-                        }
-                    }
-                    bitmap.recycle()
-                }
-
-            }
-        }
+//        thread {
+//            val content = findViewById(R.id.drawer_layout)
+//            content?.let {
+//                val bitmap = convertView2Bitmap(content, content.width, content.height)
+//                val file = File(owner.filesDir, "bg.png")
+//                var os: OutputStream? = null
+//                try {
+//                    os = FileOutputStream(file)
+//                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, os)
+//                    bitmap.recycle()
+//                    os.close()
+//                } catch (ex: Exception) {
+//                } finally {
+//                    if (os != null) {
+//                        try {
+//                            os.close()
+//                        } catch (ex: Exception) {
+//                        }
+//                    }
+//                    bitmap.recycle()
+//                }
+//
+//            }
+//        }
     }
 
 //    fun hideBg() {
