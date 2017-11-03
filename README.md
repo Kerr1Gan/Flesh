@@ -2,7 +2,7 @@
 
 果肉一款福利满满的app，数据源[mzitu][3]，MD风格的界面。
 
-如果你是一位想学习一下Kotlin的同学，那么绝对不要错过Flesh。如Kotlin所说它与Java完美兼容，所以这里有Kotlin调用Java，同时也有Java调用Kotlin。在学习的同时还将有另一种体验。
+如果你是一位想学习一下Kotlin的同学，那么绝对不要错过Flesh。如Kotlin所说它与Java完美兼容，所以这里有Kotlin调用Java，同时也有Java调用Kotlin。果肉将会不定期更新，增加更多福利。
 
 国际惯例，先上福利。[Release1.0](https://github.com/Kerr1Gan/Flesh/releases/download/170929/flesh-release.apk)
 
@@ -159,99 +159,146 @@ String imageUrl = elements.get(0).attr("src");
     ```
 
 
-**6)** 测试
+**6)** 序列化性能
 
-性能测试，为了避免干扰，我们使用AndroidTest进行测试。
+性能测试，Serializable VS Externalizable，为了避免干扰，我们使用AndroidTest进行测试。
+
+模型
+```java
+class Model1 implements Serializable {
+    String text;
+    int code;
+    boolean bool;
+    Model1 child;
+}
+
+class Model2 extends Model1 implements Externalizable {
+
+    public Model2() {
+    }
+
+    @Override
+    public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
+        text = input.readUTF();
+        code = input.readInt();
+        bool = input.readBoolean();
+
+        child = new Model2();
+        child.text = input.readUTF();
+        child.code = input.readInt();
+        child.bool = input.readBoolean();
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput output) throws IOException {
+        output.writeUTF(text);
+        output.writeInt(code);
+        output.writeBoolean(bool);
+        if (child != null) {
+            output.writeUTF(child.text);
+            output.writeInt(child.code);
+            output.writeBoolean(child.bool);
+        }
+    }
+}
+```
+测试
 ```java
 @Test
-public void useAppContext() throws Exception {
-        // Context of the app under test.
-        final Context appContext = InstrumentationRegistry.getTargetContext();
-        List<PageModel.ItemModel> itemModels = new ArrayList<PageModel.ItemModel>();
-        for (int i = 0; i < 10000; i++) {
-            itemModels.add(new PageModel.ItemModel("", "", ""));
-        }
-        //db begin
-        appContext.deleteDatabase("test4");
-        SQLiteDatabase db = DatabaseManager.getInstance(appContext).getHelper(appContext, "test4").getWritableDatabase();
-        long start = System.currentTimeMillis();
-        db.beginTransaction();
-        LikeTableImpl impl = new LikeTableImpl();
-        for (int i = 0; i < 10000; i++) {
-            impl.addLike(db, "page" + i, "", "", "");
-        }
-        db.setTransactionSuccessful();
-        db.endTransaction();
-        Log.e("cache speed", "db save time " + (System.currentTimeMillis() - start));
+public void serializableVSExternalizable() throws Exception {
+    List<Model1> testModel1 = new ArrayList<>();
+    for (int i = 0; i < 50000; i++) {
+        Model1 model1 = new Model1();
+        model1.text = "Hello World " + i;
+        model1.code = i;
+        model1.bool = false;
 
-        start = System.currentTimeMillis();
-        db.beginTransaction();
-        impl.getAllLikes(db);
-        db.setTransactionSuccessful();
-        db.endTransaction();
-        Log.e("cache speed", "db read time " + (System.currentTimeMillis() - start));
-        db.close();
-        //db end
+        Model1 child = new Model1();
+        child.text = "Hello World Child" + i;
+        child.code = i;
+        child.bool = false;
 
-        //parcel begin
-        start = System.currentTimeMillis();
-        PageModel model = new PageModel(itemModels);
-        PageListCacheHelper helper = new PageListCacheHelper(appContext.getCacheDir().getAbsolutePath());
-        helper.put("test", model);
-        Log.e("cache speed", "parcel save time " + (System.currentTimeMillis() - start));
-
-        start = System.currentTimeMillis();
-        helper.get("test");
-        Log.e("cache speed", "parcel read time " + (System.currentTimeMillis() - start));
-        //parcel end
-
-        //Serializable
-        List<TestItemModel> testModels = new ArrayList<TestItemModel>();
-        for (int i = 0; i < 10000; i++) {
-            testModels.add(new TestItemModel("", "", ""));
-        }
-        start = System.currentTimeMillis();
-        ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(new File(appContext.getCacheDir().getAbsolutePath(), "serializable")));
-        os.writeObject(testModels);
-        Log.e("cache speed", "serializable save time " + (System.currentTimeMillis() - start));
-        os.close();
-        start = System.currentTimeMillis();
-        ObjectInputStream is = new ObjectInputStream(new FileInputStream(new File(appContext.getCacheDir().getAbsolutePath(), "serializable")));
-        is.readObject();
-        Log.e("cache speed", "serializable read time " + (System.currentTimeMillis() - start));
-        is.close();
+        model1.child = child;
+        testModel1.add(model1);
     }
-```
-测试结果：(单位ms)
+    long startTime = System.currentTimeMillis();
+    File file = new File("/sdcard/serializable");
+    ObjectOutputStream oStream = new ObjectOutputStream(new FileOutputStream(file));
+    oStream.writeObject(testModel1);
+    oStream.close();
+    Log.e("serializable", "write time " + (System.currentTimeMillis() - startTime));
+    startTime = System.currentTimeMillis();
+    ObjectInputStream iStream = new ObjectInputStream(new FileInputStream(file));
+    testModel1 = (List<Model1>) iStream.readObject();
+    iStream.close();
+    Log.e("serializable", "read time " + (System.currentTimeMillis() - startTime));
+    testModel1 = null;
 
-1000条数据
+    List<Model2> testModel2 = new ArrayList<>();
+    for (int i = 0; i < 50000; i++) {
+        Model2 model2 = new Model2();
+        model2.text = "Hello World " + i;
+        model2.code = i;
+        model2.bool = false;
+
+        Model2 child = new Model2();
+        child.text = "Hello World Child" + i;
+        child.code = i;
+        child.bool = false;
+
+        model2.child = child;
+        testModel2.add(model2);
+    }
+    startTime = System.currentTimeMillis();
+    file = new File("/sdcard/externalizable");
+    oStream = new ObjectOutputStream(new FileOutputStream(file));
+    oStream.writeObject(testModel2);
+    oStream.close();
+    Log.e("externalizable", "write time " + (System.currentTimeMillis() - startTime));
+    startTime = System.currentTimeMillis();
+    iStream = new ObjectInputStream(new FileInputStream(file));
+    testModel2 = (List<Model2>) iStream.readObject();
+    iStream.close();
+    Log.e("externalizable", "read time " + (System.currentTimeMillis() - startTime));
+}
 ```
-db save time 73
-db read time 9
-parcel save time 76
-parcel read time 59
-serializable save time 150
-serializable read time 96
+结果
 ```
-10000条数据
+序列化5000个对象
+Serializable：写入耗时4026 ms，读取耗时177 ms
+Externalizable：写入耗时2680 ms，读取耗时79 ms
+
+序列化50000个对象
+Serializable：写入耗时46872 ms，读取耗时1807 ms
+Externalizable：写入耗时41334 ms，读取耗时792 ms
 ```
-db save time 684
-db read time 100
-parcel save time 141
-parcel read time 136
-serializable save time 1479
-serializable read time 996
+
+从结果上可以看到Externalizalbe相比于Serializable是稍微快一些点不管是写入还是读取速度。对象存储还可以使用一些对象关系映射（ORM）型的数据库。如[GreenDao][5]等等。
+
+**7)** Java中的深拷贝
+
+由于System.arrayCopy()该方法拷贝数组的时候，如果是基本数据类型则是深拷贝，如果是对象类型则会是浅拷贝，无法做到深拷贝，所以想深拷贝一个数组就得循环创建对象并赋值，这显得很麻烦。所以项目中使用序列化的方法进行深拷贝。PS：Serializable序列化方式读取的时候并不会调用对象构造方法，而Externalizable序列化方式读取时会调用对象的无参构造方法。
+```java
+@SuppressWarnings("unchecked")
+public static <T> T deepCopyOrThrow(T src) throws IOException, ClassNotFoundException {
+    ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+    ObjectOutputStream out = new ObjectOutputStream(byteOut);
+    out.writeObject(src);
+
+    ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
+    ObjectInputStream in = new ObjectInputStream(byteIn);
+    return (T) in.readObject();
+}
+
+public static <T> T deepCopy(T src) {
+    try {
+        return deepCopyOrThrow(src);
+    } catch (Exception ignore) {
+        ignore.printStackTrace();
+        return null;
+    }
+}
 ```
-50000条数据
-```
-db save time 3348
-db read time 890
-parcel save time 493
-parcel read time 498
-serializable save time 7571
-serializable read time 4975
-```
-从结果上可以看到数据库和parcel的存储各有优劣，而Serializable则是劣势明显。由于项目上的各种原因加上我要直接存储对象，所以最后使用了Parcel的存储方式来实现无网络状态下显示数据。并没有使用数据库，但是数据库应该是最优解，可以用一些对象型数据库框架例如[GreenDao][5]等等。
 
 ProGuard
 --------
