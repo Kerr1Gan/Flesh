@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
@@ -35,6 +36,7 @@ public class MainApplication extends Application {
         super.onCreate();
 
         if (isAppMainProcess("com.ecjtu.flesh")) {
+            Log.i("Flesh", "application init");
             SimpleGlideModule module = new SimpleGlideModule();
             GlideBuilder builder = new GlideBuilder();
             module.applyOptions(this, builder);

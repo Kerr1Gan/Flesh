@@ -299,6 +299,9 @@ public static <T> T deepCopy(T src) {
     }
 }
 ```
+**8)** 释放进程资源
+
+直接调用System.exit()方法可释放所在进程的资源，腾出内存给其他组件使用，减少被系统回收的概率。
 
 ProGuard
 --------

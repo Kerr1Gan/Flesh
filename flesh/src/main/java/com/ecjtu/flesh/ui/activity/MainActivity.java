@@ -12,18 +12,14 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.R;
-import com.ecjtu.flesh.model.ModelManager;
 import com.ecjtu.flesh.presenter.MainActivityDelegate;
-import com.ecjtu.netcore.jsoup.SoupFactory;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallback;
-import com.ecjtu.netcore.network.IRequestCallbackV2;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
-import java.nio.charset.Charset;
 
 public class MainActivity extends AppCompatActivity {
 
