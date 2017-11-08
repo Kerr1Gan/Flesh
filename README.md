@@ -2,7 +2,7 @@
 
 果肉一款福利满满的app，数据源[mzitu][3]，MD风格的界面。
 
-如果你是一位想学习一下Kotlin的同学，那么绝对不要错过Flesh。如Kotlin所说它与Java完美兼容，所以这里有Kotlin调用Java，同时也有Java调用Kotlin。果肉将会不定期更新，增加更多福利。
+如果你是一位想学习一下Kotlin的同学，那么绝对不要错过Flesh。如Kotlin所说它与Java完美兼容，所以这里有Kotlin调用Java，同时也有Java调用Kotlin。数据是从网站上爬取的所以这里也有爬虫骚操作。果肉将会不定期更新，增加更多福利。
 
 国际惯例，先上福利。[Release1.0](https://github.com/Kerr1Gan/Flesh/releases/download/170929/flesh-release.apk)
 
@@ -301,7 +301,7 @@ public static <T> T deepCopy(T src) {
 ```
 **8)** 释放进程资源
 
-直接调用System.exit()方法可释放所在进程的资源，腾出内存给其他组件使用，减少被系统回收的概率。
+直接调用System.exit()方法可释放所在进程的资源，腾出内存给其他组件使用，减少被系统回收的概率。PS:如果该进程下有服务没有关闭，该进程会在后续重新启动。
 
 ProGuard
 --------
