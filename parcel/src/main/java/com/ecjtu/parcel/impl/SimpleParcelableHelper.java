@@ -17,12 +17,12 @@ public class SimpleParcelableHelper extends ParcelableFileCacheHelper {
 
 
     @Override
-    protected <T> T readParcel(Parcel parcel) {
+    public  <T> T readParcel(Parcel parcel) {
         return parcel.readParcelable(getClass().getClassLoader());
     }
 
     @Override
-    protected <T> Parcel writeParcel(Parcel parcel, T object) {
+    public <T> Parcel writeParcel(Parcel parcel, T object) {
         if (object instanceof Parcelable) {
             parcel.writeParcelable((Parcelable) object, 0);
         }

@@ -53,12 +53,13 @@ abstract class BaseNetwork {
 
     var charset = Charset.forName("utf-8")
 
-    fun setRequestCallback(callback: IRequestCallback) {
+    fun setRequestCallback(callback: IRequestCallback):BaseNetwork {
         mCallback = callback
+        return this
     }
 
     @JvmOverloads
-    open fun request(urlStr: String, mutableMap: MutableMap<String, String>? = null) {
+    open fun request(urlStr: String, mutableMap: MutableMap<String, String>? = null):BaseNetwork {
         var ex: Exception? = null
 
         var ret = ""
@@ -85,9 +86,10 @@ abstract class BaseNetwork {
             }
             mHttpUrlConnection?.disconnect()
         }
+        return this
     }
 
-    open fun setupRequest(httpURLConnection: HttpURLConnection) {
+    protected open fun setupRequest(httpURLConnection: HttpURLConnection):BaseNetwork {
         httpURLConnection.apply {
             doInput = mDoInput
             doOutput = mDoOutput
@@ -102,7 +104,7 @@ abstract class BaseNetwork {
                 }
             }
         }
-
+        return this
     }
 
     open fun setHeaders(values: HashMap<String, String>): BaseNetwork {
@@ -124,7 +126,7 @@ abstract class BaseNetwork {
         return this
     }
 
-    open fun setParams(httpURLConnection: HttpURLConnection, mutableMap: MutableMap<String, String>? = null): String {
+    protected open fun setParams(httpURLConnection: HttpURLConnection, mutableMap: MutableMap<String, String>? = null): String {
         var ret = ""
         mutableMap?.let {
             httpURLConnection.requestMethod = Method.POST
@@ -151,7 +153,7 @@ abstract class BaseNetwork {
         }
     }
 
-    open fun getContent(httpURLConnection: HttpURLConnection): String {
+    protected open fun getContent(httpURLConnection: HttpURLConnection): String {
         var ret = ""
         var os: ByteArrayOutputStream? = null
         try {
@@ -193,7 +195,7 @@ abstract class BaseNetwork {
         }
     }
 
-    fun pushContent(httpURLConnection: HttpURLConnection, param: String) {
+    protected fun pushContent(httpURLConnection: HttpURLConnection, param: String) {
         if (httpURLConnection.requestMethod == Method.POST) {
             if (!TextUtils.isEmpty(param)) {
                 mOutputStream = httpURLConnection.outputStream

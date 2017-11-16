@@ -72,8 +72,8 @@ public abstract class ParcelableFileCacheHelper extends FileCacheHelper {
     }
 
     @Override
-    protected <T> boolean persistObject(String key, T object) {
-        return super.persistObject(key, object);
+    protected <T> boolean writeObject(String key, T object) {
+        return super.writeObject(key, object);
     }
 
     private void gc() {
@@ -82,9 +82,9 @@ public abstract class ParcelableFileCacheHelper extends FileCacheHelper {
         System.gc();
     }
 
-    protected abstract <T> T readParcel(Parcel parcel);
+    public abstract <T> T readParcel(Parcel parcel);
 
-    protected abstract <T> Parcel writeParcel(Parcel parcel, T object);
+    public abstract <T> Parcel writeParcel(Parcel parcel, T object);
 
     public int getVersion() {
         return 1;

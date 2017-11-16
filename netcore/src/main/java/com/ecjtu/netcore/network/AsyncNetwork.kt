@@ -2,8 +2,11 @@ package com.ecjtu.netcore.network
 
 import android.util.Log
 import java.lang.Exception
+import java.util.concurrent.Future
+import java.util.concurrent.SynchronousQueue
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.concurrent.thread
 
 /**
  * Created by KerriGan on 2017/7/14.
@@ -14,24 +17,30 @@ class AsyncNetwork : BaseNetwork() {
         private const val TAG = "AsyncNetwork"
 
         private var sThreadsCount: AtomicInteger = AtomicInteger(0)
+
+        @JvmStatic
+        private val sFixedThreadPool = ThreadPoolExecutor(1, Runtime.getRuntime().availableProcessors() + 1,
+                30L, TimeUnit.SECONDS,
+                SynchronousQueue())
     }
 
-    private var mThread: Thread? = null
+    private var mFuture: Future<*>? = null
 
-    override fun request(urlStr: String, mutableMap: MutableMap<String, String>?) {
-        mThread = thread {
-            Log.e(TAG, "thread begin " + toString() + " threads count:" + sThreadsCount.incrementAndGet())
+    override fun request(urlStr: String, mutableMap: MutableMap<String, String>?): BaseNetwork {
+        mFuture = sFixedThreadPool.submit {
+            Log.e(TAG, "task begin " + toString() + " task count:" + sThreadsCount.incrementAndGet())
             try {
                 super.request(urlStr, mutableMap)
             } catch (e: Exception) {
-                Log.e(TAG, "thread exception " + e.toString())
+                Log.e(TAG, "task exception " + e.toString())
             }
-            Log.e(TAG, "thread end " + toString() + " threads count:" + sThreadsCount.decrementAndGet())
+            Log.e(TAG, "task end " + toString() + " task count:" + sThreadsCount.decrementAndGet())
         }
+        return this
     }
 
     override fun cancel() {
         super.cancel()
-        mThread?.interrupt()
+        mFuture?.cancel(true)
     }
 }
