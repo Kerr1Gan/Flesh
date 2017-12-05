@@ -21,9 +21,9 @@ import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.ecjtu.componentes.activity.AppThemeActivity
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
-import com.ecjtu.componentes.activity.AppThemeActivity
 import com.ecjtu.flesh.ui.activity.MainActivity
 import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
 import com.ecjtu.flesh.ui.fragment.PageHistoryFragment
@@ -36,9 +36,6 @@ import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
 import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
-import java.lang.Exception
 import java.net.HttpURLConnection
 import kotlin.concurrent.thread
 
@@ -249,8 +246,12 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 
     private fun doFloatButton() {
         val position = mTabLayout.selectedTabPosition
-        val recyclerView = (mViewPager.adapter as TabPagerAdapter).getViewStub(position) as RecyclerView?
-        val size = (mViewPager.adapter as TabPagerAdapter).getListSize(position)
+        var recyclerView: RecyclerView? = null
+        var size = 0
+        mViewPager.adapter?.let {
+            recyclerView = (mViewPager.adapter as TabPagerAdapter).getViewStub(position) as RecyclerView?
+            size = (mViewPager.adapter as TabPagerAdapter).getListSize(position)
+        }
         val snake = Snackbar.make(findViewById(R.id.content)!!, "", Snackbar.LENGTH_SHORT)
         if (snake.view is LinearLayout) {
             val vg = snake.view as LinearLayout
@@ -266,7 +267,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                     when (v.id) {
                         R.id.top -> {
                             recyclerView?.let {
-                                (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                                (recyclerView?.layoutManager as LinearLayoutManager).scrollToPosition(0)
                             }
                         }
 
@@ -274,13 +275,13 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                             recyclerView?.let {
                                 var jumpPos = Integer.valueOf(pos.text.toString()) - 2
                                 if (jumpPos < 0) jumpPos = 0
-                                (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(jumpPos)
+                                (recyclerView?.layoutManager as LinearLayoutManager).scrollToPosition(jumpPos)
                             }
                         }
 
                         R.id.bottom -> {
                             recyclerView?.let {
-                                (recyclerView.layoutManager as LinearLayoutManager).scrollToPosition(size - 2)
+                                (recyclerView?.layoutManager as LinearLayoutManager).scrollToPosition(size - 2)
                             }
                         }
                     }
@@ -305,7 +306,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             })
             local.max = size
             if (recyclerView != null) {
-                val curPos = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                val curPos = (recyclerView?.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                 local.progress = curPos
             }
             layout.findViewById(R.id.mid).setOnClickListener(listener)
