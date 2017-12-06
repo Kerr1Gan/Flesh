@@ -2,10 +2,7 @@ package com.ecjtu.netcore.network
 
 import android.util.Log
 import java.lang.Exception
-import java.util.concurrent.Future
-import java.util.concurrent.SynchronousQueue
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -21,7 +18,7 @@ class AsyncNetwork : BaseNetwork() {
         @JvmStatic
         private val sFixedThreadPool = ThreadPoolExecutor(1, Runtime.getRuntime().availableProcessors() + 1,
                 30L, TimeUnit.SECONDS,
-                SynchronousQueue())
+                LinkedBlockingQueue()) // 阻塞队列防止Rejection异常
     }
 
     private var mFuture: Future<*>? = null

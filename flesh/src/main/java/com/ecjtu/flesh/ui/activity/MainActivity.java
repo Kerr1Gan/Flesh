@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.PREF_ZERO, false)) {
             mDelegate = new MainActivityDelegate(this);
         }
+
     }
 
     private void checkZero() {
