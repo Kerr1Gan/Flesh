@@ -21,11 +21,12 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.ui.activity.FullScreenImageActivity
-import com.ecjtu.netcore.jsoup.impl.PageDetailSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
+import com.ecjtu.netcore.jsoup.impl.PageDetailSoup
 import com.ecjtu.netcore.model.PageDetailModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
+import java.lang.Exception
 import java.net.HttpURLConnection
 
 /**
@@ -114,10 +115,15 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerViewWrapAdapte
                                     .addHeader("Proxy-Connection", "keep-alive")
                                     .addHeader("Referer", "http://m.mzitu.com/")
                             val glideUrl = GlideUrl(imgUrl, builder.build())
-                            Glide.with(target.view.context).asBitmap().load(glideUrl).
-                                    apply(RequestOptions().apply { centerCrop() }).
-                                    listener(this@PageDetailAdapter).
-                                    into(target.view)
+                            try {
+                                Glide.with(target.view.context).asBitmap().load(glideUrl).
+                                        apply(RequestOptions().apply { centerCrop() }).
+                                        listener(this@PageDetailAdapter).
+                                        into(target.view)
+                            } catch (ex: Exception) {
+                                // java.lang.IllegalArgumentException You cannot start a load for a destroyed activity #56
+                                ex.printStackTrace()
+                            }
                         }
                     }
                 }
@@ -149,10 +155,10 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerViewWrapAdapte
     override fun onClick(v: View?) {
         val position = v?.getTag(R.id.extra_tag)
         if (position != null) {
-            var intent : Intent? = null
-            if(!TextUtils.isEmpty(pageModel.backupImgUrl.get(position as Int))){
+            var intent: Intent? = null
+            if (!TextUtils.isEmpty(pageModel.backupImgUrl.get(position as Int))) {
                 intent = FullScreenImageActivity.newInstance(v.context, pageModel.backupImgUrl[position])
-            }else{
+            } else {
                 intent = FullScreenImageActivity.newInstance(v.context, String.format(pageModel.imgUrl, position as Int + 1))
             }
             v.context.startActivity(intent)
