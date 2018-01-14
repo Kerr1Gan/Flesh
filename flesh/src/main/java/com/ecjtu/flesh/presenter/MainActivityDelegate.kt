@@ -2,6 +2,8 @@ package com.ecjtu.flesh.presenter
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.preference.PreferenceManager
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.FloatingActionButton
@@ -20,6 +22,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
+import com.ashokvarma.bottomnavigation.BottomNavigationBar
+import com.ashokvarma.bottomnavigation.BottomNavigationItem
 import com.bumptech.glide.Glide
 import com.ecjtu.componentes.activity.AppThemeActivity
 import com.ecjtu.flesh.R
@@ -174,6 +178,23 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 //                content.setBackgroundDrawable(BitmapDrawable(bitmap))
 //            }
 //        }
+
+        val bottomNav = findViewById(R.id.bottom_navigation_bar) as BottomNavigationBar
+        bottomNav
+                .addItem(BottomNavigationItem(ColorDrawable(Color.BLACK), "Image"))
+                .addItem(BottomNavigationItem(ColorDrawable(Color.BLACK), "Video"))
+                .initialise()
+        bottomNav.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
+            override fun onTabUnselected(position: Int) {
+            }
+
+            override fun onTabSelected(position: Int) {
+            }
+
+            override fun onTabReselected(position: Int) {
+            }
+
+        })
     }
 
     fun onStop() {
