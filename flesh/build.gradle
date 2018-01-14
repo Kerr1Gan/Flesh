@@ -7,9 +7,12 @@ android {
         applicationId "com.ecjtu.flesh"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+//        jackOptions{
+//            enabled true
+//        }
 
     }
     buildTypes {
@@ -18,6 +21,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+//    compileOptions{
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
+
 }
 
 dependencies {
@@ -26,7 +35,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
-
     compile project(':netcore')
     compile 'com.github.bumptech.glide:glide:4.0.0'
     compile 'com.android.support:cardview-v7:23.1.1'
@@ -38,4 +46,9 @@ dependencies {
     //    compile project(path: ':fastscroll')
     compile project(':common-componentes')
     compile project(':parcel')
+
+    // aws s3
+    compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
+    compile 'com.amazonaws:aws-android-sdk-s3:2.2.+'
+    compile 'com.amazonaws:aws-android-sdk-ddb:2.2.+'
 }

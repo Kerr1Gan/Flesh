@@ -111,7 +111,8 @@ public class ExampleInstrumentedTest {
         String imgUrl;
         int height;
 
-        public TestItemModel2(){}
+        public TestItemModel2() {
+        }
 
         public TestItemModel2(String href, String description, String imgUrl) {
             this.href = href;
@@ -330,4 +331,121 @@ public class ExampleInstrumentedTest {
             }
         });
     }
+
+    static class Model1 implements Serializable {
+        static volatile int printCount = 0;
+        String text;
+        int code;
+        boolean bool;
+        Model1 child;
+
+        static volatile boolean beginSerializable = false;
+
+        public Model1() {
+            if (printCount <= 5 && beginSerializable) {
+                printCount++;
+                Log.e("serializable", "constructor invoked");
+            }
+        }
+    }
+
+    static class Model2 extends Model1 implements Externalizable {
+        static volatile int printCount2 = 0;
+        static volatile boolean beginSerializable2 = false;
+
+        public Model2() {
+            if (printCount2 <= 5 && beginSerializable2) {
+                printCount2++;
+                Log.e("externalizable", "constructor invoked");
+            }
+        }
+
+        @Override
+        public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
+            text = input.readUTF();
+            code = input.readInt();
+            bool = input.readBoolean();
+
+            child = new Model2();
+            child.text = input.readUTF();
+            child.code = input.readInt();
+            child.bool = input.readBoolean();
+        }
+
+        @Override
+        public void writeExternal(ObjectOutput output) throws IOException {
+            output.writeUTF(text);
+            output.writeInt(code);
+            output.writeBoolean(bool);
+            if (child != null) {
+                output.writeUTF(child.text);
+                output.writeInt(child.code);
+                output.writeBoolean(child.bool);
+            }
+        }
+    }
+
+    @Test
+    public void serializableVSExternalizable() throws Exception {
+        List<Model1> testModel1 = new ArrayList<>();
+        for (int i = 0; i < 5000; i++) {
+            Model1 model1 = new Model1();
+            model1.text = "Hello World " + i;
+            model1.code = i;
+            model1.bool = false;
+
+            Model1 child = new Model1();
+            child.text = "Hello World Child" + i;
+            child.code = i;
+            child.bool = false;
+
+            model1.child = child;
+            testModel1.add(model1);
+        }
+        Model1.beginSerializable = true;
+        long startTime = System.currentTimeMillis();
+        File file = new File("/sdcard/serializable");
+        ObjectOutputStream oStream = new ObjectOutputStream(new FileOutputStream(file));
+        oStream.writeObject(testModel1);
+        oStream.close();
+        Log.e("serializable", "write time " + (System.currentTimeMillis() - startTime));
+        startTime = System.currentTimeMillis();
+        ObjectInputStream iStream = new ObjectInputStream(new FileInputStream(file));
+        testModel1 = (List<Model1>) iStream.readObject();
+        iStream.close();
+        Log.e("serializable", "read time " + (System.currentTimeMillis() - startTime));
+
+        testModel1 = null;
+
+        Model1.beginSerializable = false;
+        List<Model2> testModel2 = new ArrayList<>();
+        for (int i = 0; i < 5000; i++) {
+            Model2 model2 = new Model2();
+            model2.text = "Hello World " + i;
+            model2.code = i;
+            model2.bool = false;
+
+            Model2 child = new Model2();
+            child.text = "Hello World Child" + i;
+            child.code = i;
+            child.bool = false;
+
+            model2.child = child;
+            testModel2.add(model2);
+        }
+        Model2.beginSerializable2 = true;
+        startTime = System.currentTimeMillis();
+        file = new File("/sdcard/externalizable");
+        oStream = new ObjectOutputStream(new FileOutputStream(file));
+        oStream.writeObject(testModel2);
+        oStream.close();
+        Log.e("externalizable", "write time " + (System.currentTimeMillis() - startTime));
+        startTime = System.currentTimeMillis();
+        iStream = new ObjectInputStream(new FileInputStream(file));
+        testModel2 = (List<Model2>) iStream.readObject();
+        iStream.close();
+        Log.e("externalizable", "read time " + (System.currentTimeMillis() - startTime));
+    }
+
+
 }

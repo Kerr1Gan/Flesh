@@ -88,7 +88,12 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
         val options = RequestOptions()
         options.centerCrop()
         val url = pageModel.itemList[position].imgUrl /*thumb2OriginalUrl(pageModel.itemList[position].imgUrl)*/
-        var host = url.replace("http://", "")
+        var host = ""
+        if (url.startsWith("https://")) {
+            host = url.replace("https://", "")
+        } else if (url.startsWith("http://")) {
+            host = url.replace("http://", "")
+        }
         host = host.substring(0, host.indexOf("/"))
         val builder = LazyHeaders.Builder()
                 .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E)  Chrome/60.0.3112.90 Mobile Safari/537.36")

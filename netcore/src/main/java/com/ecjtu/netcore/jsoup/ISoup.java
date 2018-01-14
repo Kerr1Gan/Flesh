@@ -12,5 +12,5 @@ import java.util.Map;
 public interface ISoup {
     void parse(Document root, Element head, Element body, Map<String, Object> values);
 
-    Map<String, Object> doParse(Object ...arg);
+    Map<String, Object> doParse(Object... arg);
 }

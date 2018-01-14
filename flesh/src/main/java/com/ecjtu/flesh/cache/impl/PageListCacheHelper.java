@@ -18,7 +18,7 @@ public class PageListCacheHelper extends ParcelableFileCacheHelper {
     }
 
     @Override
-    protected <T> T readParcel(Parcel parcel) {
+    public <T> T readParcel(Parcel parcel) {
         PageModel pageModel = new PageModel();
         String nextPage = parcel.readString();
         int id = parcel.readInt();
@@ -40,7 +40,7 @@ public class PageListCacheHelper extends ParcelableFileCacheHelper {
     }
 
     @Override
-    protected <T> Parcel writeParcel(Parcel parcel, T object) {
+    public <T> Parcel writeParcel(Parcel parcel, T object) {
         if (!(object instanceof PageModel)) {
             return null;
         }

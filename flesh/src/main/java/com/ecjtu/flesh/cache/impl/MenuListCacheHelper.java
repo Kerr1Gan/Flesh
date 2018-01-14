@@ -19,7 +19,7 @@ public class MenuListCacheHelper extends ParcelableFileCacheHelper {
     }
 
     @Override
-    protected <T> T readParcel(Parcel parcel) {
+    public <T> T readParcel(Parcel parcel) {
         int len = parcel.readInt();
         List<MenuModel> ret = new ArrayList<>();
         for(int i=0;i<len;i++){
@@ -30,7 +30,7 @@ public class MenuListCacheHelper extends ParcelableFileCacheHelper {
     }
 
     @Override
-    protected <T> Parcel writeParcel(Parcel parcel, T object) {
+    public  <T> Parcel writeParcel(Parcel parcel, T object) {
         if(!(object instanceof List)){
             return null;
         }

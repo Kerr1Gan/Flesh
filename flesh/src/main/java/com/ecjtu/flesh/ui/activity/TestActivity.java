@@ -19,5 +19,8 @@ public class TestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent intent = RotateNoCreateActivity.newInstance(this, VideoFragment.class, null);
         startActivity(intent);
+
+
+//        setContentView(R.layout.activity_test);
     }
 }

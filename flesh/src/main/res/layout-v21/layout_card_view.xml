@@ -9,9 +9,10 @@
     android:layout_marginRight="30dp"
     android:layout_marginTop="10dp"
     android:clickable="true"
+    android:foreground="@drawable/item_background_material"
     app:cardCornerRadius="10dp"
-    app:cardPreventCornerOverlap="false">
-    <!--app:cardElevation="20dp"-->
+    app:cardElevation="20dp">
+
 
     <LinearLayout
         android:layout_width="match_parent"

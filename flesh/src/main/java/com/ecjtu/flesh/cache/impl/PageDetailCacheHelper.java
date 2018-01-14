@@ -15,7 +15,7 @@ public class PageDetailCacheHelper extends ParcelableFileCacheHelper {
     }
 
     @Override
-    protected <T> T readParcel(Parcel parcel) {
+    public <T> T readParcel(Parcel parcel) {
         String baseUrl = parcel.readString();
         int maxLen = parcel.readInt();
         String imgUrl = parcel.readString();
@@ -27,7 +27,7 @@ public class PageDetailCacheHelper extends ParcelableFileCacheHelper {
     }
 
     @Override
-    protected <T> Parcel writeParcel(Parcel parcel, T object) {
+    public <T> Parcel writeParcel(Parcel parcel, T object) {
         if (!(object instanceof PageDetailModel)) {
             return null;
         }

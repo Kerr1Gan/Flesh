@@ -4,7 +4,12 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.load.DecodeFormat;
@@ -35,6 +40,7 @@ public class MainApplication extends Application {
         super.onCreate();
 
         if (isAppMainProcess("com.ecjtu.flesh")) {
+            Log.i("Flesh", "application init");
             SimpleGlideModule module = new SimpleGlideModule();
             GlideBuilder builder = new GlideBuilder();
             module.applyOptions(this, builder);
@@ -72,6 +78,15 @@ public class MainApplication extends Application {
     private void initSDK() {
 //        CrashReport.initCrashReport(getApplicationContext(), "bea4125c41", true);
         Bugly.init(getApplicationContext(), "cf90f27bcb", false);
+
+        AWSCredentials provider = new BasicAWSCredentials("AKIAJBQAJ5SXKC2GYFMA", "6XFdKbisY6uPvNwWt5PUMRXvLDuRo+79PwMTIhMS");
+        AmazonS3 s3 = new AmazonS3Client(provider);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }).start();
     }
 
     private void init() {
