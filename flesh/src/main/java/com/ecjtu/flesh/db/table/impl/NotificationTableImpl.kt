@@ -38,7 +38,7 @@ class NotificationTableImpl : BaseTableImpl() {
     }
 
     override fun updateTable(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        createTable(sqLiteDatabase)
+//        createTable(sqLiteDatabase)
     }
 
     fun addNotification(sqLiteDatabase: SQLiteDatabase, model: NotificationModel) {

@@ -1,1 +1,1 @@
-include ':flesh', ':netcore', ':common-componentes', ':parcel', ':htmlunit'
+include ':flesh', ':netcore', ':common-componentes', ':parcel', ':htmlunit', ':ijkplayer-java', ':ijkplayer-exo'

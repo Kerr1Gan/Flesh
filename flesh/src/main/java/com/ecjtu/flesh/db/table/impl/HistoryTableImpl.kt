@@ -31,7 +31,7 @@ class HistoryTableImpl : BaseTableImpl() {
     }
 
     override fun updateTable(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        createTable(sqLiteDatabase)
+//        createTable(sqLiteDatabase)
     }
 
     fun addHistory(sqLiteDatabase: SQLiteDatabase, href: String) {

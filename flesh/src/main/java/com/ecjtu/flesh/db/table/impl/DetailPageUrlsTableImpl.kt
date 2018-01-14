@@ -31,7 +31,7 @@ class DetailPageUrlsTableImpl : BaseTableImpl() {
     }
 
     override fun updateTable(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        createTable(sqLiteDatabase)
+//        createTable(sqLiteDatabase)
     }
 
     fun addPageUrls(sqLiteDatabase: SQLiteDatabase, pageId: Int, imageUrl: List<String>) {

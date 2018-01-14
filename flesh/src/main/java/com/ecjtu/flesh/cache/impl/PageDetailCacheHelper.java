@@ -19,10 +19,12 @@ public class PageDetailCacheHelper extends ParcelableFileCacheHelper {
         String baseUrl = parcel.readString();
         int maxLen = parcel.readInt();
         String imgUrl = parcel.readString();
+        int type = parcel.readInt();
         PageDetailModel model = new PageDetailModel(baseUrl);
 
         model.setMaxLen(maxLen);
         model.setImgUrl(imgUrl);
+        model.setType(type);
         return (T) model;
     }
 
@@ -35,6 +37,7 @@ public class PageDetailCacheHelper extends ParcelableFileCacheHelper {
         parcel.writeString(local.getBaseUrl());
         parcel.writeInt(local.getMaxLen());
         parcel.writeString(local.getImgUrl());
+        parcel.writeInt(local.getType());
         return parcel;
     }
 }

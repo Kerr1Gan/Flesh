@@ -34,7 +34,7 @@ class ClassPageListTableImpl : BaseTableImpl() {
     }
 
     override fun updateTable(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        createTable(sqLiteDatabase)
+//        createTable(sqLiteDatabase)
     }
 
     fun addPageList(sqLiteDatabase: SQLiteDatabase, pageModel: PageModel) {
