@@ -31,7 +31,7 @@ class LikeTableImpl : BaseTableImpl() {
     }
 
     override fun updateTable(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        createTable(sqLiteDatabase)
+//        createTable(sqLiteDatabase)
     }
 
     fun addLike(sqLiteDatabase: SQLiteDatabase, href: String) {

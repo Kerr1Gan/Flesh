@@ -72,7 +72,7 @@ public class MainApplication extends Application {
         manager.registerTable(new HistoryTableImpl());
         manager.registerTable(new LikeTableImpl());
         manager.registerTable(new NotificationTableImpl());
-        manager.getHelper(this, "heaven", 2).getWritableDatabase();
+        manager.getHelper(this, "heaven", 2+1).getWritableDatabase();
     }
 
     private void initSDK() {

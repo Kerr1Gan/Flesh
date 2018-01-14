@@ -38,6 +38,7 @@ public class PageDetailSoup extends BaseSoup {
         imageUrl += suffix;
         model.setImgUrl(imageUrl);
         model.setMaxLen(maxPage);
+        model.setType(0);
         values.put(getClass().getSimpleName(), model);
         values.put("origin_img",originImageUrl);
     }

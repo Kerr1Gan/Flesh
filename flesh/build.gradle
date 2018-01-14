@@ -46,9 +46,11 @@ dependencies {
     //    compile project(path: ':fastscroll')
     compile project(':common-componentes')
     compile project(':parcel')
-
     // aws s3
     compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
     compile 'com.amazonaws:aws-android-sdk-s3:2.2.+'
     compile 'com.amazonaws:aws-android-sdk-ddb:2.2.+'
+    compile project(':ijkplayer-exo')
+
+    compile 'com.ashokvarma.android:bottom-navigation-bar:2.0.4'
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="video_progress_bg">#1296db</color>
+    <color name="video_thumb_color">#1C7BDB</color>
+    <color name="video_progress_first">#ffffff</color>
+    <color name="video_progress_second">#6b6666</color>
+</resources>

@@ -30,7 +30,7 @@ class DatabaseManager(context: Context? = null) {
     }
 
     fun getDatabase(): SQLiteDatabase? {
-        return getDatabase(2)
+        return getDatabase(2+1)
     }
 
     fun getDatabase(version: Int): SQLiteDatabase? {

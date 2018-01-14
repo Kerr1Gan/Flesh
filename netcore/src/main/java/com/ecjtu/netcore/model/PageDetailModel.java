@@ -13,6 +13,7 @@ public class PageDetailModel {
     int maxLen;
     String imgUrl;
     List<String> backupImgUrl;
+    int type; // 0 is image,1 is video
 
     public PageDetailModel(String baseUrl) {
         this.baseUrl = baseUrl;
@@ -69,5 +70,13 @@ public class PageDetailModel {
 
     public void setBackupImgUrl(List<String> backupImgUrl) {
         this.backupImgUrl = backupImgUrl;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

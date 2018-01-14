@@ -62,6 +62,6 @@ public class PageListCacheHelper extends ParcelableFileCacheHelper {
 
     @Override
     public int getVersion() {
-        return super.getVersion();
+        return super.getVersion()+1;
     }
 }

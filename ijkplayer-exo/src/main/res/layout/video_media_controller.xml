@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sdk_media_controller"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:visibility="invisible">
+
+    <LinearLayout
+        android:id="@+id/sdk_media_controller_panel"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_horizontal|left"
+        android:orientation="horizontal">
+
+        <!-- 返回按钮 -->
+        <ImageView
+            android:id="@+id/sdk_media_controller_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/btn_video_back"
+            android:visibility="gone" />
+
+        <!-- 视频标题 -->
+        <TextView
+            android:id="@+id/sdk_media_controller_video_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:textColor="#ffffff"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:paddingTop="4dp">
+
+        <RelativeLayout
+            android:id="@+id/sdk_media_controller_control"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- 播放过去时间 -->
+            <TextView
+                android:id="@+id/time_current"
+                style="@style/video_media_controller_time_text_style"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <!-- seek进度条 -->
+            <SeekBar
+                android:id="@+id/media_controller_progress"
+                style="@style/video_media_controller_seekbar_style"
+                android:layout_toLeftOf="@+id/time"
+                android:layout_toRightOf="@+id/time_current"
+                android:indeterminate="false"
+                android:theme="@style/video_media_controller_seekbar_style" />
+
+            <!-- 总时间 -->
+            <TextView
+                android:id="@+id/time"
+                style="@style/video_media_controller_time_text_style"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/sdk_media_controller_direction"
+                android:layout_toStartOf="@+id/sdk_media_controller_direction" />
+
+            <ImageButton
+                android:id="@+id/sdk_media_controller_direction"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@null"
+                android:scaleType="fitXY"
+                android:src="@mipmap/btn_video_expand" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <!-- 暂停播放按钮 -->
+    <ImageButton
+        android:id="@+id/pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@null"
+        android:src="@drawable/video_play_selector" />
+
+</RelativeLayout>
