@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide
 import com.ecjtu.componentes.activity.AppThemeActivity
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
+import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.flesh.ui.activity.MainActivity
 import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
 import com.ecjtu.flesh.ui.fragment.PageHistoryFragment
@@ -38,6 +39,8 @@ import com.ecjtu.netcore.jsoup.impl.MenuSoup
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.File
 import java.net.HttpURLConnection
 import kotlin.concurrent.thread
@@ -189,7 +192,44 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             }
 
             override fun onTabSelected(position: Int) {
-                Log.e("ttttttttt", "onTabSelected " + position)
+                when (position) {
+                    0 -> {
+                    }
+
+                    1 -> {
+                        AsyncNetwork().apply {
+                            request("https://Kerr1Gan.github.io/flesh/v33a.json", null)
+                            setRequestCallback(object : IRequestCallback {
+                                override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
+                                    try {
+                                        val jObj = JSONArray (response)
+                                        val map = linkedMapOf<String,List<V33Model>>()
+                                        for(i in 0 until jObj.length()){
+                                            val jTitle = jObj[i] as JSONObject
+                                            val title = jTitle.optString("title")
+                                            val list = jTitle.optJSONArray("list")
+                                            val modelList = arrayListOf<V33Model>()
+                                            for(j in 0 until list.length()){
+                                                val v33Model = V33Model()
+                                                val jItem = list[j] as JSONObject
+                                                v33Model.baseUrl = jItem.optString("baseUrl")
+                                                v33Model.imageUrl = jItem.optString("imageUrl")
+                                                v33Model.title = jItem.optString("title")
+                                                v33Model.videoUrl = jItem.optString("videoUrl")
+                                                modelList.add(v33Model)
+                                            }
+                                            map.put(title,modelList)
+                                        }
+                                    }catch (ex:Exception){
+                                        ex.printStackTrace()
+                                    }
+                                    var x=0
+                                    x++
+                                }
+                            })
+                        }
+                    }
+                }
             }
 
             override fun onTabReselected(position: Int) {
