@@ -2,8 +2,6 @@ package com.ecjtu.flesh.presenter
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.preference.PreferenceManager
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.FloatingActionButton
@@ -15,6 +13,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.format.Formatter
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -181,17 +180,20 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 
         val bottomNav = findViewById(R.id.bottom_navigation_bar) as BottomNavigationBar
         bottomNav
-                .addItem(BottomNavigationItem(ColorDrawable(Color.BLACK), "Image"))
-                .addItem(BottomNavigationItem(ColorDrawable(Color.BLACK), "Video"))
+                .addItem(BottomNavigationItem(R.drawable.ic_image, "Image"))
+                .addItem(BottomNavigationItem(R.drawable.ic_video, "Video"))
                 .initialise()
         bottomNav.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
             override fun onTabUnselected(position: Int) {
+                Log.e("ttttttttt", "onTabUnselected " + position)
             }
 
             override fun onTabSelected(position: Int) {
+                Log.e("ttttttttt", "onTabSelected " + position)
             }
 
             override fun onTabReselected(position: Int) {
+                Log.e("ttttttttt", "onTabReselected " + position)
             }
 
         })

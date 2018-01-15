@@ -52,8 +52,8 @@
             android:id="@+id/float_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="30dp"
             android:layout_marginBottom="68dp"
+            android:layout_marginRight="30dp"
             android:src="@drawable/ic_float_button"
             app:fabSize="mini"
             app:layout_anchor="@+id/view_pager"
@@ -66,6 +66,7 @@
             android:id="@+id/bottom_navigation_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:bnbBackgroundColor="#CCFFFFFF"
             app:layout_anchor="@+id/view_pager"
             app:layout_anchorGravity="bottom"
             app:layout_scrollFlags="scroll|enterAlways" />
