@@ -28,7 +28,7 @@ import kotlin.concurrent.thread
 /**
  * Created by Ethan_Xiang on 2017/9/12.
  */
-class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
+open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
 
     companion object {
         private const val KEY_CARD_CACHE = "card_cache_"
@@ -77,7 +77,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         return menu[position].title
     }
 
-    fun onStop(context: Context, key: String, recyclerView: RecyclerView?, pageModel: PageModel?) {
+    open fun onStop(context: Context, key: String, recyclerView: RecyclerView?, pageModel: PageModel?) {
         thread {
             val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
             val helper = PageListCacheHelper(context.filesDir.absolutePath)
@@ -93,7 +93,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         }
     }
 
-    fun onStop(context: Context) {
+    open fun onStop(context: Context) {
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         for (entry in mViewStub) {
             val recyclerView = entry.value.recyclerView
@@ -134,7 +134,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         editor.apply()
     }
 
-    fun onResume() {
+    open fun onResume() {
         for (entry in mViewStub) {
             if (entry.value.recyclerView?.adapter is CardListAdapter) {
                 (entry.value.recyclerView?.adapter as CardListAdapter).onResume()
@@ -252,7 +252,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         }
     }
 
-    fun getScrollYDistance(recyclerView: RecyclerView): Int {
+    open fun getScrollYDistance(recyclerView: RecyclerView): Int {
         val layoutManager = recyclerView.layoutManager as LinearLayoutManager
         val position = layoutManager.findFirstVisibleItemPosition()
         val firstVisibleChildView = layoutManager.findViewByPosition(position)
@@ -260,19 +260,19 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         return position * itemHeight - (firstVisibleChildView?.top ?: 0)
     }
 
-    fun getScrollYPosition(recyclerView: RecyclerView): Int {
+    open fun getScrollYPosition(recyclerView: RecyclerView): Int {
         val layoutManager = recyclerView.layoutManager as LinearLayoutManager
         return layoutManager.findFirstVisibleItemPosition()
     }
 
-    fun getScrollYOffset(recyclerView: RecyclerView): Int {
+    open fun getScrollYOffset(recyclerView: RecyclerView): Int {
         val layoutManager = recyclerView.layoutManager as LinearLayoutManager
         val position = layoutManager.findFirstVisibleItemPosition()
         val firstVisibleChildView = layoutManager.findViewByPosition(position)
         return firstVisibleChildView?.top ?: 0
     }
 
-    fun findLastVisiblePosition(recyclerView: RecyclerView): Int {
+    open fun findLastVisiblePosition(recyclerView: RecyclerView): Int {
         val layoutManager = recyclerView.layoutManager as LinearLayoutManager
         return layoutManager.findLastVisibleItemPosition()
     }
@@ -281,11 +281,11 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         return POSITION_NONE
     }
 
-    fun getViewStub(position: Int): View? {
+    open fun getViewStub(position: Int): View? {
         return mViewStub.get(menu[position].title)?.recyclerView
     }
 
-    fun getListSize(position: Int): Int {
+    open fun getListSize(position: Int): Int {
         return mViewStub.get(menu[position].title)?.getPageModel()?.itemList?.size ?: 0
     }
 }

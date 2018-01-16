@@ -7,13 +7,13 @@ import android.support.design.widget.AppBarLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
+import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.format.Formatter
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +30,7 @@ import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.flesh.ui.activity.MainActivity
 import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
+import com.ecjtu.flesh.ui.adapter.VideoTabPagerAdapter
 import com.ecjtu.flesh.ui.fragment.PageHistoryFragment
 import com.ecjtu.flesh.ui.fragment.PageLikeFragment
 import com.ecjtu.flesh.util.file.FileUtil
@@ -62,6 +63,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     private val mTabLayout = owner.findViewById(R.id.tab_layout) as TabLayout
     private val mAppbarLayout = owner.findViewById(R.id.app_bar) as AppBarLayout
     private var mAppbarExpand = true
+    private val mAdapterArray = Array<PagerAdapter?>(2, { index -> null })
 
     init {
         val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
@@ -74,6 +76,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             mViewPager.adapter = TabPagerAdapter(menuList)
             mTabLayout.setupWithViewPager(mViewPager)
             mViewPager.setCurrentItem(lastTabItem)
+            mAdapterArray[0] = mViewPager.adapter
         }
         val request = AsyncNetwork()
         request.request(Constants.HOST_MOBILE_URL, null)
@@ -188,52 +191,63 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 .initialise()
         bottomNav.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
             override fun onTabUnselected(position: Int) {
-                Log.e("ttttttttt", "onTabUnselected " + position)
             }
 
             override fun onTabSelected(position: Int) {
                 when (position) {
                     0 -> {
+                        mViewPager.adapter = mAdapterArray[0]
                     }
 
                     1 -> {
-                        AsyncNetwork().apply {
-                            request("https://Kerr1Gan.github.io/flesh/v33a.json", null)
-                            setRequestCallback(object : IRequestCallback {
-                                override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
-                                    try {
-                                        val jObj = JSONArray (response)
-                                        val map = linkedMapOf<String,List<V33Model>>()
-                                        for(i in 0 until jObj.length()){
-                                            val jTitle = jObj[i] as JSONObject
-                                            val title = jTitle.optString("title")
-                                            val list = jTitle.optJSONArray("list")
-                                            val modelList = arrayListOf<V33Model>()
-                                            for(j in 0 until list.length()){
-                                                val v33Model = V33Model()
-                                                val jItem = list[j] as JSONObject
-                                                v33Model.baseUrl = jItem.optString("baseUrl")
-                                                v33Model.imageUrl = jItem.optString("imageUrl")
-                                                v33Model.title = jItem.optString("title")
-                                                v33Model.videoUrl = jItem.optString("videoUrl")
-                                                modelList.add(v33Model)
+                        if (mAdapterArray[1] != null) {
+                            mViewPager.adapter = mAdapterArray[1]
+                        } else {
+                            AsyncNetwork().apply {
+                                request("https://Kerr1Gan.github.io/flesh/v33a.json", null)
+                                setRequestCallback(object : IRequestCallback {
+                                    override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
+                                        val menuModel = arrayListOf<MenuModel>()
+                                        val map = linkedMapOf<String, List<V33Model>>()
+                                        try {
+                                            val jObj = JSONArray(response)
+                                            for (i in 0 until jObj.length()) {
+                                                val jTitle = jObj[i] as JSONObject
+                                                val title = jTitle.optString("title")
+                                                val list = jTitle.optJSONArray("list")
+                                                val modelList = arrayListOf<V33Model>()
+                                                for (j in 0 until list.length()) {
+                                                    val v33Model = V33Model()
+                                                    val jItem = list[j] as JSONObject
+                                                    v33Model.baseUrl = jItem.optString("baseUrl")
+                                                    v33Model.imageUrl = jItem.optString("imageUrl")
+                                                    v33Model.title = jItem.optString("title")
+                                                    v33Model.videoUrl = jItem.optString("videoUrl")
+                                                    modelList.add(v33Model)
+                                                }
+                                                map.put(title, modelList)
+                                                val model = MenuModel(title, "")
+                                                menuModel.add(model)
                                             }
-                                            map.put(title,modelList)
+                                        } catch (ex: Exception) {
+                                            ex.printStackTrace()
                                         }
-                                    }catch (ex:Exception){
-                                        ex.printStackTrace()
+                                        owner.runOnUiThread {
+                                            mViewPager.adapter = if (mAdapterArray[1] == null) {
+                                                mAdapterArray[1] = VideoTabPagerAdapter(menuModel)
+                                                (mAdapterArray[1] as VideoTabPagerAdapter).setMenuChildList(map)
+                                                mAdapterArray[1]
+                                            } else mAdapterArray[1]
+                                        }
                                     }
-                                    var x=0
-                                    x++
-                                }
-                            })
+                                })
+                            }
                         }
                     }
                 }
             }
 
             override fun onTabReselected(position: Int) {
-                Log.e("ttttttttt", "onTabReselected " + position)
             }
 
         })
