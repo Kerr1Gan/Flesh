@@ -66,19 +66,19 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
     }
 
     fun onStop(context: Context, key: String, recyclerView: RecyclerView?, pageModel: List<V33Model>?) {
-//        thread {
-//            val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-//            val helper = PageListCacheHelper(context.filesDir.absolutePath)
-//            if (pageModel != null) {
-//                helper.put(KEY_CARD_CACHE + key, pageModel)
-//            }
-//            if (recyclerView != null) {
-//                editor.putInt(KEY_LAST_POSITION + key,
-//                        getScrollYPosition(recyclerView)).
-//                        putInt(KEY_LAST_POSITION_OFFSET + key, getScrollYOffset(recyclerView))
-//            }
-//            editor.apply()
-//        }
+        thread {
+            val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+            val helper = PageListCacheHelper(context.filesDir.absolutePath)
+            if (pageModel != null) {
+                helper.put(KEY_CARD_CACHE + key, pageModel)
+            }
+            if (recyclerView != null) {
+                editor.putInt(KEY_LAST_POSITION + key,
+                        getScrollYPosition(recyclerView)).
+                        putInt(KEY_LAST_POSITION_OFFSET + key, getScrollYOffset(recyclerView))
+            }
+            editor.apply()
+        }
     }
 
     override fun onStop(context: Context) {

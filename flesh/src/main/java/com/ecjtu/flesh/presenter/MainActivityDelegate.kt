@@ -64,13 +64,14 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     private val mAppbarLayout = owner.findViewById(R.id.app_bar) as AppBarLayout
     private var mAppbarExpand = true
     private val mAdapterArray = Array<PagerAdapter?>(2, { index -> null })
+    private var mCurrentPagerIndex = 0
 
     init {
         val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
-        val lastTabItem = PreferenceManager.getDefaultSharedPreferences(owner).getInt(KEY_LAST_TAB_ITEM, 0)
+        val lastTabItem = PreferenceManager.getDefaultSharedPreferences(owner).getInt(KEY_LAST_TAB_ITEM + "_" + 0, 0)
         var menuList: MutableList<MenuModel>? = null
-        if (helper.get<Any>(CACHE_MENU_LIST) != null) {
-            menuList = helper.get(CACHE_MENU_LIST)
+        if (helper.get<Any>(CACHE_MENU_LIST + "_" + 0) != null) {
+            menuList = helper.get(CACHE_MENU_LIST + "_" + 0)
         }
         if (menuList != null) {
             mViewPager.adapter = TabPagerAdapter(menuList)
@@ -92,6 +93,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                 mViewPager.adapter = TabPagerAdapter(localList)
                                 mTabLayout.setupWithViewPager(mViewPager)
                                 mViewPager.setCurrentItem(lastTabItem)
+                                mAdapterArray[0] = mViewPager.adapter
                             } else {
                                 var needUpdate = false
                                 for (obj in localList) {
@@ -194,15 +196,19 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             }
 
             override fun onTabSelected(position: Int) {
+                mCurrentPagerIndex = position
                 when (position) {
                     0 -> {
+                        mViewPager.adapter = null
                         mViewPager.adapter = mAdapterArray[0]
                     }
 
                     1 -> {
                         if (mAdapterArray[1] != null) {
+                            mViewPager.adapter = null
                             mViewPager.adapter = mAdapterArray[1]
                         } else {
+                            mViewPager.adapter = null
                             AsyncNetwork().apply {
                                 request("https://Kerr1Gan.github.io/flesh/v33a.json", null)
                                 setRequestCallback(object : IRequestCallback {
@@ -254,15 +260,19 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     }
 
     fun onStop() {
-        mViewPager.adapter?.let {
-            (mViewPager.adapter as TabPagerAdapter).onStop(owner)
-            val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
-            helper.put(CACHE_MENU_LIST, (mViewPager.adapter as TabPagerAdapter).menu)
+        var index = 0
+        for (adapter in mAdapterArray) {
+            adapter?.let {
+                (adapter as TabPagerAdapter).onStop(owner)
+                val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
+                helper.put(CACHE_MENU_LIST + "_" + index, (adapter as TabPagerAdapter).menu)
 
-            PreferenceManager.getDefaultSharedPreferences(owner).edit().
-                    putInt(KEY_LAST_TAB_ITEM, mTabLayout.selectedTabPosition).
-                    putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isAppbarLayoutExpand()).
-                    apply()
+                PreferenceManager.getDefaultSharedPreferences(owner).edit().
+                        putInt(KEY_LAST_TAB_ITEM + "_" + index, mTabLayout.selectedTabPosition).
+                        putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isAppbarLayoutExpand()).
+                        apply()
+            }
+            index++
         }
     }
 
