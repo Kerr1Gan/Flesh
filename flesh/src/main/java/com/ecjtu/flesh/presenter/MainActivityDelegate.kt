@@ -199,13 +199,11 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 mCurrentPagerIndex = position
                 when (position) {
                     0 -> {
-                        mViewPager.adapter = null
                         mViewPager.adapter = mAdapterArray[0]
                     }
 
                     1 -> {
                         if (mAdapterArray[1] != null) {
-                            mViewPager.adapter = null
                             mViewPager.adapter = mAdapterArray[1]
                         } else {
                             mViewPager.adapter = null
@@ -244,6 +242,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                                 (mAdapterArray[1] as VideoTabPagerAdapter).setMenuChildList(map)
                                                 mAdapterArray[1]
                                             } else mAdapterArray[1]
+                                            mViewPager.adapter?.notifyDataSetChanged()
                                         }
                                     }
                                 })
@@ -251,6 +250,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                         }
                     }
                 }
+                mViewPager.adapter?.notifyDataSetChanged()
             }
 
             override fun onTabReselected(position: Int) {
