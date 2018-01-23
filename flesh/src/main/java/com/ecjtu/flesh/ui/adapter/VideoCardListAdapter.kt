@@ -9,9 +9,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.ecjtu.flesh.R
@@ -44,6 +48,33 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
         holder?.itemView?.setTag(R.id.extra_tag_2, videoUrl)
         holder?.itemView?.setOnClickListener(this)
         holder?.itemView?.setTag(R.id.extra_tag, position)
+
+        val imageView = holder?.thumb
+        val options = RequestOptions()
+        options.centerCrop()
+        val url = pageModel.get(position).imageUrl /*thumb2OriginalUrl(pageModel.itemList[position].imgUrl)*/
+        var host = ""
+        if (url.startsWith("https://")) {
+            host = url.replace("https://", "")
+        } else if (url.startsWith("http://")) {
+            host = url.replace("http://", "")
+        }
+
+        host = host.substring(0, if (host.indexOf("/") >= 0) host.indexOf("/") else host.length)
+        val builder = LazyHeaders.Builder()
+                .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E)  Chrome/60.0.3112.90 Mobile Safari/537.36")
+                .addHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8")
+                .addHeader("Accept-Encoding", "gzip, deflate")
+                .addHeader("Accept-Language", "zh-CN,zh;q=0.8")
+                .addHeader("Host", host)
+                .addHeader("Proxy-Connection", "keep-alive")
+                .addHeader("Referer", "http://m.mzitu.com/")
+        val glideUrl = GlideUrl(url, builder.build())
+        url.let {
+            imageView?.setTag(R.id.extra_tag, position)
+            Glide.with(context).asBitmap().load(glideUrl).listener(this).apply(options).into(imageView)
+            holder?.textView?.setText(pageModel.get(position).title)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VH {
@@ -74,20 +105,6 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
         return true
     }
 
-    private fun thumb2OriginalUrl(url: String): String? {
-        return try {
-            var localUrl = url.replace("/thumbs", "")
-            var suffix = localUrl.substring(localUrl.lastIndexOf("/"))
-            suffix = suffix.substring(suffix.indexOf("_") + 1)
-            var end = suffix.substring(suffix.lastIndexOf("."))
-            suffix = suffix.substring(0, suffix.lastIndexOf("_"))
-            suffix += end
-            localUrl.substring(0, localUrl.lastIndexOf("/") + 1) + suffix
-        } catch (ex: Exception) {
-            null
-        }
-    }
-
     override fun getItemViewType(position: Int): Int {
         return super.getItemViewType(position)
     }
@@ -100,6 +117,8 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
         val videoUrl = v?.getTag(R.id.extra_tag_2) as String?
         videoUrl?.let {
             val videoView = v?.findViewById(R.id.ijk_video) as IjkVideoView
+            val thumb = v.findViewById(R.id.thumb) as ImageView?
+            thumb?.visibility = View.INVISIBLE
             videoView.setVideoPath(videoUrl)
             videoView.requestFocus()
             videoView.start()
@@ -126,6 +145,7 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
         val textView = itemView.findViewById(R.id.title) as TextView
         val heart = itemView.findViewById(R.id.heart) as ImageView
         val description = itemView.findViewById(R.id.description) as TextView
+        val thumb = itemView.findViewById(R.id.thumb) as ImageView
 
         init {
             heart.setOnClickListener { v: View? ->

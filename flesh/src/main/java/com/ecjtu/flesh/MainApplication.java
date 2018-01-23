@@ -79,14 +79,6 @@ public class MainApplication extends Application {
 //        CrashReport.initCrashReport(getApplicationContext(), "bea4125c41", true);
         Bugly.init(getApplicationContext(), "cf90f27bcb", false);
 
-        AWSCredentials provider = new BasicAWSCredentials("AKIAJBQAJ5SXKC2GYFMA", "6XFdKbisY6uPvNwWt5PUMRXvLDuRo+79PwMTIhMS");
-        AmazonS3 s3 = new AmazonS3Client(provider);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        }).start();
     }
 
     private void init() {
