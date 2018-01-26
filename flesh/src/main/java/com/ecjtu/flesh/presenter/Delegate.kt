@@ -75,4 +75,8 @@ abstract class Delegate<out T>(val owner: T) {
         }
         return null
     }
+
+    open fun getContext(): Context? {
+        return mContext
+    }
 }

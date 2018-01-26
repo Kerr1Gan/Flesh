@@ -108,7 +108,11 @@ public class FileCacheHelper {
             fileLock = fos.getChannel().lock();
             writeObjectFromStream(fos, object);
             ret = true;
-            file.renameTo(new File(path, key));
+            File newFile = new File(path, key);
+            if (newFile.exists()) {
+                newFile.delete();
+            }
+            file.renameTo(newFile);
         } catch (Exception e) {
             e.printStackTrace();
             ret = false;

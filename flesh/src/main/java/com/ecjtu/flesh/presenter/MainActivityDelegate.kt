@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide
 import com.ecjtu.componentes.activity.AppThemeActivity
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
+import com.ecjtu.flesh.cache.impl.V33CacheHelper
 import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.flesh.ui.activity.MainActivity
 import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
@@ -65,6 +66,9 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     private var mAppbarExpand = true
     private val mAdapterArray = Array<PagerAdapter?>(2, { index -> null })
     private var mCurrentPagerIndex = 0
+    private var mLoadingDialog: AlertDialog? = null
+    private var mV33Menu: List<MenuModel>? = null
+    private var mV33Cache: Map<String, List<V33Model>>? = null
 
     init {
         val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
@@ -86,6 +90,9 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 val values = SoupFactory.parseHtml(MenuSoup::class.java, response)
                 if (values != null) {
                     owner.runOnUiThread {
+                        if (mCurrentPagerIndex != 0) {
+                            return@runOnUiThread
+                        }
                         var localList: List<MenuModel>? = null
                         if (values[MenuSoup::class.java.simpleName] != null) {
                             localList = values[MenuSoup::class.java.simpleName] as List<MenuModel>
@@ -207,7 +214,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                             mViewPager.adapter = mAdapterArray[1]
                         } else {
                             mViewPager.adapter = null
-                            AsyncNetwork().apply {
+                            val req = AsyncNetwork().apply {
                                 request("https://Kerr1Gan.github.io/flesh/v33a.json", null)
                                 setRequestCallback(object : IRequestCallback {
                                     override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
@@ -236,16 +243,56 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                         } catch (ex: Exception) {
                                             ex.printStackTrace()
                                         }
+
+                                        mLoadingDialog?.cancel()
+                                        mLoadingDialog = null
                                         owner.runOnUiThread {
-                                            mViewPager.adapter = if (mAdapterArray[1] == null) {
-                                                mAdapterArray[1] = VideoTabPagerAdapter(menuModel)
-                                                (mAdapterArray[1] as VideoTabPagerAdapter).setMenuChildList(map)
-                                                mAdapterArray[1]
-                                            } else mAdapterArray[1]
-                                            mViewPager.adapter?.notifyDataSetChanged()
+                                            if (mCurrentPagerIndex == 1) {
+                                                mViewPager.adapter = if (mAdapterArray[1] == null) {
+                                                    mAdapterArray[1] = VideoTabPagerAdapter(menuModel)
+                                                    (mAdapterArray[1] as VideoTabPagerAdapter).setMenuChildList(map)
+                                                    mAdapterArray[1]
+                                                } else mAdapterArray[1]
+                                                mViewPager.adapter?.notifyDataSetChanged()
+                                                mV33Menu = menuModel
+                                                mV33Cache = map
+                                            }
                                         }
                                     }
                                 })
+                            }
+                            if (mLoadingDialog == null) {
+                                mLoadingDialog = AlertDialog.Builder(owner).setTitle("加载中").setMessage("需要一小会时间")
+                                        .setNegativeButton("取消", { dialog, which ->
+                                            req.cancel()
+                                        })
+                                        .setCancelable(false)
+                                        .setOnCancelListener {
+                                            mLoadingDialog = null
+                                        }.create()
+                                mLoadingDialog?.show()
+                            }
+                            thread {
+                                val helper = V33CacheHelper(owner.filesDir.absolutePath)
+                                val helper2 = MenuListCacheHelper(owner.filesDir.absolutePath)
+                                mV33Menu = helper2.get("v33menu")
+                                mV33Cache = helper.get("v33cache")
+                                val localMenu = mV33Menu
+                                val localCache = mV33Cache
+                                if (localMenu != null && localCache != null) {
+                                    mLoadingDialog?.cancel()
+                                    mLoadingDialog = null
+                                }
+                                owner.runOnUiThread {
+                                    if (mCurrentPagerIndex == 1 && localMenu != null && localCache != null) {
+                                        mViewPager.adapter = if (mAdapterArray[1] == null) {
+                                            mAdapterArray[1] = VideoTabPagerAdapter(localMenu)
+                                            (mAdapterArray[1] as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
+                                            mAdapterArray[1]
+                                        } else mAdapterArray[1]
+                                        mViewPager.adapter?.notifyDataSetChanged()
+                                    }
+                                }
                             }
                         }
                     }
@@ -273,6 +320,16 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                         apply()
             }
             index++
+        }
+
+        thread {
+            val helper = V33CacheHelper(owner.filesDir.absolutePath)
+            val helper2 = MenuListCacheHelper(owner.filesDir.absolutePath)
+            if (mV33Menu != null && mV33Cache != null) {
+                helper2.put("v33menu", mV33Menu)
+                helper.put("v33cache", mV33Cache)
+            }
+
         }
     }
 

@@ -122,7 +122,6 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
         fun load(v33ModelList: List<V33Model>) {
             mPageModel = v33ModelList
             loadCache(itemView.context, key)
-            requestUrl()
         }
 
         fun getPageModel(): List<V33Model>? {
@@ -142,15 +141,8 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
 
         private fun initRefreshLayout() {
             if (mRefreshLayout != null) {
-                mRefreshLayout.setColorSchemeColors(mRefreshLayout.context.resources.getColor(R.color.colorPrimary))
-                mRefreshLayout.setOnRefreshListener {
-                    requestUrl()
-                }
+                mRefreshLayout.isEnabled = false
             }
-        }
-
-        private fun requestUrl() {
-
         }
     }
 
