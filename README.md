@@ -1,12 +1,16 @@
 # Flesh（果肉）
 
-果肉一款福利满满的app，数据源[mzitu][3]，MD风格的界面。
+果肉一款由Kotlin实现的app，数据源[mzitu][3]，MD风格的界面。
 
 如果你是一位想学习一下Kotlin的同学，那么绝对不要错过Flesh。如Kotlin所说它与Java完美兼容，所以这里有Kotlin调用Java，同时也有Java调用Kotlin。数据是从网站上爬取的所以这里也有爬虫骚操作。果肉将会不定期更新，增加更多福利。
 
-国际惯例，先上福利。[Release1.0](https://github.com/Kerr1Gan/Flesh/releases/download/170929/flesh-release.apk)
+先上福利。[Release1.0](https://github.com/Kerr1Gan/Flesh/releases/download/170929/flesh-release.apk)
 
 ![fuli](art/fuli.gif)
+
+更新日志
+--------
+向下兼容至Android4.1版本 --2018.1.29
 
 特点
 --------
