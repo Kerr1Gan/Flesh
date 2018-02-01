@@ -91,6 +91,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                         if (values[MenuSoup::class.java.simpleName] != null) {
                             localList = values[MenuSoup::class.java.simpleName] as List<MenuModel>
                             if (menuList == null && localList != null) {
+                                mViewPager.adapter = null
                                 mViewPager.adapter = TabPagerAdapter(localList)
                                 mTabLayout.setupWithViewPager(mViewPager)
                                 mViewPager.setCurrentItem(lastTabItem)
@@ -190,12 +191,14 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 }
                 when (position) {
                     0 -> {
+                        mViewPager.adapter = null
                         mViewPager.adapter = mAdapterArray[0]
                         recoverTab(getLastTabItem(TabPagerAdapter::class), isAppbarLayoutExpand())
                     }
 
                     1 -> {
                         if (mAdapterArray[1] != null) {
+                            mViewPager.adapter = null
                             mViewPager.adapter = mAdapterArray[1]
                             recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
                         } else {
@@ -280,6 +283,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                             mAdapterArray[1]
                                         } else mAdapterArray[1]
                                         mViewPager.adapter?.notifyDataSetChanged()
+                                        recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
                                     }
                                 }
                             }
@@ -299,7 +303,11 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     fun onStop() {
         for ((index, adapter) in mAdapterArray.withIndex()) {
             adapter?.let {
-                (adapter as TabPagerAdapter).onStop(owner, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
+                if (index == mCurrentPagerIndex) {
+                    (adapter as TabPagerAdapter).onStop(owner, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
+                } else {
+                    (adapter as TabPagerAdapter).onStop(owner, -1, isAppbarLayoutExpand())
+                }
             }
         }
     }
@@ -399,5 +407,5 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     }
 
     private fun getLastTabItem(clazz: KClass<out TabPagerAdapter>): Int = PreferenceManager.getDefaultSharedPreferences(owner).
-            getInt(TabPagerAdapter.KEY_LAST_TAB_ITEM + "_" + clazz.java, 0)
+            getInt(TabPagerAdapter.KEY_LAST_TAB_ITEM + "_" + clazz.java.simpleName, 0)
 }

@@ -32,13 +32,14 @@ import kotlin.concurrent.thread
 open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
 
     companion object {
-        const val KEY_CARD_CACHE = "card_cache_"
-        const val KEY_LAST_POSITION = "last_position_"
-        const val KEY_LAST_POSITION_OFFSET = "last_position_offset_"
         const val KEY_LAST_TAB_ITEM = "key_last_tab_item"
         const val KEY_APPBAR_LAYOUT_COLLAPSED = "key_appbar_layout_collapse"
         const val CACHE_MENU_LIST = "menu_list_cache"
     }
+
+    private val KEY_CARD_CACHE = "card_cache_"
+    private val KEY_LAST_POSITION = "last_position_"
+    private val KEY_LAST_POSITION_OFFSET = "last_position_offset_"
 
     private val mViewStub = HashMap<String, VH>()
 
@@ -128,20 +129,20 @@ open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
 //                    }
 //                }
                 helper.put(KEY_CARD_CACHE + entry.key, pageModel)
-            }
-            if (recyclerView != null) {
-                editor.putInt(KEY_LAST_POSITION + entry.key,
-                        getScrollYPosition(recyclerView)).
-                        putInt(KEY_LAST_POSITION_OFFSET + entry.key, getScrollYOffset(recyclerView))
+                if (recyclerView != null) {
+                    editor.putInt(KEY_LAST_POSITION + entry.key,
+                            getScrollYPosition(recyclerView)).
+                            putInt(KEY_LAST_POSITION_OFFSET + entry.key, getScrollYOffset(recyclerView))
+                }
             }
         }
         val helper = MenuListCacheHelper(context.filesDir.absolutePath)
         helper.put(CACHE_MENU_LIST + "_" + TabPagerAdapter::class.java.toString(), menu)
 
-        PreferenceManager.getDefaultSharedPreferences(context).edit().
-                putInt(KEY_LAST_TAB_ITEM + "_" + TabPagerAdapter::class.java.toString(), tabIndex).
-                putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isExpand).
-                apply()
+        editor.putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isExpand)
+        if (tabIndex >= 0) {
+            editor.putInt(KEY_LAST_TAB_ITEM + "_" + TabPagerAdapter::class.java.simpleName, tabIndex)
+        }
         editor.apply()
     }
 
@@ -153,7 +154,7 @@ open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         }
     }
 
-    private class VH(val itemView: View, private val menu: MenuModel, val key: String) {
+    private inner class VH(val itemView: View, private val menu: MenuModel, val key: String) {
         val recyclerView = itemView.findViewById(R.id.recycler_view) as RecyclerView?
         private var mPageModel: PageModel? = null
         private val mRefreshLayout = if (itemView is SwipeRefreshLayout) itemView else null

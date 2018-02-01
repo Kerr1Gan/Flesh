@@ -22,11 +22,9 @@ import kotlin.concurrent.thread
  */
 class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
 
-    companion object {
-        private const val KEY_CARD_CACHE = "video_card_cache_"
-        private const val KEY_LAST_POSITION = "video_last_position_"
-        private const val KEY_LAST_POSITION_OFFSET = "video_last_position_offset_"
-    }
+    private val KEY_CARD_CACHE = "video_card_cache_"
+    private val KEY_LAST_POSITION = "video_last_position_"
+    private val KEY_LAST_POSITION_OFFSET = "video_last_position_offset_"
 
     private val mViewStub = HashMap<String, VH>()
 
@@ -44,8 +42,6 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
         val title = getPageTitle(position) as String
         val vh = VH(item, menu[position], title)
         thread {
-            //            val helper = PageListCacheHelper(container?.context?.filesDir?.absolutePath)
-//            val pageModel: PageModel? = helper.get(KEY_CARD_CACHE + getPageTitle(position))
             vh.itemView.post {
                 mMenuChildList?.get(title)?.let {
                     vh.load(mMenuChildList!!.get(title)!!)
@@ -101,8 +97,10 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
                 helper.put("v33cache", mMenuChildList)
             }
         }
-        editor.putInt(KEY_LAST_TAB_ITEM + "_" + this::class.java.toString(), tabIndex).
-                putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isExpand)
+        if (tabIndex >= 0) {
+            editor.putInt(KEY_LAST_TAB_ITEM + "_" + TabPagerAdapter::class.java.simpleName, tabIndex)
+        }
+        editor.putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isExpand)
         editor.apply()
     }
 
@@ -114,7 +112,7 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
         }
     }
 
-    private class VH(val itemView: View, private val menu: MenuModel, val key: String) {
+    private inner class VH(val itemView: View, private val menu: MenuModel, val key: String) {
         val recyclerView = itemView.findViewById(R.id.recycler_view) as RecyclerView?
         private var mPageModel: List<V33Model>? = null
         private val mRefreshLayout = if (itemView is SwipeRefreshLayout) itemView else null
