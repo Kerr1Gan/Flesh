@@ -8,6 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -141,6 +142,7 @@ open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
 
         editor.putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isExpand)
         if (tabIndex >= 0) {
+            Log.i("tttttttttt", "tabPager " + tabIndex)
             editor.putInt(KEY_LAST_TAB_ITEM + "_" + TabPagerAdapter::class.java.simpleName, tabIndex)
         }
         editor.apply()

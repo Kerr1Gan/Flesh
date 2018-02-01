@@ -6,6 +6,7 @@ import android.preference.PreferenceManager
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -98,7 +99,8 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
             }
         }
         if (tabIndex >= 0) {
-            editor.putInt(KEY_LAST_TAB_ITEM + "_" + TabPagerAdapter::class.java.simpleName, tabIndex)
+            Log.i("tttttttttt", "videoTabPager " + tabIndex)
+            editor.putInt(KEY_LAST_TAB_ITEM + "_" + VideoTabPagerAdapter::class.java.simpleName, tabIndex)
         }
         editor.putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isExpand)
         editor.apply()

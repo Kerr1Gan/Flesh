@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.format.Formatter
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -68,6 +69,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     init {
         val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
         val lastTabItem = getLastTabItem(TabPagerAdapter::class)
+        Log.i("tttttttttt", "init lastTabItem " + lastTabItem)
         var menuList: MutableList<MenuModel>? = null
         if (helper.get<Any>(TabPagerAdapter.CACHE_MENU_LIST + "_" + TabPagerAdapter::class.java) != null) {
             menuList = helper.get(TabPagerAdapter.CACHE_MENU_LIST + "_" + TabPagerAdapter::class.java)
@@ -304,8 +306,10 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         for ((index, adapter) in mAdapterArray.withIndex()) {
             adapter?.let {
                 if (index == mCurrentPagerIndex) {
+                    Log.i("tttttttttt", "onStop curPage" + mTabLayout.selectedTabPosition)
                     (adapter as TabPagerAdapter).onStop(owner, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
                 } else {
+                    Log.i("tttttttttt", "onStop " + mTabLayout.selectedTabPosition)
                     (adapter as TabPagerAdapter).onStop(owner, -1, isAppbarLayoutExpand())
                 }
             }
