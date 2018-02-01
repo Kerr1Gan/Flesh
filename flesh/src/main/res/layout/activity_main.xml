@@ -66,7 +66,9 @@
             android:id="@+id/bottom_navigation_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:bnbBackgroundColor="#CCFFFFFF"
+            app:bnbBackgroundColor="@color/colorPrimary"
+            app:bnbActiveColor="@android:color/white"
+            app:bnbInactiveColor="#B3FFFFFF"
             app:layout_anchor="@+id/view_pager"
             app:layout_anchorGravity="bottom"
             app:layout_scrollFlags="scroll|enterAlways" />

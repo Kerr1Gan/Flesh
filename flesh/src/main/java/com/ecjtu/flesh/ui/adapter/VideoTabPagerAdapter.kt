@@ -10,7 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ecjtu.flesh.R
+import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.cache.impl.PageListCacheHelper
+import com.ecjtu.flesh.cache.impl.V33CacheHelper
 import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.netcore.model.MenuModel
 import kotlin.concurrent.thread
@@ -57,7 +59,7 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
     override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
         container?.removeView(`object` as View)
         val vh: VH? = mViewStub.remove(getPageTitle(position))
-        onStop(container?.context!!, getPageTitle(position).toString(), vh?.recyclerView, vh?.getPageModel())
+        onDestroyItem(container?.context!!, getPageTitle(position).toString(), vh?.recyclerView, vh?.getPageModel())
         (vh?.recyclerView?.adapter as VideoCardListAdapter?)?.onRelease()
     }
 
@@ -65,7 +67,7 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
         return menu[position].title
     }
 
-    fun onStop(context: Context, key: String, recyclerView: RecyclerView?, pageModel: List<V33Model>?) {
+    fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?, pageModel: List<V33Model>?) {
         thread {
             val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
             val helper = PageListCacheHelper(context.filesDir.absolutePath)
@@ -81,23 +83,26 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
         }
     }
 
-    override fun onStop(context: Context) {
+    override fun onStop(context: Context, tabIndex: Int, isExpand: Boolean) {
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         for (entry in mViewStub) {
             val recyclerView = entry.value.recyclerView
-
-            val helper = PageListCacheHelper(context.filesDir.absolutePath)
-            if (entry.value.getPageModel() != null) {
-                val pageModel = entry.value.getPageModel()
-                //todo 无法正确获取到当前位置对应的nextPageUrl
-                helper.put(KEY_CARD_CACHE + entry.key, pageModel)
-            }
             if (recyclerView != null) {
                 editor.putInt(KEY_LAST_POSITION + entry.key,
                         getScrollYPosition(recyclerView)).
                         putInt(KEY_LAST_POSITION_OFFSET + entry.key, getScrollYOffset(recyclerView))
             }
         }
+        thread {
+            val helper = V33CacheHelper(context.filesDir.absolutePath)
+            val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
+            if (menu != null && mMenuChildList != null) {
+                helper2.put("v33menu", menu)
+                helper.put("v33cache", mMenuChildList)
+            }
+        }
+        editor.putInt(KEY_LAST_TAB_ITEM + "_" + this::class.java.toString(), tabIndex).
+                putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isExpand)
         editor.apply()
     }
 

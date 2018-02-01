@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ecjtu.flesh.R
+import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.cache.impl.PageListCacheHelper
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
@@ -31,9 +32,12 @@ import kotlin.concurrent.thread
 open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
 
     companion object {
-        private const val KEY_CARD_CACHE = "card_cache_"
-        private const val KEY_LAST_POSITION = "last_position_"
-        private const val KEY_LAST_POSITION_OFFSET = "last_position_offset_"
+        const val KEY_CARD_CACHE = "card_cache_"
+        const val KEY_LAST_POSITION = "last_position_"
+        const val KEY_LAST_POSITION_OFFSET = "last_position_offset_"
+        const val KEY_LAST_TAB_ITEM = "key_last_tab_item"
+        const val KEY_APPBAR_LAYOUT_COLLAPSED = "key_appbar_layout_collapse"
+        const val CACHE_MENU_LIST = "menu_list_cache"
     }
 
     private val mViewStub = HashMap<String, VH>()
@@ -69,7 +73,7 @@ open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
     override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
         container?.removeView(`object` as View)
         val vh: VH? = mViewStub.remove(getPageTitle(position))
-        onStop(container?.context!!, getPageTitle(position).toString(), vh?.recyclerView, vh?.getPageModel())
+        onDestroyItem(container?.context!!, getPageTitle(position).toString(), vh?.recyclerView, vh?.getPageModel())
         (vh?.recyclerView?.adapter as CardListAdapter?)?.onRelease()
     }
 
@@ -77,7 +81,7 @@ open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         return menu[position].title
     }
 
-    open fun onStop(context: Context, key: String, recyclerView: RecyclerView?, pageModel: PageModel?) {
+    open fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?, pageModel: PageModel?) {
         thread {
             val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
             val helper = PageListCacheHelper(context.filesDir.absolutePath)
@@ -93,7 +97,7 @@ open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         }
     }
 
-    open fun onStop(context: Context) {
+    open fun onStop(context: Context, tabIndex: Int, isExpand: Boolean) {
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         for (entry in mViewStub) {
             val recyclerView = entry.value.recyclerView
@@ -131,6 +135,13 @@ open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
                         putInt(KEY_LAST_POSITION_OFFSET + entry.key, getScrollYOffset(recyclerView))
             }
         }
+        val helper = MenuListCacheHelper(context.filesDir.absolutePath)
+        helper.put(CACHE_MENU_LIST + "_" + TabPagerAdapter::class.java.toString(), menu)
+
+        PreferenceManager.getDefaultSharedPreferences(context).edit().
+                putInt(KEY_LAST_TAB_ITEM + "_" + TabPagerAdapter::class.java.toString(), tabIndex).
+                putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isExpand).
+                apply()
         editor.apply()
     }
 

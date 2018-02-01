@@ -72,12 +72,12 @@ public class MainApplication extends Application {
         manager.registerTable(new HistoryTableImpl());
         manager.registerTable(new LikeTableImpl());
         manager.registerTable(new NotificationTableImpl());
-        manager.getHelper(this, "heaven", 2+1).getWritableDatabase();
+        manager.getHelper(this, "heaven", 2 + 1).getWritableDatabase();
     }
 
     private void initSDK() {
 //        CrashReport.initCrashReport(getApplicationContext(), "bea4125c41", true);
-        Bugly.init(getApplicationContext(), "cf90f27bcb", false);
+        Bugly.init(getApplicationContext(), getString(R.string.bugly), Boolean.parseBoolean(getString(R.string.bugly_isDebug)));
 
     }
 

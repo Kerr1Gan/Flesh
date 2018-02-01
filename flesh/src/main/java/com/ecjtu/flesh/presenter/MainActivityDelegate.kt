@@ -46,18 +46,13 @@ import org.json.JSONObject
 import java.io.File
 import java.net.HttpURLConnection
 import kotlin.concurrent.thread
+import kotlin.reflect.KClass
 
 
 /**
  * Created by KerriGan on 2017/6/2.
  */
 class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) {
-
-    companion object {
-        private const val KEY_LAST_TAB_ITEM = "key_last_tab_item"
-        private const val KEY_APPBAR_LAYOUT_COLLAPSED = "key_appbar_layout_collapse"
-        private const val CACHE_MENU_LIST = "menu_list_cache"
-    }
 
     private val mFloatButton = owner.findViewById(R.id.float_button) as FloatingActionButton
     private val mViewPager = owner.findViewById(R.id.view_pager) as ViewPager
@@ -72,15 +67,14 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 
     init {
         val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
-        val lastTabItem = PreferenceManager.getDefaultSharedPreferences(owner).getInt(KEY_LAST_TAB_ITEM + "_" + 0, 0)
+        val lastTabItem = getLastTabItem(TabPagerAdapter::class)
         var menuList: MutableList<MenuModel>? = null
-        if (helper.get<Any>(CACHE_MENU_LIST + "_" + 0) != null) {
-            menuList = helper.get(CACHE_MENU_LIST + "_" + 0)
+        if (helper.get<Any>(TabPagerAdapter.CACHE_MENU_LIST + "_" + TabPagerAdapter::class.java) != null) {
+            menuList = helper.get(TabPagerAdapter.CACHE_MENU_LIST + "_" + TabPagerAdapter::class.java)
         }
         if (menuList != null) {
             mViewPager.adapter = TabPagerAdapter(menuList)
             mTabLayout.setupWithViewPager(mViewPager)
-            mViewPager.setCurrentItem(lastTabItem)
             mAdapterArray[0] = mViewPager.adapter
         }
         val request = AsyncNetwork()
@@ -120,6 +114,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         })
 
         initView()
+        recoverTab(lastTabItem, isAppbarLayoutExpand())
     }
 
     private fun initView() {
@@ -128,11 +123,13 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         val glideSize = FileUtil.getGlideCacheSize(owner)
         val glideStr = Formatter.formatFileSize(owner, glideSize)
         val textView = findViewById(R.id.size) as TextView?
+        val bottomNav = findViewById(R.id.bottom_navigation_bar) as BottomNavigationBar
+
         textView?.let {
             textView.setText(String.format("%s/%s", glideStr, cacheStr))
         }
         mFloatButton.setOnClickListener {
-            doFloatButton()
+            doFloatButton(bottomNav)
         }
 
         findViewById(R.id.like)?.setOnClickListener {
@@ -169,13 +166,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             drawerLayout.closeDrawer(Gravity.START)
         }
 
-        mAppbarExpand = PreferenceManager.getDefaultSharedPreferences(owner).getBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, false)
-        val expand = isAppbarLayoutExpand()
-        if (expand) {
-            mAppbarLayout.setExpanded(true)
-        } else {
-            mAppbarLayout.setExpanded(false)
-        }
+        mAppbarExpand = PreferenceManager.getDefaultSharedPreferences(owner).getBoolean(TabPagerAdapter.KEY_APPBAR_LAYOUT_COLLAPSED, false)
         mAppbarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             if (verticalOffset == 0) {
                 mAppbarExpand = true
@@ -184,16 +175,6 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             }
         }
 
-//        val content = findViewById(R.id.drawer_layout)
-//        content?.let {
-//            showBg()
-//            val bitmap = BitmapFactory.decodeFile(owner.filesDir.absolutePath + "/bg.png")
-//            if (bitmap != null) {
-//                content.setBackgroundDrawable(BitmapDrawable(bitmap))
-//            }
-//        }
-
-        val bottomNav = findViewById(R.id.bottom_navigation_bar) as BottomNavigationBar
         bottomNav
                 .addItem(BottomNavigationItem(R.drawable.ic_image, "Image"))
                 .addItem(BottomNavigationItem(R.drawable.ic_video, "Video"))
@@ -204,18 +185,23 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 
             override fun onTabSelected(position: Int) {
                 mCurrentPagerIndex = position
+                mViewPager.adapter?.apply {
+                    (this as TabPagerAdapter).onStop(owner, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
+                }
                 when (position) {
                     0 -> {
                         mViewPager.adapter = mAdapterArray[0]
+                        recoverTab(getLastTabItem(TabPagerAdapter::class), isAppbarLayoutExpand())
                     }
 
                     1 -> {
                         if (mAdapterArray[1] != null) {
                             mViewPager.adapter = mAdapterArray[1]
+                            recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
                         } else {
                             mViewPager.adapter = null
                             val req = AsyncNetwork().apply {
-                                request("https://Kerr1Gan.github.io/flesh/v33a.json", null)
+                                request(com.ecjtu.flesh.Constants.V33_URL, null)
                                 setRequestCallback(object : IRequestCallback {
                                     override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                                         val menuModel = arrayListOf<MenuModel>()
@@ -248,6 +234,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                         mLoadingDialog = null
                                         owner.runOnUiThread {
                                             if (mCurrentPagerIndex == 1) {
+                                                mViewPager.adapter = null
                                                 mViewPager.adapter = if (mAdapterArray[1] == null) {
                                                     mAdapterArray[1] = VideoTabPagerAdapter(menuModel)
                                                     (mAdapterArray[1] as VideoTabPagerAdapter).setMenuChildList(map)
@@ -256,6 +243,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                                 mViewPager.adapter?.notifyDataSetChanged()
                                                 mV33Menu = menuModel
                                                 mV33Cache = map
+                                                recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
                                             }
                                         }
                                     }
@@ -285,6 +273,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                 }
                                 owner.runOnUiThread {
                                     if (mCurrentPagerIndex == 1 && localMenu != null && localCache != null) {
+                                        mViewPager.adapter = null
                                         mViewPager.adapter = if (mAdapterArray[1] == null) {
                                             mAdapterArray[1] = VideoTabPagerAdapter(localMenu)
                                             (mAdapterArray[1] as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
@@ -297,6 +286,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                         }
                     }
                 }
+                //store view states
                 mViewPager.adapter?.notifyDataSetChanged()
             }
 
@@ -307,29 +297,10 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     }
 
     fun onStop() {
-        var index = 0
-        for (adapter in mAdapterArray) {
+        for ((index, adapter) in mAdapterArray.withIndex()) {
             adapter?.let {
-                (adapter as TabPagerAdapter).onStop(owner)
-                val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
-                helper.put(CACHE_MENU_LIST + "_" + index, (adapter as TabPagerAdapter).menu)
-
-                PreferenceManager.getDefaultSharedPreferences(owner).edit().
-                        putInt(KEY_LAST_TAB_ITEM + "_" + index, mTabLayout.selectedTabPosition).
-                        putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isAppbarLayoutExpand()).
-                        apply()
+                (adapter as TabPagerAdapter).onStop(owner, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
             }
-            index++
-        }
-
-        thread {
-            val helper = V33CacheHelper(owner.filesDir.absolutePath)
-            val helper2 = MenuListCacheHelper(owner.filesDir.absolutePath)
-            if (mV33Menu != null && mV33Cache != null) {
-                helper2.put("v33menu", mV33Menu)
-                helper.put("v33cache", mV33Cache)
-            }
-
         }
     }
 
@@ -340,45 +311,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     }
 
     fun onDestroy() {
-//        thread {
-//            val content = findViewById(R.id.drawer_layout)
-//            content?.let {
-//                val bitmap = convertView2Bitmap(content, content.width, content.height)
-//                val file = File(owner.filesDir, "bg.png")
-//                var os: OutputStream? = null
-//                try {
-//                    os = FileOutputStream(file)
-//                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, os)
-//                    bitmap.recycle()
-//                    os.close()
-//                } catch (ex: Exception) {
-//                } finally {
-//                    if (os != null) {
-//                        try {
-//                            os.close()
-//                        } catch (ex: Exception) {
-//                        }
-//                    }
-//                    bitmap.recycle()
-//                }
-//
-//            }
-//        }
     }
-
-//    fun hideBg() {
-//        val vg = findViewById(R.id.drawer_layout) as ViewGroup
-//        for (i in 0 until vg.childCount) {
-//            vg.getChildAt(i).visibility = View.VISIBLE
-//        }
-//    }
-//
-//    fun showBg() {
-//        val vg = findViewById(R.id.drawer_layout) as ViewGroup
-//        for (i in 0 until vg.childCount) {
-//            vg.getChildAt(i).visibility = View.INVISIBLE
-//        }
-//    }
 
     fun isAppbarLayoutExpand(): Boolean = mAppbarExpand
 
@@ -388,7 +321,8 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         return bitmap
     }
 
-    private fun doFloatButton() {
+    private fun doFloatButton(bottomNavigationBar: BottomNavigationBar) {
+        bottomNavigationBar.hide()
         val position = mTabLayout.selectedTabPosition
         var recyclerView: RecyclerView? = null
         var size = 0
@@ -458,4 +392,12 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         }
         snake.show()
     }
+
+    private fun recoverTab(tabItem: Int, isExpand: Boolean) {
+        mViewPager.setCurrentItem(tabItem)
+        mAppbarLayout.setExpanded(isExpand)
+    }
+
+    private fun getLastTabItem(clazz: KClass<out TabPagerAdapter>): Int = PreferenceManager.getDefaultSharedPreferences(owner).
+            getInt(TabPagerAdapter.KEY_LAST_TAB_ITEM + "_" + clazz.java, 0)
 }

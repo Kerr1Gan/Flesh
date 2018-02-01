@@ -22,4 +22,7 @@ object Constants {
 
     @JvmField
     val CONFIG_URL = "https://kerr1gan.github.io/flesh/config"
+
+    @JvmStatic
+    val V33_URL = "https://Kerr1Gan.github.io/flesh/v33a.json"
 }
