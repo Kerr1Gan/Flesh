@@ -10,6 +10,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/common-componentes" />
             <option value="$PROJECT_DIR$/flesh" />
+            <option value="$PROJECT_DIR$/htmlunit" />
+            <option value="$PROJECT_DIR$/ijkplayer-exo" />
+            <option value="$PROJECT_DIR$/ijkplayer-java" />
             <option value="$PROJECT_DIR$/netcore" />
             <option value="$PROJECT_DIR$/parcel" />
           </set>
