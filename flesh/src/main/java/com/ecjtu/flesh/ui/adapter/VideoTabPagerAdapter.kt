@@ -38,7 +38,7 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
     }
 
     override fun instantiateItem(container: ViewGroup?, position: Int): Any {
-        Log.i("ttttttt", "VideoTabPagerAdapter instantiateItem " + position +" container "+container?.childCount)
+        Log.i("ttttttt", "VideoTabPagerAdapter instantiateItem " + position + " container " + container?.childCount)
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
         container?.addView(item)
         val title = getPageTitle(position) as String
@@ -64,18 +64,17 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
 
     fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?, pageModel: List<V33Model>?) {
         thread {
-            val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
             val helper = PageListCacheHelper(context.filesDir.absolutePath)
             if (pageModel != null) {
                 helper.put(KEY_CARD_CACHE + key, pageModel)
             }
-            if (recyclerView != null) {
-                editor.putInt(KEY_LAST_POSITION + key,
-                        getScrollYPosition(recyclerView)).
-                        putInt(KEY_LAST_POSITION_OFFSET + key, getScrollYOffset(recyclerView))
-            }
-            editor.apply()
         }
+        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        if (recyclerView != null) {
+            editor.putInt(KEY_LAST_POSITION + key, getScrollYPosition(recyclerView)).
+                    putInt(KEY_LAST_POSITION_OFFSET + key, getScrollYOffset(recyclerView))
+        }
+        editor.apply()
     }
 
     override fun onStop(context: Context, tabIndex: Int, isExpand: Boolean) {

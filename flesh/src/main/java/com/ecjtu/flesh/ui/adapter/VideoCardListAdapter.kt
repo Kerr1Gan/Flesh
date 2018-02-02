@@ -48,10 +48,8 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
         val model = pageModel.get(position)
         holder?.textView?.text = model.title
 
-        if (holder?.ijkVideoView?.isPlaying == true) {
-            holder.ijkVideoView.release(true)
-            holder.thumb.visibility = View.INVISIBLE
-        }
+        holder?.ijkVideoView?.release(true)
+        holder?.thumb?.visibility = View.VISIBLE
 
         val videoUrl = model.videoUrl
         holder?.itemView?.setTag(R.id.extra_tag_2, videoUrl)

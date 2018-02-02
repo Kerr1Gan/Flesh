@@ -70,7 +70,6 @@ open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
             }
         }
         mViewStub.put(getPageTitle(position).toString(), vh)
-        item.setTag(title)
         return item
     }
 
@@ -88,18 +87,18 @@ open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
 
     open fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?, pageModel: PageModel?) {
         thread {
-            val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
             val helper = PageListCacheHelper(context.filesDir.absolutePath)
             if (pageModel != null) {
                 helper.put(KEY_CARD_CACHE + key, pageModel)
             }
-            if (recyclerView != null) {
-                editor.putInt(KEY_LAST_POSITION + key,
-                        getScrollYPosition(recyclerView)).
-                        putInt(KEY_LAST_POSITION_OFFSET + key, getScrollYOffset(recyclerView))
-            }
-            editor.apply()
         }
+        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        if (recyclerView != null) {
+            editor.putInt(KEY_LAST_POSITION + key,
+                    getScrollYPosition(recyclerView)).
+                    putInt(KEY_LAST_POSITION_OFFSET + key, getScrollYOffset(recyclerView))
+        }
+        editor.apply()
     }
 
     open fun onStop(context: Context, tabIndex: Int, isExpand: Boolean) {
