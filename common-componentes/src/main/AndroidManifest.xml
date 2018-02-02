@@ -7,17 +7,17 @@
         android:supportsRtl="true">
         <activity
             android:name=".activity.ImmersiveFragmentActivity"
-            android:theme="@style/ImageStatusBarStyle" />
+            android:theme="@style/CCImageStatusBarStyle" />
 
         <activity
             android:name=".activity.ActionBarFragmentActivity"
             android:exported="true"
-            android:theme="@style/AppPreferenceTheme" />
+            android:theme="@style/CCAppPreferenceTheme" />
 
         <activity
             android:name=".activity.RotateNoCreateActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|mcc|mnc"
-            android:theme="@style/ImageStatusBarStyle" />
+            android:theme="@style/CCImageStatusBarStyle" />
 
         <activity android:name=".activity.AppThemeActivity" />
 

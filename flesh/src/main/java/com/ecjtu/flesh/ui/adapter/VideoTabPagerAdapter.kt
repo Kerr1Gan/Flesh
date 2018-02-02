@@ -38,22 +38,20 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
     }
 
     override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+        Log.i("ttttttt", "VideoTabPagerAdapter instantiateItem " + position +" container "+container?.childCount)
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
         container?.addView(item)
         val title = getPageTitle(position) as String
         val vh = VH(item, menu[position], title)
-        thread {
-            vh.itemView.post {
-                mMenuChildList?.get(title)?.let {
-                    vh.load(mMenuChildList!!.get(title)!!)
-                }
-            }
+        mMenuChildList?.get(title)?.let {
+            vh.load(mMenuChildList!!.get(title)!!)
         }
         mViewStub.put(getPageTitle(position).toString(), vh)
         return item
     }
 
     override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
+        Log.i("ttttttt", "VideoTabPagerAdapter remove view " + position)
         container?.removeView(`object` as View)
         val vh: VH? = mViewStub.remove(getPageTitle(position))
         onDestroyItem(container?.context!!, getPageTitle(position).toString(), vh?.recyclerView, vh?.getPageModel())

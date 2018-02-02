@@ -19,7 +19,7 @@
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:theme="@style/WhiteToolbar"
+        app:theme="@style/CCWhiteToolbar"
         app:title=""
         app:titleTextColor="@android:color/white" />
 </RelativeLayout>

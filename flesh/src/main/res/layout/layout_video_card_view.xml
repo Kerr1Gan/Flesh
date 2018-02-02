@@ -18,12 +18,30 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <tv.danmaku.ijk.media.exo.video.IjkVideoView
-            android:id="@+id/ijk_video"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_weight="1"
-            android:scaleType="fitXY" />
+            android:layout_height="300dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true">
+
+                <tv.danmaku.ijk.media.exo.video.IjkVideoView
+                    android:id="@+id/ijk_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_gravity="center"
+                    android:background="@android:color/black" />
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/thumb"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY" />
+
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/bottom"

@@ -20,7 +20,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -513,7 +512,9 @@ public class SimpleMediaController extends FrameLayout {
 
     private OnClickListener mDirectionListener = new OnClickListener() {
         public void onClick(View v) {
-            mCallback.onChangeOrientation();
+            if (mCallback != null) {
+                mCallback.onChangeOrientation();
+            }
         }
     };
 

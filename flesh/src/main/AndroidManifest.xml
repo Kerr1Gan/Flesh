@@ -29,7 +29,7 @@
         <activity
             android:name=".ui.activity.FullScreenImageActivity"
             android:process=":child"
-            android:theme="@style/ImageStatusBarStyle" />
+            android:theme="@style/CCImageStatusBarStyle" />
 
         <service
             android:name=".service.MainService"
@@ -37,7 +37,8 @@
 
         <activity
             android:name=".ui.activity.TestActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/AppThemeNoActionBar"/>
 
         <service
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"

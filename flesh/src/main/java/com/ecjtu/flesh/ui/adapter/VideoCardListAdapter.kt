@@ -2,6 +2,7 @@ package com.ecjtu.flesh.ui.adapter
 
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
+import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -18,12 +19,16 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
+import com.ecjtu.componentes.activity.RotateNoCreateActivity
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.LikeTableImpl
 import com.ecjtu.flesh.model.models.V33Model
+import com.ecjtu.flesh.ui.fragment.IjkVideoFragment
 import com.ecjtu.netcore.model.PageModel
+import tv.danmaku.ijk.media.exo.video.AndroidMediaController
 import tv.danmaku.ijk.media.exo.video.IjkVideoView
+import tv.danmaku.ijk.media.player.IMediaPlayer
 
 /**
  * Created by Ethan_Xiang on 2018/1/16.
@@ -40,9 +45,13 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
 
     override fun onBindViewHolder(holder: VH?, position: Int) {
         val context = holder?.itemView?.context
-        val params = holder?.itemView?.layoutParams
         val model = pageModel.get(position)
         holder?.textView?.text = model.title
+
+        if (holder?.ijkVideoView?.isPlaying == true) {
+            holder.ijkVideoView.release(true)
+            holder.thumb.visibility = View.INVISIBLE
+        }
 
         val videoUrl = model.videoUrl
         holder?.itemView?.setTag(R.id.extra_tag_2, videoUrl)
@@ -88,7 +97,7 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
 
     override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
         if (target is BitmapImageViewTarget) {
-            val parent = target.view.parent?.parent
+            val parent = target.view.parent?.parent as View
             val layoutParams = (parent as View).layoutParams
             var height = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
 
@@ -118,6 +127,9 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
         videoUrl?.let {
             val videoView = v?.findViewById(R.id.ijk_video) as IjkVideoView
             val thumb = v.findViewById(R.id.thumb) as ImageView?
+            if (videoView.isPlaying) {
+                return@let
+            }
             thumb?.visibility = View.INVISIBLE
             videoView.setVideoPath(videoUrl)
             videoView.requestFocus()
@@ -146,6 +158,7 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
         val heart = itemView.findViewById(R.id.heart) as ImageView
         val description = itemView.findViewById(R.id.description) as TextView
         val thumb = itemView.findViewById(R.id.thumb) as ImageView
+        val mediaController = AndroidMediaController(itemView.context)
 
         init {
             heart.setOnClickListener { v: View? ->
@@ -163,6 +176,18 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
                     }
                 }
                 db.close()
+            }
+            ijkVideoView.setMediaController(mediaController)
+            ijkVideoView.setOnInfoListener { mp, what, extra ->
+                if (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+                }
+                return@setOnInfoListener false
+            }
+            mediaController.setMediaPlayerCallback {
+                val videoUrl = itemView.getTag(R.id.extra_tag_2) as String?
+                val intent = RotateNoCreateActivity.newInstance(itemView.context, IjkVideoFragment::class.java
+                        , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, videoUrl) })
+                itemView.context.startActivity(intent)
             }
         }
     }

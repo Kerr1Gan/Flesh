@@ -98,6 +98,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                 mTabLayout.setupWithViewPager(mViewPager)
                                 mViewPager.setCurrentItem(lastTabItem)
                                 mAdapterArray[0] = mViewPager.adapter
+                                Log.i("tttttttttt", "init adapter" + mTabLayout.selectedTabPosition)
                             } else {
                                 var needUpdate = false
                                 for (obj in localList) {
@@ -109,6 +110,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                 if (needUpdate) {
                                     mViewPager.adapter.notifyDataSetChanged()
                                 }
+                                Log.i("tttttttttt", "re adapter" + mTabLayout.selectedTabPosition)
                             }
                         }
                     }
@@ -257,7 +259,9 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                             if (mLoadingDialog == null) {
                                 mLoadingDialog = AlertDialog.Builder(owner).setTitle("加载中").setMessage("需要一小会时间")
                                         .setNegativeButton("取消", { dialog, which ->
-                                            req.cancel()
+                                            thread {
+                                                req.cancel()
+                                            }
                                         })
                                         .setCancelable(false)
                                         .setOnCancelListener {

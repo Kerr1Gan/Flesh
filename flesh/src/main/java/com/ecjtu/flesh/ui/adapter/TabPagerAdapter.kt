@@ -51,6 +51,7 @@ open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
     }
 
     override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+        Log.i("ttttttt", "TabPagerAdapter instantiateItem " + position + " container " + container?.childCount)
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
         container?.addView(item)
         val title = getPageTitle(position) as String
@@ -69,10 +70,12 @@ open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
             }
         }
         mViewStub.put(getPageTitle(position).toString(), vh)
+        item.setTag(title)
         return item
     }
 
     override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
+        Log.i("ttttttt", "TabPagerAdapter remove view " + position)
         container?.removeView(`object` as View)
         val vh: VH? = mViewStub.remove(getPageTitle(position))
         onDestroyItem(container?.context!!, getPageTitle(position).toString(), vh?.recyclerView, vh?.getPageModel())
