@@ -30,7 +30,7 @@ import kotlin.concurrent.thread
 /**
  * Created by Ethan_Xiang on 2017/9/12.
  */
-open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
+open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
 
     companion object {
         const val KEY_LAST_TAB_ITEM = "key_last_tab_item"
@@ -79,6 +79,8 @@ open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
         val vh: VH? = mViewStub.remove(getPageTitle(position))
         onDestroyItem(container?.context!!, getPageTitle(position).toString(), vh?.recyclerView, vh?.getPageModel())
         (vh?.recyclerView?.adapter as CardListAdapter?)?.onRelease()
+        vh?.getRefreshLayout()?.setRefreshing(false)
+        vh?.getRefreshLayout()?.visibility = View.INVISIBLE
     }
 
     override fun getPageTitle(position: Int): CharSequence {
@@ -265,6 +267,10 @@ open class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
                     }
                 }
             })
+        }
+
+        fun getRefreshLayout(): SwipeRefreshLayout? {
+            return mRefreshLayout
         }
     }
 

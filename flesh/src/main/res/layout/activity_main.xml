@@ -39,14 +39,18 @@
                 app:tabTextColor="#90FFFFFF" />
         </android.support.design.widget.AppBarLayout>
 
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/view_pager"
+        <FrameLayout
+            android:id="@+id/view_pager_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+            <android.support.v4.view.ViewPager
+                android:id="@+id/view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white" />
+        </FrameLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/float_button"
@@ -56,7 +60,7 @@
             android:layout_marginRight="30dp"
             android:src="@drawable/ic_float_button"
             app:fabSize="mini"
-            app:layout_anchor="@+id/view_pager"
+            app:layout_anchor="@+id/view_pager_container"
             app:layout_anchorGravity="bottom|right"
             app:layout_behavior="com.ecjtu.flesh.ui.widget.ScrollAwareFABBehavior"
             app:layout_scrollFlags="scroll|enterAlways" />
@@ -66,10 +70,10 @@
             android:id="@+id/bottom_navigation_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:bnbBackgroundColor="@color/colorPrimary"
             app:bnbActiveColor="@android:color/white"
+            app:bnbBackgroundColor="@color/colorPrimary"
             app:bnbInactiveColor="#B3FFFFFF"
-            app:layout_anchor="@+id/view_pager"
+            app:layout_anchor="@+id/view_pager_container"
             app:layout_anchorGravity="bottom"
             app:layout_scrollFlags="scroll|enterAlways" />
 

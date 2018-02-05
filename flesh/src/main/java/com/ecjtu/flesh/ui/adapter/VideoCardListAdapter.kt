@@ -21,11 +21,8 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.ecjtu.componentes.activity.RotateNoCreateActivity
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.db.DatabaseManager
-import com.ecjtu.flesh.db.table.impl.LikeTableImpl
 import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.flesh.ui.fragment.IjkVideoFragment
-import com.ecjtu.netcore.model.PageModel
 import tv.danmaku.ijk.media.exo.video.AndroidMediaController
 import tv.danmaku.ijk.media.exo.video.IjkVideoView
 import tv.danmaku.ijk.media.player.IMediaPlayer
@@ -95,7 +92,13 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
 
     override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
         if (target is BitmapImageViewTarget) {
-            val parent = target.view.parent?.parent as View
+            var parent: View = target.view
+            while (true) {
+                if (parent.id == R.id.container) {
+                    break
+                }
+                parent = parent.parent as View
+            }
             val layoutParams = (parent as View).layoutParams
             var height = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
 
@@ -159,22 +162,23 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
         val mediaController = AndroidMediaController(itemView.context)
 
         init {
-            heart.setOnClickListener { v: View? ->
-                val manager = DatabaseManager.getInstance(v?.context)
-                val db = manager?.getDatabase() as SQLiteDatabase
-                val url = v?.getTag(R.id.extra_tag) as PageModel.ItemModel?
-                if (url != null) {
-                    val impl = LikeTableImpl()
-                    if (impl.isLike(db, url.href)) {
-                        impl.deleteLike(db, url.href)
-                        v?.isActivated = false
-                    } else {
-                        impl.addLike(db, url.href)
-                        v?.isActivated = true
-                    }
-                }
-                db.close()
-            }
+//            heart.setOnClickListener { v: View? ->
+//                val manager = DatabaseManager.getInstance(v?.context)
+//                val db = manager?.getDatabase() as SQLiteDatabase
+//                val url = v?.getTag(R.id.extra_tag) as PageModel.ItemModel?
+//                if (url != null) {
+//                    val impl = LikeTableImpl()
+//                    if (impl.isLike(db, url.href)) {
+//                        impl.deleteLike(db, url.href)
+//                        v?.isActivated = false
+//                    } else {
+//                        impl.addLike(db, url.href)
+//                        v?.isActivated = true
+//                    }
+//                }
+//                db.close()
+//            }
+            heart.visibility = View.GONE
             ijkVideoView.setMediaController(mediaController)
             ijkVideoView.setOnInfoListener { mp, what, extra ->
                 if (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {

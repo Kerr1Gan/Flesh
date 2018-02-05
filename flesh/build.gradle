@@ -53,4 +53,5 @@ dependencies {
     compile project(':ijkplayer-exo')
 
     compile 'com.ashokvarma.android:bottom-navigation-bar:2.0.4'
+//    compile 'com.google.android.gms:play-services-ads:11.8.0'
 }

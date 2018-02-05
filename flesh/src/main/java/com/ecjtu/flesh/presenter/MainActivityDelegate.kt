@@ -2,12 +2,14 @@ package com.ecjtu.flesh.presenter
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
+import android.os.Build
 import android.preference.PreferenceManager
+import android.support.annotation.RequiresApi
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
-import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AlertDialog
@@ -56,11 +58,11 @@ import kotlin.reflect.KClass
 class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) {
 
     private val mFloatButton = owner.findViewById(R.id.float_button) as FloatingActionButton
-    private val mViewPager = owner.findViewById(R.id.view_pager) as ViewPager
+    private var mViewPager = owner.findViewById(R.id.view_pager) as ViewPager
     private val mTabLayout = owner.findViewById(R.id.tab_layout) as TabLayout
     private val mAppbarLayout = owner.findViewById(R.id.app_bar) as AppBarLayout
     private var mAppbarExpand = true
-    private val mAdapterArray = Array<PagerAdapter?>(2, { index -> null })
+    private val mViewPagerArray = Array<ViewPager?>(2, { index -> null })
     private var mCurrentPagerIndex = 0
     private var mLoadingDialog: AlertDialog? = null
     private var mV33Menu: List<MenuModel>? = null
@@ -77,7 +79,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         if (menuList != null) {
             mViewPager.adapter = TabPagerAdapter(menuList)
             mTabLayout.setupWithViewPager(mViewPager)
-            mAdapterArray[0] = mViewPager.adapter
+            mViewPagerArray[0] = mViewPager
         }
         val request = AsyncNetwork()
         request.request(Constants.HOST_MOBILE_URL, null)
@@ -97,7 +99,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                 mViewPager.adapter = TabPagerAdapter(localList)
                                 mTabLayout.setupWithViewPager(mViewPager)
                                 mViewPager.setCurrentItem(lastTabItem)
-                                mAdapterArray[0] = mViewPager.adapter
+                                mViewPagerArray[0] = mViewPager
                                 Log.i("tttttttttt", "init adapter" + mTabLayout.selectedTabPosition)
                             } else {
                                 var needUpdate = false
@@ -188,6 +190,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             override fun onTabUnselected(position: Int) {
             }
 
+            @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
             override fun onTabSelected(position: Int) {
                 mCurrentPagerIndex = position
                 mViewPager.adapter?.apply {
@@ -195,18 +198,51 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 }
                 when (position) {
                     0 -> {
-                        mViewPager.adapter = null
-                        mViewPager.adapter = mAdapterArray[0]
+                        mViewPager = mViewPagerArray[0]!!
                         recoverTab(getLastTabItem(TabPagerAdapter::class), isAppbarLayoutExpand())
+                        changeViewPager(0)
                     }
 
                     1 -> {
-                        if (mAdapterArray[1] != null) {
-                            mViewPager.adapter = null
-                            mViewPager.adapter = mAdapterArray[1]
+                        if (mViewPagerArray[1] != null) {
+                            mViewPager = mViewPagerArray[1]!!
+                            if (mV33Menu == null || mV33Menu?.size == 0) {
+                                thread {
+                                    val helper = V33CacheHelper(owner.filesDir.absolutePath)
+                                    val helper2 = MenuListCacheHelper(owner.filesDir.absolutePath)
+                                    mV33Menu = helper2.get("v33menu")
+                                    mV33Cache = helper.get("v33cache")
+                                    val localMenu = mV33Menu
+                                    val localCache = mV33Cache
+                                    if (localMenu != null && localCache != null) {
+                                        mLoadingDialog?.cancel()
+                                        mLoadingDialog = null
+                                    }
+                                    owner.runOnUiThread {
+                                        if (mCurrentPagerIndex == 1 && localMenu != null && localCache != null) {
+                                            if (mViewPager.adapter == null) {
+                                                mViewPager.adapter = VideoTabPagerAdapter(localMenu)
+                                                (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
+                                            } else {
+                                                (mViewPager.adapter as VideoTabPagerAdapter).menu = localMenu
+                                                (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
+                                            }
+                                            mViewPager.adapter?.notifyDataSetChanged()
+                                            recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
+                                        }
+                                    }
+                                }
+                            }
                             recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
                         } else {
-                            mViewPager.adapter = null
+                            mViewPagerArray[1] = ViewPager(owner)
+                            mViewPagerArray[1]?.setBackgroundColor(Color.WHITE)
+                            mViewPager = mViewPagerArray[1]!!
+                            val layoutParams = mViewPagerArray[1]?.layoutParams
+                            layoutParams?.apply {
+                                width = ViewGroup.LayoutParams.MATCH_PARENT
+                                height = ViewGroup.LayoutParams.MATCH_PARENT
+                            }
                             val req = AsyncNetwork().apply {
                                 request(com.ecjtu.flesh.Constants.V33_URL, null)
                                 setRequestCallback(object : IRequestCallback {
@@ -241,12 +277,13 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                         mLoadingDialog = null
                                         owner.runOnUiThread {
                                             if (mCurrentPagerIndex == 1) {
-                                                mViewPager.adapter = null
-                                                mViewPager.adapter = if (mAdapterArray[1] == null) {
-                                                    mAdapterArray[1] = VideoTabPagerAdapter(menuModel)
-                                                    (mAdapterArray[1] as VideoTabPagerAdapter).setMenuChildList(map)
-                                                    mAdapterArray[1]
-                                                } else mAdapterArray[1]
+                                                if (mViewPager.adapter == null) {
+                                                    mViewPager.adapter = VideoTabPagerAdapter(menuModel)
+                                                    (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(map)
+                                                } else {
+                                                    (mViewPager.adapter as VideoTabPagerAdapter).menu = menuModel
+                                                    (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(map)
+                                                }
                                                 mViewPager.adapter?.notifyDataSetChanged()
                                                 mV33Menu = menuModel
                                                 mV33Cache = map
@@ -282,22 +319,24 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                 }
                                 owner.runOnUiThread {
                                     if (mCurrentPagerIndex == 1 && localMenu != null && localCache != null) {
-                                        mViewPager.adapter = null
-                                        mViewPager.adapter = if (mAdapterArray[1] == null) {
-                                            mAdapterArray[1] = VideoTabPagerAdapter(localMenu)
-                                            (mAdapterArray[1] as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
-                                            mAdapterArray[1]
-                                        } else mAdapterArray[1]
+                                        if (mViewPager.adapter == null) {
+                                            mViewPager.adapter = VideoTabPagerAdapter(localMenu)
+                                            (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
+                                        } else {
+                                            (mViewPager.adapter as VideoTabPagerAdapter).menu = localMenu
+                                            (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
+                                        }
                                         mViewPager.adapter?.notifyDataSetChanged()
                                         recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
                                     }
                                 }
                             }
                         }
+                        changeViewPager(1)
                     }
                 }
                 //store view states
-                mViewPager.adapter?.notifyDataSetChanged()
+                //mViewPager.adapter?.notifyDataSetChanged()
             }
 
             override fun onTabReselected(position: Int) {
@@ -307,14 +346,14 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     }
 
     fun onStop() {
-        for ((index, adapter) in mAdapterArray.withIndex()) {
-            adapter?.let {
+        for ((index, viewPager) in mViewPagerArray.withIndex()) {
+            viewPager?.let {
                 if (index == mCurrentPagerIndex) {
                     Log.i("tttttttttt", "onStop curPage" + mTabLayout.selectedTabPosition)
-                    (adapter as TabPagerAdapter).onStop(owner, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
+                    (viewPager.adapter as TabPagerAdapter?)?.onStop(owner, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
                 } else {
                     Log.i("tttttttttt", "onStop " + mTabLayout.selectedTabPosition)
-                    (adapter as TabPagerAdapter).onStop(owner, -1, isAppbarLayoutExpand())
+                    (viewPager.adapter as TabPagerAdapter?)?.onStop(owner, -1, isAppbarLayoutExpand())
                 }
             }
         }
@@ -416,4 +455,12 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 
     private fun getLastTabItem(clazz: KClass<out TabPagerAdapter>): Int = PreferenceManager.getDefaultSharedPreferences(owner).
             getInt(TabPagerAdapter.KEY_LAST_TAB_ITEM + "_" + clazz.java.simpleName, 0)
+
+    private fun changeViewPager(index: Int) {
+        val container = owner.findViewById(R.id.view_pager_container) as ViewGroup
+        container.removeAllViews()
+        container.addView(mViewPagerArray[index])
+        mTabLayout.removeAllTabs()
+        mTabLayout.setupWithViewPager(mViewPagerArray[index])
+    }
 }
