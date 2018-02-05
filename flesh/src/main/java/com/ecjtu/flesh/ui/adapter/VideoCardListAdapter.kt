@@ -21,8 +21,11 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.ecjtu.componentes.activity.RotateNoCreateActivity
 import com.ecjtu.flesh.R
+import com.ecjtu.flesh.db.DatabaseManager
+import com.ecjtu.flesh.db.table.impl.LikeTableImpl
 import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.flesh.ui.fragment.IjkVideoFragment
+import com.ecjtu.netcore.model.PageModel
 import tv.danmaku.ijk.media.exo.video.AndroidMediaController
 import tv.danmaku.ijk.media.exo.video.IjkVideoView
 import tv.danmaku.ijk.media.player.IMediaPlayer
@@ -45,8 +48,12 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
         val model = pageModel.get(position)
         holder?.textView?.text = model.title
 
-        holder?.ijkVideoView?.release(true)
-        holder?.thumb?.visibility = View.VISIBLE
+        if (mLastClickPosition != position) {
+            holder?.ijkVideoView?.pause()
+            holder?.thumb?.visibility = View.VISIBLE
+        } else {
+            holder?.thumb?.visibility = View.INVISIBLE
+        }
 
         val videoUrl = model.videoUrl
         holder?.itemView?.setTag(R.id.extra_tag_2, videoUrl)
@@ -129,11 +136,11 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
             val videoView = v?.findViewById(R.id.ijk_video) as IjkVideoView
             val thumb = v.findViewById(R.id.thumb) as ImageView?
             if (videoView.isPlaying) {
+                thumb?.visibility = View.INVISIBLE
                 return@let
             }
             thumb?.visibility = View.INVISIBLE
             videoView.setVideoPath(videoUrl)
-            videoView.requestFocus()
             videoView.start()
         }
     }
