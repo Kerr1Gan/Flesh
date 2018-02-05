@@ -111,21 +111,31 @@ public class SimpleMediaController extends FrameLayout {
      * @param view The view to which to anchor the controller when it is visible.
      */
     public void setAnchorView(View view) {
+        boolean reset = false;
+        if (mAnchor != null && !mAnchor.equals(view)) {
+            reset = true;
+        }
         mAnchor = view;
         ViewGroup viewGroup = null;
         if (view instanceof ViewGroup) {
             viewGroup = (ViewGroup) view;
 
-            removeAllViews();
-            mRoot = makeControllerView();
-
-            viewGroup.removeView(mRoot);
-
-            LayoutParams lp = new LayoutParams(-1, -1);
-            this.mRoot.setFocusable(true);
-            this.mRoot.setFocusableInTouchMode(true);
-            this.mRoot.setClickable(true);
-            viewGroup.addView(this.mRoot, lp);
+            if (mRoot != null && viewGroup.indexOfChild(mRoot) < 0 && !reset) {
+                mRoot = makeControllerView();
+                LayoutParams lp = new LayoutParams(-1, -1);
+                this.mRoot.setFocusable(true);
+                this.mRoot.setFocusableInTouchMode(true);
+                this.mRoot.setClickable(true);
+                viewGroup.addView(this.mRoot, lp);
+            } else if (reset) {
+                viewGroup.removeView(mRoot);
+                mRoot = makeControllerView();
+                LayoutParams lp = new LayoutParams(-1, -1);
+                this.mRoot.setFocusable(true);
+                this.mRoot.setFocusableInTouchMode(true);
+                this.mRoot.setClickable(true);
+                viewGroup.addView(this.mRoot, lp);
+            }
         }
     }
 
