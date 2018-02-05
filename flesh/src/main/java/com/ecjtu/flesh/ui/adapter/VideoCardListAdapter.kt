@@ -21,13 +21,11 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.ecjtu.componentes.activity.RotateNoCreateActivity
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.db.DatabaseManager
-import com.ecjtu.flesh.db.table.impl.LikeTableImpl
 import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.flesh.ui.fragment.IjkVideoFragment
-import com.ecjtu.netcore.model.PageModel
 import tv.danmaku.ijk.media.exo.video.AndroidMediaController
 import tv.danmaku.ijk.media.exo.video.IjkVideoView
+import tv.danmaku.ijk.media.exo.video.SimpleMediaController
 import tv.danmaku.ijk.media.player.IMediaPlayer
 
 /**
@@ -128,6 +126,7 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
 
     override fun onClick(v: View?) {
         val position = v?.getTag(R.id.extra_tag) as Int?
+        val isInSamePos = mLastClickPosition == position
         position?.let {
             mLastClickPosition = position
         }
@@ -140,8 +139,13 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
                 return@let
             }
             thumb?.visibility = View.INVISIBLE
-            videoView.setVideoPath(videoUrl)
-            videoView.start()
+            if(isInSamePos && videoView.isInPlaybackState){
+                videoView.start()
+            }else{
+                videoView.setVideoPath(videoUrl)
+                videoView.start()
+            }
+            (videoView.mediaController as SimpleMediaController?)?.updatePausePlay()
         }
     }
 

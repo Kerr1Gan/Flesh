@@ -416,7 +416,7 @@ public class SimpleMediaController extends FrameLayout {
         }
     };
 
-    private void updatePausePlay() {
+    public void updatePausePlay() {
         if (mRoot == null || mPauseButton == null)
             return;
 

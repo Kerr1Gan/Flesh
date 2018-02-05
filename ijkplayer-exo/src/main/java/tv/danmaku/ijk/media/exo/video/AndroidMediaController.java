@@ -56,4 +56,5 @@ public class AndroidMediaController extends SimpleMediaController implements IMe
         view.setVisibility(View.VISIBLE);
         show();
     }
+
 }
