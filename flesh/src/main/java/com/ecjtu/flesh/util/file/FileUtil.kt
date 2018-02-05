@@ -67,4 +67,28 @@ object FileUtil {
         }
         return ret
     }
+
+    fun readFileContent(file: File): ByteArray? {
+        var fis: FileInputStream? = null
+        var buf: ByteArrayOutputStream? = null
+        var ret: ByteArray? = null
+        try {
+            fis = FileInputStream(file)
+            buf = ByteArrayOutputStream()
+            var byteArr = ByteArray(1024 * 2)
+            var len = fis.read(byteArr)
+            while (len > 0) {
+                buf.write(byteArr, 0, len)
+                len = fis.read(byteArr)
+            }
+            ret = buf.toByteArray()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            ret = null
+        } finally {
+            fis?.close()
+            buf?.close()
+        }
+        return ret
+    }
 }

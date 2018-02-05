@@ -88,7 +88,11 @@ public class MainService extends Service {
                             for (int i = 0; i < notify.size(); i++) {
                                 NotificationModel model = notify.get(i);
                                 SimpleNotificationBuilder builder = new SimpleNotificationBuilder(MainService.this);
-                                builder.build(model.getTitle(), model.getContent(), model.getTicker(), model.getActionDetailUrl());
+                                if (model.getType() == 0) {
+                                    builder.build(model.getTitle(), model.getContent(), model.getTicker(), model.getActionDetailUrl());
+                                } else if (model.getType() == 1) {
+                                    builder.build(model.getTitle(), model.getContent(), model.getTicker(), model.getH5Page());
+                                }
                                 builder.send(null);
                                 model.setOccurs(model.getOccurs() + 1);
                             }
@@ -154,7 +158,7 @@ public class MainService extends Service {
                         NotificationModel model = ModelManager.getNotificationModel(obj.getInt("id"), obj.getString("title"),
                                 obj.getString("content"), obj.getString("ticker"),
                                 obj.getInt("limit"), obj.getString("time"), obj.getString("timeLimit"), obj.getString("actionDetailUrl"),
-                                obj.getString("h5Page"));
+                                obj.getString("h5Page"), obj.getInt("type"));
                         models.add(model);
                     }
                 } catch (JSONException e) {

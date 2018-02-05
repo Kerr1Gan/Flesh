@@ -15,6 +15,7 @@ public class NotificationModel {
     String actionDetailUrl = "";
     int occurs = 0;
     String h5Page = "";
+    int type = 0;
 
     public NotificationModel() {
     }
@@ -108,6 +109,14 @@ public class NotificationModel {
 
     public void setH5Page(String h5Page) {
         this.h5Page = h5Page;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     @Override
