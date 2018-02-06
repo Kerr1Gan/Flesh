@@ -70,7 +70,6 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>, private val recyc
         holder?.textView?.text = model.title
 
         if (mLastClickPosition != position) {
-            mPlayViewHolder?.ijkVideoView?.pause()
             holder?.ijkVideoView?.pause()
             holder?.thumb?.visibility = View.VISIBLE
             Log.i("VideoCardListAdapter", "pause 3 video position " + mLastClickPosition)
