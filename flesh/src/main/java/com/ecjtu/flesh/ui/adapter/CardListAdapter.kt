@@ -240,6 +240,10 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
         mLastClickPosition = -1
     }
 
+    open fun onStop() {
+
+    }
+
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView = itemView.findViewById(R.id.image) as ImageView
         val textView = itemView.findViewById(R.id.title) as TextView

@@ -139,6 +139,9 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
                             getScrollYPosition(recyclerView)).
                             putInt(KEY_LAST_POSITION_OFFSET + entry.key, getScrollYOffset(recyclerView))
                 }
+                if (recyclerView?.adapter is CardListAdapter) {
+                    (recyclerView.adapter as CardListAdapter).onStop()
+                }
             }
         }
         val helper = MenuListCacheHelper(context.filesDir.absolutePath)
@@ -158,6 +161,9 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
                 (entry.value.recyclerView?.adapter as CardListAdapter).onResume()
             }
         }
+    }
+
+    open fun onDestroy() {
     }
 
     private inner class VH(val itemView: View, private val menu: MenuModel, val key: String) {

@@ -85,6 +85,9 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
                 editor.putInt(KEY_LAST_POSITION + entry.key,
                         getScrollYPosition(recyclerView)).
                         putInt(KEY_LAST_POSITION_OFFSET + entry.key, getScrollYOffset(recyclerView))
+                if (recyclerView.adapter is VideoCardListAdapter) {
+                    (recyclerView.adapter as VideoCardListAdapter).onStop()
+                }
             }
         }
         thread {
@@ -105,8 +108,17 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
 
     override fun onResume() {
         for (entry in mViewStub) {
-            if (entry.value.recyclerView?.adapter is CardListAdapter) {
-                (entry.value.recyclerView?.adapter as CardListAdapter).onResume()
+            if (entry.value.recyclerView?.adapter is VideoCardListAdapter) {
+                (entry.value.recyclerView?.adapter as VideoCardListAdapter).onResume()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        for (entry in mViewStub) {
+            if (entry.value.recyclerView?.adapter is VideoCardListAdapter) {
+                (entry.value.recyclerView?.adapter as VideoCardListAdapter).onDestroy()
             }
         }
     }
@@ -132,7 +144,7 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
 
         private fun loadCache(context: Context, key: String) {
             if (mPageModel != null) {
-                recyclerView?.adapter = VideoCardListAdapter(mPageModel!!)
+                recyclerView?.adapter = VideoCardListAdapter(mPageModel!!, recyclerView!!)
                 val lastPosition = PreferenceManager.getDefaultSharedPreferences(context).getInt(KEY_LAST_POSITION + key, -1)
                 if (lastPosition >= 0) {
                     val yOffset = PreferenceManager.getDefaultSharedPreferences(context).getInt(KEY_LAST_POSITION_OFFSET + key, 0)

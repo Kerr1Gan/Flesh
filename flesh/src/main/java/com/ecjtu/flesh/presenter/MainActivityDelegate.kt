@@ -366,6 +366,11 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     }
 
     fun onDestroy() {
+        for ((index, viewPager) in mViewPagerArray.withIndex()) {
+            viewPager?.let {
+                (viewPager.adapter as TabPagerAdapter?)?.onDestroy()
+            }
+        }
     }
 
     fun isAppbarLayoutExpand(): Boolean = mAppbarExpand

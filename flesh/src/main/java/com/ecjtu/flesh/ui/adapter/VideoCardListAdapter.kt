@@ -3,7 +3,9 @@ package com.ecjtu.flesh.ui.adapter
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,30 +33,54 @@ import tv.danmaku.ijk.media.player.IMediaPlayer
 /**
  * Created by Ethan_Xiang on 2018/1/16.
  */
-open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWrapAdapter<VideoCardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
+open class VideoCardListAdapter(var pageModel: List<V33Model>, private val recyclerView: RecyclerView) : RecyclerViewWrapAdapter<VideoCardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
 
     private var mDatabase: SQLiteDatabase? = null
 
     private var mLastClickPosition = -1
+
+    private val linearLayoutManager: LinearLayoutManager? = if (recyclerView.layoutManager is LinearLayoutManager) recyclerView.layoutManager as LinearLayoutManager? else null
+
+    private var mIsInForeground = true
+
+    private var mPlayViewHolder: VH? = null
 
     override fun getItemCount(): Int {
         return pageModel.size
     }
 
     override fun onBindViewHolder(holder: VH?, position: Int) {
+        if (mLastClickPosition < linearLayoutManager?.findFirstVisibleItemPosition() ?: 0 ||
+                mLastClickPosition > linearLayoutManager?.findLastVisibleItemPosition() ?: 0) {
+            if (mLastClickPosition >= 0) {
+                mPlayViewHolder?.ijkVideoView?.apply {
+                    pause()
+                    Log.i("VideoCardListAdapter", "pause 1 video position " + mLastClickPosition)
+                }
+            }
+        }
+        if (!mIsInForeground) {
+            mPlayViewHolder?.ijkVideoView?.pause()
+            holder?.ijkVideoView?.pause()
+            holder?.thumb?.visibility = View.VISIBLE
+            Log.i("VideoCardListAdapter", "pause video 2 position " + mLastClickPosition)
+        }
         val context = holder?.itemView?.context
         val model = pageModel.get(position)
         holder?.textView?.text = model.title
 
         if (mLastClickPosition != position) {
+            mPlayViewHolder?.ijkVideoView?.pause()
             holder?.ijkVideoView?.pause()
             holder?.thumb?.visibility = View.VISIBLE
+            Log.i("VideoCardListAdapter", "pause 3 video position " + mLastClickPosition)
         } else {
             holder?.thumb?.visibility = View.INVISIBLE
         }
 
         val videoUrl = model.videoUrl
         holder?.itemView?.setTag(R.id.extra_tag_2, videoUrl)
+        holder?.itemView?.setTag(R.id.extra_tag_3, holder)
         holder?.itemView?.setOnClickListener(this)
         holder?.itemView?.setTag(R.id.extra_tag, position)
 
@@ -128,20 +154,27 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
         val position = v?.getTag(R.id.extra_tag) as Int?
         val isInSamePos = mLastClickPosition == position
         position?.let {
+            val lastPos = mLastClickPosition
             mLastClickPosition = position
+            if (!isInSamePos) {
+                mPlayViewHolder?.ijkVideoView?.pause()
+                Log.i("VideoCardListAdapter", "pause 5 video position " + lastPos)
+            }
         }
         val videoUrl = v?.getTag(R.id.extra_tag_2) as String?
         videoUrl?.let {
             val videoView = v?.findViewById(R.id.ijk_video) as IjkVideoView
             val thumb = v.findViewById(R.id.thumb) as ImageView?
+            (videoView.mediaController as SimpleMediaController?)?.updatePausePlay()
             if (videoView.isPlaying) {
                 thumb?.visibility = View.INVISIBLE
                 return@let
             }
+            mPlayViewHolder = v.getTag(R.id.extra_tag_3) as VH?
             thumb?.visibility = View.INVISIBLE
-            if(isInSamePos && videoView.isInPlaybackState){
+            if (isInSamePos && videoView.isInPlaybackState) {
                 videoView.start()
-            }else{
+            } else {
                 videoView.setVideoPath(videoUrl)
                 videoView.start()
             }
@@ -155,13 +188,27 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>) : RecyclerViewWra
 
     open fun onRelease() {
         mDatabase?.close()
+        mPlayViewHolder?.ijkVideoView?.apply {
+            release(true)
+            Log.i("VideoCardListAdapter", "release video position " + mLastClickPosition)
+        }
     }
 
     open fun onResume() {
+        mIsInForeground = true
         if (mLastClickPosition >= 0) {
             notifyItemChanged(mLastClickPosition)
         }
         mLastClickPosition = -1
+    }
+
+    open fun onStop() {
+        mIsInForeground = false
+        notifyDataSetChanged()
+    }
+
+    open fun onDestroy() {
+        onRelease()
     }
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {

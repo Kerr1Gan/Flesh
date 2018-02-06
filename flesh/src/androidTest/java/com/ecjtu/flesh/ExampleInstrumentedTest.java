@@ -30,7 +30,10 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -197,7 +200,7 @@ public class ExampleInstrumentedTest {
 
         List<PageModel.ItemModel> itemModels = new ArrayList<PageModel.ItemModel>();
         for (int i = 0; i < 50000; i++) {
-            itemModels.add(new PageModel.ItemModel("", "", "",0));
+            itemModels.add(new PageModel.ItemModel("", "", ""));
         }
 
         //db begin
@@ -447,5 +450,18 @@ public class ExampleInstrumentedTest {
         Log.e("externalizable", "read time " + (System.currentTimeMillis() - startTime));
     }
 
+    @Test
+    public void testFormat() throws Exception{
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMDD");
+        Date date = null;
+        try {
+            date = formatter.parse("");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        formatter.format(date);
+        int x=0;
+        x++;
+    }
 
 }
