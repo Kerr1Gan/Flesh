@@ -451,7 +451,7 @@ public class ExampleInstrumentedTest {
     }
 
     @Test
-    public void testFormat() throws Exception{
+    public void testFormat() throws Exception {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMDD");
         Date date = null;
         try {
@@ -460,7 +460,14 @@ public class ExampleInstrumentedTest {
             e.printStackTrace();
         }
         formatter.format(date);
-        int x=0;
+        int x = 0;
+        x++;
+    }
+
+    public void testStringFormat() throws Exception {
+        int x = 0;
+        x++;
+        String str = null + "，" + null + "步";
         x++;
     }
 

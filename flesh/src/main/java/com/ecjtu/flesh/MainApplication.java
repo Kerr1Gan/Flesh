@@ -38,7 +38,6 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         if (isAppMainProcess("com.ecjtu.flesh")) {
             Log.i("Flesh", "application init");
             SimpleGlideModule module = new SimpleGlideModule();

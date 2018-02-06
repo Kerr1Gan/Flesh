@@ -174,9 +174,11 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>, private val recyc
             thumb?.visibility = View.INVISIBLE
             if (isInSamePos && videoView.isInPlaybackState) {
                 videoView.start()
+                Log.i("VideoCardListAdapter", "start 1 video position " + mLastClickPosition)
             } else {
                 videoView.setVideoPath(videoUrl)
                 videoView.start()
+                Log.i("VideoCardListAdapter", "start 2 video position " + mLastClickPosition)
             }
             (videoView.mediaController as SimpleMediaController?)?.updatePausePlay()
         }
