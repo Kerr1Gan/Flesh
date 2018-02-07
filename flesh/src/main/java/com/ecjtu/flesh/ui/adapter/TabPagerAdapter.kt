@@ -43,7 +43,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
     private val KEY_LAST_POSITION_OFFSET = "last_position_offset_"
 
     private val mViewStub = HashMap<String, VH>()
-
+    private var mIsReset = false
     override fun isViewFromObject(view: View?, `object`: Any?): Boolean = view == `object`
 
     override fun getCount(): Int {
@@ -306,7 +306,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
     }
 
     override fun getItemPosition(`object`: Any?): Int {
-        return POSITION_NONE
+        return if (mIsReset) POSITION_NONE else super.getItemPosition(`object`)
     }
 
     open fun getViewStub(position: Int): View? {
@@ -315,5 +315,10 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
 
     open fun getListSize(position: Int): Int {
         return mViewStub.get(menu[position].title)?.getPageModel()?.itemList?.size ?: 0
+    }
+
+    open fun notifyDataSetChanged(reset: Boolean) {
+        mIsReset = reset
+        super.notifyDataSetChanged()
     }
 }

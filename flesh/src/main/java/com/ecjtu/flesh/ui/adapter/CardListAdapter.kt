@@ -38,9 +38,6 @@ import java.net.HttpURLConnection
  * Created by Ethan_Xiang on 2017/9/8.
  */
 open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<CardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener ,IChangeTab{
-    override fun onSelectTab() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     private var mDatabase: SQLiteDatabase? = null
 
@@ -245,6 +242,12 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
 
     open fun onStop() {
 
+    }
+
+    override fun onSelectTab() {
+    }
+
+    override fun onUnSelectTab() {
     }
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {

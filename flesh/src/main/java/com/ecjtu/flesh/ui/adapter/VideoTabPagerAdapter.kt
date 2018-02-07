@@ -3,6 +3,7 @@ package com.ecjtu.flesh.ui.adapter
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import android.support.v4.view.ViewPager
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -21,7 +22,7 @@ import kotlin.concurrent.thread
 /**
  * Created by Ethan_Xiang on 2018/1/15.
  */
-class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
+class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager) : TabPagerAdapter(menu), ViewPager.OnPageChangeListener {
 
     private val KEY_CARD_CACHE = "video_card_cache_"
     private val KEY_LAST_POSITION = "video_last_position_"
@@ -30,6 +31,35 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
     private val mViewStub = HashMap<String, VH>()
 
     private var mMenuChildList: Map<String, List<V33Model>>? = null
+    private var mLastScrolledPosition = 0
+
+    init {
+        viewPager.addOnPageChangeListener(this)
+    }
+
+    override fun onPageScrollStateChanged(state: Int) {
+    }
+
+    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+    }
+
+    override fun onPageSelected(position: Int) {
+        if (position != mLastScrolledPosition) {
+            var recyclerView = mViewStub.get(getPageTitle(position))?.recyclerView
+            recyclerView?.let {
+                if (recyclerView?.adapter is IChangeTab) {
+                    (recyclerView?.adapter as IChangeTab).onSelectTab()
+                }
+            }
+            recyclerView = mViewStub.get(getPageTitle(mLastScrolledPosition))?.recyclerView
+            recyclerView?.let {
+                if (recyclerView?.adapter is IChangeTab) {
+                    (recyclerView?.adapter as IChangeTab).onUnSelectTab()
+                }
+            }
+        }
+        mLastScrolledPosition = position
+    }
 
     override fun isViewFromObject(view: View?, `object`: Any?): Boolean = view == `object`
 
@@ -121,6 +151,7 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
                 (entry.value.recyclerView?.adapter as VideoCardListAdapter).onDestroy()
             }
         }
+        viewPager.removeOnPageChangeListener(this)
     }
 
     private inner class VH(val itemView: View, private val menu: MenuModel, val key: String) {
@@ -158,35 +189,6 @@ class VideoTabPagerAdapter(menu: List<MenuModel>) : TabPagerAdapter(menu) {
                 mRefreshLayout.isEnabled = false
             }
         }
-    }
-
-    override fun getScrollYDistance(recyclerView: RecyclerView): Int {
-        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-        val position = layoutManager.findFirstVisibleItemPosition()
-        val firstVisibleChildView = layoutManager.findViewByPosition(position)
-        val itemHeight = firstVisibleChildView.height
-        return position * itemHeight - (firstVisibleChildView?.top ?: 0)
-    }
-
-    override fun getScrollYPosition(recyclerView: RecyclerView): Int {
-        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-        return layoutManager.findFirstVisibleItemPosition()
-    }
-
-    override fun getScrollYOffset(recyclerView: RecyclerView): Int {
-        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-        val position = layoutManager.findFirstVisibleItemPosition()
-        val firstVisibleChildView = layoutManager.findViewByPosition(position)
-        return firstVisibleChildView?.top ?: 0
-    }
-
-    override fun findLastVisiblePosition(recyclerView: RecyclerView): Int {
-        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-        return layoutManager.findLastVisibleItemPosition()
-    }
-
-    override fun getItemPosition(`object`: Any?): Int {
-        return POSITION_NONE
     }
 
     override fun getViewStub(position: Int): View? {

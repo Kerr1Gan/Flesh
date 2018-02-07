@@ -5,4 +5,5 @@ package com.ecjtu.flesh.ui.adapter
  */
 public interface IChangeTab{
     fun onSelectTab()
+    fun onUnSelectTab()
 }

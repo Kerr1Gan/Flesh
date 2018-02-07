@@ -33,7 +33,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer
 /**
  * Created by Ethan_Xiang on 2018/1/16.
  */
-open class VideoCardListAdapter(var pageModel: List<V33Model>, private val recyclerView: RecyclerView) : RecyclerViewWrapAdapter<VideoCardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener {
+open class VideoCardListAdapter(var pageModel: List<V33Model>, private val recyclerView: RecyclerView) : RecyclerViewWrapAdapter<VideoCardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener, IChangeTab {
 
     private var mDatabase: SQLiteDatabase? = null
 
@@ -209,6 +209,13 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>, private val recyc
     }
 
     open fun onDestroy() {
+        onRelease()
+    }
+
+    override fun onSelectTab() {
+    }
+
+    override fun onUnSelectTab() {
         onRelease()
     }
 

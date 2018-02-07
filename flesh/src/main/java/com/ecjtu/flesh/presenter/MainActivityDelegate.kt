@@ -221,13 +221,14 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                     owner.runOnUiThread {
                                         if (mCurrentPagerIndex == 1 && localMenu != null && localCache != null) {
                                             if (mViewPager.adapter == null) {
-                                                mViewPager.adapter = VideoTabPagerAdapter(localMenu)
+                                                mViewPager.adapter = VideoTabPagerAdapter(localMenu, mViewPager)
                                                 (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
+                                                (mViewPager.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(true)
                                             } else {
                                                 (mViewPager.adapter as VideoTabPagerAdapter).menu = localMenu
                                                 (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
+                                                (mViewPager.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(false)
                                             }
-                                            mViewPager.adapter?.notifyDataSetChanged()
                                             recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
                                         }
                                     }
@@ -278,13 +279,14 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                         owner.runOnUiThread {
                                             if (mCurrentPagerIndex == 1) {
                                                 if (mViewPager.adapter == null) {
-                                                    mViewPager.adapter = VideoTabPagerAdapter(menuModel)
+                                                    mViewPager.adapter = VideoTabPagerAdapter(menuModel, mViewPager)
                                                     (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(map)
+                                                    (mViewPager.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(true)
                                                 } else {
                                                     (mViewPager.adapter as VideoTabPagerAdapter).menu = menuModel
                                                     (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(map)
+                                                    (mViewPager.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(false)
                                                 }
-                                                mViewPager.adapter?.notifyDataSetChanged()
                                                 mV33Menu = menuModel
                                                 mV33Cache = map
                                                 recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
@@ -320,13 +322,14 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                                 owner.runOnUiThread {
                                     if (mCurrentPagerIndex == 1 && localMenu != null && localCache != null) {
                                         if (mViewPager.adapter == null) {
-                                            mViewPager.adapter = VideoTabPagerAdapter(localMenu)
+                                            mViewPager.adapter = VideoTabPagerAdapter(localMenu, mViewPager)
                                             (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
+                                            (mViewPager.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(true)
                                         } else {
                                             (mViewPager.adapter as VideoTabPagerAdapter).menu = localMenu
                                             (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
+                                            (mViewPager.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(false)
                                         }
-                                        mViewPager.adapter?.notifyDataSetChanged()
                                         recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
                                     }
                                 }
