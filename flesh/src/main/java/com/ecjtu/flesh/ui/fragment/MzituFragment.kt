@@ -32,6 +32,7 @@ class MzituFragment : Fragment {
     private var delegate: MainActivityDelegate? = null
     private var mViewPager: ViewPager? = null
     private var mTabLayout: TabLayout? = null
+    private var mLastTabItem = 0
 
     constructor() : super()
 
@@ -45,22 +46,24 @@ class MzituFragment : Fragment {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        Log.i(TAG,"onCreateView")
+        Log.i(TAG, "onCreateView")
         return inflater?.inflate(R.layout.fragment_mzitu, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        Log.i(TAG,"onViewCreated")
+        Log.i(TAG, "onViewCreated")
         initView()
         val helper = MenuListCacheHelper(context.filesDir.absolutePath)
-        val lastTabItem = delegate?.getLastTabItem(TabPagerAdapter::class) ?: 0
+        mLastTabItem = delegate?.getLastTabItem(TabPagerAdapter::class) ?: 0
         var menuList: MutableList<MenuModel>? = null
         if (helper.get<Any>(TabPagerAdapter.CACHE_MENU_LIST + "_" + TabPagerAdapter::class.java) != null) {
             menuList = helper.get(TabPagerAdapter.CACHE_MENU_LIST + "_" + TabPagerAdapter::class.java)
         }
         if (menuList != null) {
             mViewPager?.adapter = TabPagerAdapter(menuList)
-            mTabLayout?.setupWithViewPager(mViewPager)
+            if (userVisibleHint) {
+                mTabLayout?.setupWithViewPager(mViewPager)
+            }
         }
         val request = AsyncNetwork()
         request.request(Constants.HOST_MOBILE_URL, null)
@@ -74,8 +77,10 @@ class MzituFragment : Fragment {
                             localList = values[MenuSoup::class.java.simpleName] as List<MenuModel>
                             if (menuList == null && localList != null) {
                                 mViewPager?.adapter = TabPagerAdapter(localList)
-                                mTabLayout?.setupWithViewPager(mViewPager)
-                                mViewPager?.setCurrentItem(lastTabItem)
+                                if (userVisibleHint) {
+                                    mTabLayout?.setupWithViewPager(mViewPager)
+                                    mViewPager?.setCurrentItem(mLastTabItem)
+                                }
                             } else {
                                 var needUpdate = false
                                 for (obj in localList) {
@@ -98,7 +103,7 @@ class MzituFragment : Fragment {
     protected fun initView() {
         mViewPager = view!!.findViewById(R.id.view_pager) as ViewPager?
         mTabLayout = delegate?.getTabLayout()
-        if(userVisibleHint){
+        if (userVisibleHint) {
             attachTabLayout()
         }
     }
@@ -113,6 +118,7 @@ class MzituFragment : Fragment {
         Log.i(TAG, "setUserVisibleHint " + isVisibleToUser)
         if (isVisibleToUser) {
             attachTabLayout()
+            mViewPager?.setCurrentItem(mLastTabItem)
         }
     }
 

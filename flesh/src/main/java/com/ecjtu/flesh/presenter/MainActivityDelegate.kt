@@ -37,10 +37,7 @@ import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.flesh.ui.activity.MainActivity
 import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
 import com.ecjtu.flesh.ui.adapter.VideoTabPagerAdapter
-import com.ecjtu.flesh.ui.fragment.MzituFragment
-import com.ecjtu.flesh.ui.fragment.PageHistoryFragment
-import com.ecjtu.flesh.ui.fragment.PageLikeFragment
-import com.ecjtu.flesh.ui.fragment.V33Fragment
+import com.ecjtu.flesh.ui.fragment.*
 import com.ecjtu.flesh.util.file.FileUtil
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
@@ -136,7 +133,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         bottomNav
                 .addItem(BottomNavigationItem(R.drawable.ic_image, "Image"))
                 .addItem(BottomNavigationItem(R.drawable.ic_video, "Video"))
-//                .addItem(BottomNavigationItem(R.drawable.ic_video, "More"))
+                .addItem(BottomNavigationItem(R.drawable.ic_video, "More"))
                 .initialise()
         bottomNav.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
             override fun onTabUnselected(position: Int) {
@@ -155,6 +152,9 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 
                     1 -> {
                         mViewPager.setCurrentItem(1)
+                    }
+                    2->{
+                        mViewPager.setCurrentItem(2)
                     }
                 }
                 //store view states
@@ -293,13 +293,16 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     }
 
     inner class FragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-        val fragments = Array<Fragment?>(2, { int ->
+        val fragments = Array<Fragment?>(3, { int ->
             when (int) {
                 0 -> {
                     MzituFragment().apply { setDelegate(this@MainActivityDelegate) }
                 }
                 1 -> {
                     V33Fragment().apply { setDelegate(this@MainActivityDelegate) }
+                }
+                2 -> {
+                    MeiPaiFragment().apply { setDelegate(this@MainActivityDelegate) }
                 }
                 else -> {
                     null
