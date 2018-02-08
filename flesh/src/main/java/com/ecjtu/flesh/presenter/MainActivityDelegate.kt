@@ -40,10 +40,8 @@ import com.ecjtu.flesh.ui.adapter.VideoTabPagerAdapter
 import com.ecjtu.flesh.ui.fragment.MzituFragment
 import com.ecjtu.flesh.ui.fragment.PageHistoryFragment
 import com.ecjtu.flesh.ui.fragment.PageLikeFragment
+import com.ecjtu.flesh.ui.fragment.V33Fragment
 import com.ecjtu.flesh.util.file.FileUtil
-import com.ecjtu.netcore.Constants
-import com.ecjtu.netcore.jsoup.SoupFactory
-import com.ecjtu.netcore.jsoup.impl.MenuSoup
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
@@ -72,60 +70,9 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     private var mV33Cache: Map<String, List<V33Model>>? = null
 
     init {
-//        mViewPager.adapter = FragmentAdapter(owner.supportFragmentManager)
-        val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
-        val lastTabItem = getLastTabItem(TabPagerAdapter::class)
-        Log.i("tttttttttt", "init lastTabItem " + lastTabItem)
-        var menuList: MutableList<MenuModel>? = null
-        if (helper.get<Any>(TabPagerAdapter.CACHE_MENU_LIST + "_" + TabPagerAdapter::class.java) != null) {
-            menuList = helper.get(TabPagerAdapter.CACHE_MENU_LIST + "_" + TabPagerAdapter::class.java)
-        }
-        if (menuList != null) {
-            mViewPager.adapter = TabPagerAdapter(menuList)
-            mTabLayout.setupWithViewPager(mViewPager)
-            mViewPagerArray[0] = mViewPager
-        }
-        val request = AsyncNetwork()
-        request.request(Constants.HOST_MOBILE_URL, null)
-        request.setRequestCallback(object : IRequestCallback {
-            override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
-                val values = SoupFactory.parseHtml(MenuSoup::class.java, response)
-                if (values != null) {
-                    owner.runOnUiThread {
-                        if (mCurrentPagerIndex != 0) {
-                            return@runOnUiThread
-                        }
-                        var localList: List<MenuModel>? = null
-                        if (values[MenuSoup::class.java.simpleName] != null) {
-                            localList = values[MenuSoup::class.java.simpleName] as List<MenuModel>
-                            if (menuList == null && localList != null) {
-                                mViewPager.adapter = null
-                                mViewPager.adapter = TabPagerAdapter(localList)
-                                mTabLayout.setupWithViewPager(mViewPager)
-                                mViewPager.setCurrentItem(lastTabItem)
-                                mViewPagerArray[0] = mViewPager
-                                Log.i("tttttttttt", "init adapter" + mTabLayout.selectedTabPosition)
-                            } else {
-                                var needUpdate = false
-                                for (obj in localList) {
-                                    if (menuList?.indexOf(obj) ?: 0 < 0) {
-                                        menuList?.add(0, obj)
-                                        needUpdate = true
-                                    }
-                                }
-                                if (needUpdate) {
-                                    mViewPager.adapter.notifyDataSetChanged()
-                                }
-                                Log.i("tttttttttt", "re adapter" + mTabLayout.selectedTabPosition)
-                            }
-                        }
-                    }
-                }
-            }
-        })
-
+        mViewPager.adapter = FragmentAdapter(owner.supportFragmentManager)
         initView()
-        recoverTab(lastTabItem, isAppbarLayoutExpand())
+        recoverTab(0, isAppbarLayoutExpand())
     }
 
     private fun initView() {
@@ -198,148 +145,16 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
             @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
             override fun onTabSelected(position: Int) {
                 mCurrentPagerIndex = position
-                mViewPager.adapter?.apply {
-                    (this as TabPagerAdapter).onStop(owner, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
-                }
+//                mViewPager.adapter?.apply {
+//                    (this as TabPagerAdapter).onStop(owner, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
+//                }
                 when (position) {
                     0 -> {
-                        mViewPager = mViewPagerArray[0]!!
-                        recoverTab(getLastTabItem(TabPagerAdapter::class), isAppbarLayoutExpand())
-                        changeViewPager(0)
+                        mViewPager.setCurrentItem(0)
                     }
 
                     1 -> {
-                        if (mViewPagerArray[1] != null) {
-                            mViewPager = mViewPagerArray[1]!!
-                            if (mV33Menu == null || mV33Menu?.size == 0) {
-                                thread {
-                                    val helper = V33CacheHelper(owner.filesDir.absolutePath)
-                                    val helper2 = MenuListCacheHelper(owner.filesDir.absolutePath)
-                                    mV33Menu = helper2.get("v33menu")
-                                    mV33Cache = helper.get("v33cache")
-                                    val localMenu = mV33Menu
-                                    val localCache = mV33Cache
-                                    if (localMenu != null && localCache != null) {
-                                        mLoadingDialog?.cancel()
-                                        mLoadingDialog = null
-                                    }
-                                    owner.runOnUiThread {
-                                        if (mCurrentPagerIndex == 1 && localMenu != null && localCache != null) {
-                                            if (mViewPager.adapter == null) {
-                                                mViewPager.adapter = VideoTabPagerAdapter(localMenu, mViewPager)
-                                                (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
-                                                (mViewPager.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(true)
-                                            } else {
-                                                (mViewPager.adapter as VideoTabPagerAdapter).menu = localMenu
-                                                (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
-                                                (mViewPager.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(false)
-                                            }
-                                            recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
-                                        }
-                                    }
-                                }
-                            }
-                            recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
-                        } else {
-                            mViewPagerArray[1] = ViewPager(owner)
-                            mViewPager = mViewPagerArray[1]!!
-                            val layoutParams = mViewPagerArray[1]?.layoutParams
-                            layoutParams?.apply {
-                                width = ViewGroup.LayoutParams.MATCH_PARENT
-                                height = ViewGroup.LayoutParams.MATCH_PARENT
-                            }
-                            val req = AsyncNetwork().apply {
-                                request(com.ecjtu.flesh.Constants.V33_URL, null)
-                                setRequestCallback(object : IRequestCallback {
-                                    override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
-                                        val menuModel = arrayListOf<MenuModel>()
-                                        val map = linkedMapOf<String, List<V33Model>>()
-                                        try {
-                                            val jObj = JSONArray(response)
-                                            for (i in 0 until jObj.length()) {
-                                                val jTitle = jObj[i] as JSONObject
-                                                val title = jTitle.optString("title")
-                                                val list = jTitle.optJSONArray("list")
-                                                val modelList = arrayListOf<V33Model>()
-                                                for (j in 0 until list.length()) {
-                                                    val v33Model = V33Model()
-                                                    val jItem = list[j] as JSONObject
-                                                    v33Model.baseUrl = jItem.optString("baseUrl")
-                                                    v33Model.imageUrl = jItem.optString("imageUrl")
-                                                    v33Model.title = jItem.optString("title")
-                                                    v33Model.videoUrl = jItem.optString("videoUrl")
-                                                    modelList.add(v33Model)
-                                                }
-                                                map.put(title, modelList)
-                                                val model = MenuModel(title, "")
-                                                menuModel.add(model)
-                                            }
-                                        } catch (ex: Exception) {
-                                            ex.printStackTrace()
-                                        }
-
-                                        mLoadingDialog?.cancel()
-                                        mLoadingDialog = null
-                                        owner.runOnUiThread {
-                                            if (mCurrentPagerIndex == 1) {
-                                                if (mViewPager.adapter == null) {
-                                                    mViewPager.adapter = VideoTabPagerAdapter(menuModel, mViewPager)
-                                                    (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(map)
-                                                    (mViewPager.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(true)
-                                                } else {
-                                                    (mViewPager.adapter as VideoTabPagerAdapter).menu = menuModel
-                                                    (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(map)
-                                                    (mViewPager.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(false)
-                                                }
-                                                mV33Menu = menuModel
-                                                mV33Cache = map
-                                                recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
-                                            }
-                                        }
-                                    }
-                                })
-                            }
-                            if (mLoadingDialog == null) {
-                                mLoadingDialog = AlertDialog.Builder(owner).setTitle("加载中").setMessage("需要一小会时间")
-                                        .setNegativeButton("取消", { dialog, which ->
-                                            thread {
-                                                req.cancel()
-                                            }
-                                        })
-                                        .setCancelable(false)
-                                        .setOnCancelListener {
-                                            mLoadingDialog = null
-                                        }.create()
-                                mLoadingDialog?.show()
-                            }
-                            thread {
-                                val helper = V33CacheHelper(owner.filesDir.absolutePath)
-                                val helper2 = MenuListCacheHelper(owner.filesDir.absolutePath)
-                                mV33Menu = helper2.get("v33menu")
-                                mV33Cache = helper.get("v33cache")
-                                val localMenu = mV33Menu
-                                val localCache = mV33Cache
-                                if (localMenu != null && localCache != null) {
-                                    mLoadingDialog?.cancel()
-                                    mLoadingDialog = null
-                                }
-                                owner.runOnUiThread {
-                                    if (mCurrentPagerIndex == 1 && localMenu != null && localCache != null) {
-                                        if (mViewPager.adapter == null) {
-                                            mViewPager.adapter = VideoTabPagerAdapter(localMenu, mViewPager)
-                                            (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
-                                            (mViewPager.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(true)
-                                        } else {
-                                            (mViewPager.adapter as VideoTabPagerAdapter).menu = localMenu
-                                            (mViewPager.adapter as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
-                                            (mViewPager.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(false)
-                                        }
-                                        recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
-                                    }
-                                }
-                            }
-                        }
-                        changeViewPager(1)
+                        mViewPager.setCurrentItem(1)
                     }
                 }
                 //store view states
@@ -353,17 +168,17 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     }
 
     fun onStop() {
-        for ((index, viewPager) in mViewPagerArray.withIndex()) {
-            viewPager?.let {
-                if (index == mCurrentPagerIndex) {
-                    Log.i("tttttttttt", "onStop curPage" + mTabLayout.selectedTabPosition)
-                    (viewPager.adapter as TabPagerAdapter?)?.onStop(owner, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
-                } else {
-                    Log.i("tttttttttt", "onStop " + mTabLayout.selectedTabPosition)
-                    (viewPager.adapter as TabPagerAdapter?)?.onStop(owner, -1, isAppbarLayoutExpand())
-                }
-            }
-        }
+//        for ((index, viewPager) in mViewPagerArray.withIndex()) {
+//            viewPager?.let {
+//                if (index == mCurrentPagerIndex) {
+//                    Log.i("tttttttttt", "onStop curPage" + mTabLayout.selectedTabPosition)
+//                    (viewPager.adapter as TabPagerAdapter?)?.onStop(owner, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
+//                } else {
+//                    Log.i("tttttttttt", "onStop " + mTabLayout.selectedTabPosition)
+//                    (viewPager.adapter as TabPagerAdapter?)?.onStop(owner, -1, isAppbarLayoutExpand())
+//                }
+//            }
+//        }
     }
 
     fun onResume() {
@@ -373,11 +188,11 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     }
 
     fun onDestroy() {
-        for ((index, viewPager) in mViewPagerArray.withIndex()) {
-            viewPager?.let {
-                (viewPager.adapter as TabPagerAdapter?)?.onDestroy()
-            }
-        }
+//        for ((index, viewPager) in mViewPagerArray.withIndex()) {
+//            viewPager?.let {
+//                (viewPager.adapter as TabPagerAdapter?)?.onDestroy()
+//            }
+//        }
     }
 
     fun isAppbarLayoutExpand(): Boolean = mAppbarExpand
@@ -460,31 +275,43 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         snake.show()
     }
 
-    private fun recoverTab(tabItem: Int, isExpand: Boolean) {
+    fun recoverTab(tabItem: Int, isExpand: Boolean) {
         mViewPager.setCurrentItem(tabItem)
         mAppbarLayout.setExpanded(isExpand)
     }
 
-    private fun getLastTabItem(clazz: KClass<out TabPagerAdapter>): Int = PreferenceManager.getDefaultSharedPreferences(owner).
+    fun getLastTabItem(clazz: KClass<out TabPagerAdapter>): Int = PreferenceManager.getDefaultSharedPreferences(owner).
             getInt(TabPagerAdapter.KEY_LAST_TAB_ITEM + "_" + clazz.java.simpleName, 0)
 
-    private fun changeViewPager(index: Int) {
-        val container = owner.findViewById(R.id.view_pager_container) as ViewGroup
-        container.removeAllViews()
-        container.addView(mViewPagerArray[index])
-        mTabLayout.removeAllTabs()
-        mTabLayout.setupWithViewPager(mViewPagerArray[index])
+    fun changeViewPager(index: Int) {
+//        mTabLayout.removeAllTabs()
+//        mTabLayout.setupWithViewPager((mViewPager.adapter as FragmentPagerAdapter).getItem(index))
+    }
+
+    fun getTabLayout(): TabLayout {
+        return mTabLayout
     }
 
     inner class FragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-        val fragments = Array<Fragment>(2, { int -> MzituFragment() })
+        val fragments = Array<Fragment?>(2, { int ->
+            when (int) {
+                0 -> {
+                    MzituFragment().apply { setDelegate(this@MainActivityDelegate) }
+                }
+                1 -> {
+                    V33Fragment().apply { setDelegate(this@MainActivityDelegate) }
+                }
+                else -> {
+                    null
+                }
+            }
+        })
 
         init {
-
         }
 
         override fun getItem(position: Int): Fragment {
-            return fragments[position]
+            return fragments[position]!!
         }
 
         override fun getCount(): Int {
