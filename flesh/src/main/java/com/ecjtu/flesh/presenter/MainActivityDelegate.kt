@@ -2,7 +2,6 @@ package com.ecjtu.flesh.presenter
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.os.Build
 import android.preference.PreferenceManager
 import android.support.annotation.RequiresApi
@@ -10,6 +9,9 @@ import android.support.design.widget.AppBarLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AlertDialog
@@ -35,6 +37,7 @@ import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.flesh.ui.activity.MainActivity
 import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
 import com.ecjtu.flesh.ui.adapter.VideoTabPagerAdapter
+import com.ecjtu.flesh.ui.fragment.MzituFragment
 import com.ecjtu.flesh.ui.fragment.PageHistoryFragment
 import com.ecjtu.flesh.ui.fragment.PageLikeFragment
 import com.ecjtu.flesh.util.file.FileUtil
@@ -69,6 +72,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     private var mV33Cache: Map<String, List<V33Model>>? = null
 
     init {
+//        mViewPager.adapter = FragmentAdapter(owner.supportFragmentManager)
         val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
         val lastTabItem = getLastTabItem(TabPagerAdapter::class)
         Log.i("tttttttttt", "init lastTabItem " + lastTabItem)
@@ -363,9 +367,9 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
     }
 
     fun onResume() {
-        mViewPager.adapter?.let {
-            (mViewPager.adapter as TabPagerAdapter).onResume()
-        }
+//        mViewPager.adapter?.let {
+//            (mViewPager.adapter as TabPagerAdapter).onResume()
+//        }
     }
 
     fun onDestroy() {
@@ -470,5 +474,21 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         container.addView(mViewPagerArray[index])
         mTabLayout.removeAllTabs()
         mTabLayout.setupWithViewPager(mViewPagerArray[index])
+    }
+
+    inner class FragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+        val fragments = Array<Fragment>(2, { int -> MzituFragment() })
+
+        init {
+
+        }
+
+        override fun getItem(position: Int): Fragment {
+            return fragments[position]
+        }
+
+        override fun getCount(): Int {
+            return fragments.size
+        }
     }
 }
