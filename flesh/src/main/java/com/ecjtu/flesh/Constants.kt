@@ -25,4 +25,7 @@ object Constants {
 
     @JvmStatic
     val V33_URL = "https://Kerr1Gan.github.io/flesh/v33a.json"
+
+    @JvmStatic
+    val WEIPAI_URL = "https://Kerr1Gan.github.io/flesh/WeiPai.json"
 }

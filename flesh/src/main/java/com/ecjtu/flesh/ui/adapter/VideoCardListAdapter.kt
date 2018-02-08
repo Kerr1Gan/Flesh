@@ -55,6 +55,7 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>, private val recyc
             if (mLastClickPosition >= 0) {
                 mPlayViewHolder?.ijkVideoView?.apply {
                     pause()
+                    this.mediaController?.hide()
                     Log.i("VideoCardListAdapter", "pause 1 video position " + mLastClickPosition)
                 }
             }

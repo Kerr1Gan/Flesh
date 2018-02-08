@@ -185,6 +185,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         bottomNav
                 .addItem(BottomNavigationItem(R.drawable.ic_image, "Image"))
                 .addItem(BottomNavigationItem(R.drawable.ic_video, "Video"))
+//                .addItem(BottomNavigationItem(R.drawable.ic_video, "More"))
                 .initialise()
         bottomNav.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
             override fun onTabUnselected(position: Int) {
@@ -237,7 +238,6 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                             recoverTab(getLastTabItem(VideoTabPagerAdapter::class), isAppbarLayoutExpand())
                         } else {
                             mViewPagerArray[1] = ViewPager(owner)
-                            mViewPagerArray[1]?.setBackgroundColor(Color.WHITE)
                             mViewPager = mViewPagerArray[1]!!
                             val layoutParams = mViewPagerArray[1]?.layoutParams
                             layoutParams?.apply {
