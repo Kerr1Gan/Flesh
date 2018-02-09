@@ -93,12 +93,12 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
     }
 
     open fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?, pageModel: List<V33Model>?) {
-        thread {
-            val helper = PageListCacheHelper(context.filesDir.absolutePath)
-            if (pageModel != null) {
-                helper.put(KEY_CARD_CACHE + key, pageModel)
-            }
-        }
+//        thread {
+//            val helper = PageListCacheHelper(context.filesDir.absolutePath)
+//            if (pageModel != null) {
+//                helper.put(KEY_CARD_CACHE + key, pageModel)
+//            }
+//        }
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         if (recyclerView != null) {
             editor.putInt(KEY_LAST_POSITION + key, getScrollYPosition(recyclerView)).

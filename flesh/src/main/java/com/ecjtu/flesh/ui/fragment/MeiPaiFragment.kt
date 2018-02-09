@@ -1,6 +1,7 @@
 package com.ecjtu.flesh.ui.fragment
 
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
@@ -16,6 +17,7 @@ import com.ecjtu.flesh.model.ModelManager
 import com.ecjtu.flesh.model.models.MeiPaiModel
 import com.ecjtu.flesh.presenter.MainActivityDelegate
 import com.ecjtu.flesh.ui.adapter.MeiPaiPagerAdapter
+import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
@@ -101,17 +103,19 @@ class MeiPaiFragment : Fragment() {
                 })
             }
             if (mLoadingDialog == null) {
-                mLoadingDialog = AlertDialog.Builder(context).setTitle("加载中").setMessage("需要一小会时间")
-                        .setNegativeButton("取消", { dialog, which ->
-                            thread {
-                                req.cancel()
-                            }
-                        })
-                        .setCancelable(false)
-                        .setOnCancelListener {
-                            mLoadingDialog = null
-                        }.create()
-                mLoadingDialog?.show()
+                Handler().post {
+                    mLoadingDialog = AlertDialog.Builder(context).setTitle("加载中").setMessage("需要一小会时间")
+                            .setNegativeButton("取消", { dialog, which ->
+                                thread {
+                                    req.cancel()
+                                }
+                            })
+                            .setCancelable(false)
+                            .setOnCancelListener {
+                                mLoadingDialog = null
+                            }.create()
+                    mLoadingDialog?.show()
+                }
             }
             thread {
                 val helper = MeiPaiCacheHelper(context.filesDir.absolutePath)
@@ -120,10 +124,6 @@ class MeiPaiFragment : Fragment() {
                 mMeiPaiCache = helper.get("meipaicache")
                 val localMenu = mMeiPaiMenu
                 val localCache = mMeiPaiCache
-                if (localMenu != null && localCache != null) {
-                    mLoadingDialog?.cancel()
-                    mLoadingDialog = null
-                }
                 activity.runOnUiThread {
                     if (localMenu != null && localCache != null) {
                         if (mViewPager != null && mViewPager?.adapter == null) {
@@ -135,11 +135,41 @@ class MeiPaiFragment : Fragment() {
                             (mViewPager?.adapter as MeiPaiPagerAdapter).setMeiPaiList(localCache as MutableMap<String, List<MeiPaiModel>>)
                             (mViewPager?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(false)
                         }
-//                            delegate?.recoverTab(delegate?.getLastTabItem(VideoTabPagerAdapter::class) ?: 0,
-//                                    delegate?.isAppbarLayoutExpand() ?: false)
+                        if (userVisibleHint) {
+                            attachTabLayout()
+                        }
+                        mLoadingDialog?.cancel()
+                        mLoadingDialog = null
+
                     }
                 }
             }
+        }
+    }
+
+
+    override fun onStop() {
+        super.onStop()
+        Log.i(TAG, "onStop tabIndex " + mTabLayout?.selectedTabPosition)
+        mViewPager?.let {
+            (mViewPager?.adapter as TabPagerAdapter?)?.onStop(context, mTabLayout?.selectedTabPosition ?: 0,
+                    delegate?.isAppbarLayoutExpand() ?: false)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i(TAG, "onResume " + mTabLayout?.selectedTabPosition)
+        mViewPager?.adapter?.let {
+            (mViewPager?.adapter as TabPagerAdapter).onResume()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i(TAG, "onDestroy " + mTabLayout?.selectedTabPosition)
+        mViewPager?.let {
+            (mViewPager?.adapter as TabPagerAdapter?)?.onDestroy()
         }
     }
 }

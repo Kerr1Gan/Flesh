@@ -12,9 +12,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ecjtu.flesh.R
+import com.ecjtu.flesh.cache.impl.MeiPaiCacheHelper
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
-import com.ecjtu.flesh.cache.impl.PageListCacheHelper
-import com.ecjtu.flesh.cache.impl.V33CacheHelper
 import com.ecjtu.flesh.model.models.MeiPaiModel
 import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.netcore.model.MenuModel
@@ -95,12 +94,12 @@ class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager
     }
 
     override fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?, pageModel: List<V33Model>?) {
-        thread {
-            val helper = PageListCacheHelper(context.filesDir.absolutePath)
-            if (pageModel != null) {
-                helper.put(KEY_CARD_CACHE + key, pageModel)
-            }
-        }
+//        thread {
+//            val helper = PageListCacheHelper(context.filesDir.absolutePath)
+//            if (pageModel != null) {
+//                helper.put(KEY_CARD_CACHE + key, pageModel)
+//            }
+//        }
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         if (recyclerView != null) {
             editor.putInt(KEY_LAST_POSITION + key, getScrollYPosition(recyclerView)).
@@ -123,11 +122,11 @@ class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager
             }
         }
         thread {
-            val helper = V33CacheHelper(context.filesDir.absolutePath)
+            val helper = MeiPaiCacheHelper(context.filesDir.absolutePath)
             val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
             if (menu != null && mMenuChildList != null) {
-                helper2.put("v33menu", menu)
-                helper.put("v33cache", mMenuChildList)
+                helper2.put("meipaimenu", menu)
+                helper.put("meipaicache", mMenuChildList)
             }
         }
         if (tabIndex >= 0) {

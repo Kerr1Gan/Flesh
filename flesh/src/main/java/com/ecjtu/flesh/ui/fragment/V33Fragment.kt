@@ -119,6 +119,9 @@ class V33Fragment : Fragment() {
                                 mV33Cache = map
 //                                delegate?.recoverTab(delegate?.getLastTabItem(VideoTabPagerAdapter::class) ?: 0,
 //                                        delegate?.isAppbarLayoutExpand() ?: false)
+                                if (userVisibleHint) {
+                                    attachTabLayout()
+                                }
                             }
                         }
                     })
@@ -160,6 +163,9 @@ class V33Fragment : Fragment() {
                             }
 //                            delegate?.recoverTab(delegate?.getLastTabItem(VideoTabPagerAdapter::class) ?: 0,
 //                                    delegate?.isAppbarLayoutExpand() ?: false)
+                            if (userVisibleHint) {
+                                attachTabLayout()
+                            }
                         }
                     }
                 }
