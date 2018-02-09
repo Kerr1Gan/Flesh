@@ -15,23 +15,25 @@ import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.cache.impl.PageListCacheHelper
 import com.ecjtu.flesh.cache.impl.V33CacheHelper
+import com.ecjtu.flesh.model.models.MeiPaiModel
 import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.netcore.model.MenuModel
 import kotlin.concurrent.thread
 
 /**
- * Created by Ethan_Xiang on 2018/1/15.
+ * Created by Ethan_Xiang on 2018/2/9.
  */
-open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager) : TabPagerAdapter(menu), ViewPager.OnPageChangeListener {
+class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager) : VideoTabPagerAdapter(menu, viewPager) {
 
-    private val KEY_CARD_CACHE = "video_card_cache_"
-    private val KEY_LAST_POSITION = "video_last_position_"
-    private val KEY_LAST_POSITION_OFFSET = "video_last_position_offset_"
+    private val KEY_CARD_CACHE = "meipai_card_cache_"
+    private val KEY_LAST_POSITION = "meipai_last_position_"
+    private val KEY_LAST_POSITION_OFFSET = "meipai_last_position_offset_"
 
     private val mViewStub = HashMap<String, VH>()
 
-    private var mMenuChildList: Map<String, List<V33Model>>? = null
+    private var mMenuChildList: Map<String, List<MeiPaiModel>>? = null
     private var mLastScrolledPosition = 0
+
 
     init {
         viewPager.addOnPageChangeListener(this)
@@ -92,7 +94,7 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
         return menu[position].title
     }
 
-    open fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?, pageModel: List<V33Model>?) {
+    override fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?, pageModel: List<V33Model>?) {
         thread {
             val helper = PageListCacheHelper(context.filesDir.absolutePath)
             if (pageModel != null) {
@@ -154,9 +156,13 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
         viewPager.removeOnPageChangeListener(this)
     }
 
+    fun setMeiPaiList(mutableMap: MutableMap<String, List<MeiPaiModel>>) {
+        mMenuChildList = mutableMap
+    }
+
     private inner class VH(val itemView: View, private val menu: MenuModel, val key: String) {
         val recyclerView = itemView.findViewById(R.id.recycler_view) as RecyclerView?
-        private var mPageModel: List<V33Model>? = null
+        private var mPageModel: List<MeiPaiModel>? = null
         private val mRefreshLayout = if (itemView is SwipeRefreshLayout) itemView else null
 
         init {
@@ -164,18 +170,18 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
             initRefreshLayout()
         }
 
-        fun load(v33ModelList: List<V33Model>) {
+        fun load(v33ModelList: List<MeiPaiModel>) {
             mPageModel = v33ModelList
             loadCache(itemView.context, key)
         }
 
-        fun getPageModel(): List<V33Model>? {
+        fun getPageModel(): List<MeiPaiModel>? {
             return mPageModel
         }
 
         private fun loadCache(context: Context, key: String) {
             if (mPageModel != null) {
-                recyclerView?.adapter = VideoCardListAdapter(mPageModel!!, recyclerView!!)
+                recyclerView?.adapter = MeiPaiCardListAdapter(mPageModel!!, recyclerView!!)
                 val lastPosition = PreferenceManager.getDefaultSharedPreferences(context).getInt(KEY_LAST_POSITION + key, -1)
                 if (lastPosition >= 0) {
                     val yOffset = PreferenceManager.getDefaultSharedPreferences(context).getInt(KEY_LAST_POSITION_OFFSET + key, 0)
@@ -189,17 +195,5 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
                 mRefreshLayout.isEnabled = false
             }
         }
-    }
-
-    override fun getViewStub(position: Int): View? {
-        return mViewStub.get(menu[position].title)?.recyclerView
-    }
-
-    override fun getListSize(position: Int): Int {
-        return mViewStub.get(menu[position].title)?.getPageModel()?.size ?: 0
-    }
-
-    fun setMenuChildList(mutableMap: MutableMap<String, List<V33Model>>) {
-        mMenuChildList = mutableMap
     }
 }

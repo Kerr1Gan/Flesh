@@ -1,5 +1,6 @@
 package com.ecjtu.flesh.model;
 
+import com.ecjtu.flesh.model.models.MeiPaiModel;
 import com.ecjtu.flesh.model.models.NotificationModel;
 import com.ecjtu.flesh.model.models.VideoModel;
 
@@ -8,7 +9,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Ethan_Xiang on 2017/9/22.
@@ -26,7 +29,7 @@ public class ModelManager {
      * @param timeLimit
      * @param actionDetailUrl
      * @param h5Page
-     * @param type 0 is anli page, 1 is h5 page
+     * @param type            0 is anli page, 1 is h5 page
      * @return
      */
     public static NotificationModel getNotificationModel(int id, String title, String content, String ticker, int limit, String time, String timeLimit, String actionDetailUrl, String h5Page, int type) {
@@ -44,7 +47,7 @@ public class ModelManager {
         return model;
     }
 
-    public static List<VideoModel> getVideoModelByString(String json) {
+    public static List<VideoModel> getVideoModelByJsonString(String json) {
         try {
             JSONObject root = new JSONObject(json);
             JSONArray arr = root.getJSONArray("data");
@@ -62,6 +65,34 @@ public class ModelManager {
                 model.setAddtime(obj.optString("addtime"));
                 model.setHits(obj.optString("hits"));
                 ret.add(model);
+            }
+            return ret;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Map<String, List<MeiPaiModel>> getMeiPaiModelByJsonString(String json) {
+        try {
+            JSONArray jArray = new JSONArray(json);
+            Map<String, List<MeiPaiModel>> ret = new LinkedHashMap<>();
+            for (int i = 0; i < jArray.length(); i++) {
+                JSONObject jObj = jArray.getJSONObject(i);
+                String key = jObj.optString("key", "");
+                JSONArray array = jObj.optJSONArray("array");
+                List<MeiPaiModel> list = new ArrayList<>();
+                for (int j = 0; j < array.length(); j++) {
+                    JSONObject obj = array.getJSONObject(j);
+                    MeiPaiModel model = new MeiPaiModel();
+                    model.setHref(obj.optString("href", ""));
+                    model.setImgUrl(obj.optString("imgURl", ""));
+                    model.setTitle(obj.optString("title", ""));
+                    model.setVideoUrl(obj.optString("videoUrl", ""));
+                    model.setVideoImageUrl(obj.optString("videoImageUrl", ""));
+                    list.add(model);
+                }
+                ret.put(key, list);
             }
             return ret;
         } catch (JSONException e) {

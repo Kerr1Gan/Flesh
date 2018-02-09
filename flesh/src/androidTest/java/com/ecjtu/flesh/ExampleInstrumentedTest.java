@@ -330,7 +330,7 @@ public class ExampleInstrumentedTest {
 
             @Override
             public void onSuccess(HttpURLConnection httpURLConnection, String response) {
-                ModelManager.getVideoModelByString(response);
+                ModelManager.getVideoModelByJsonString(response);
             }
         });
     }
