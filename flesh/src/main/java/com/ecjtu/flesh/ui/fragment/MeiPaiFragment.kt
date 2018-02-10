@@ -2,9 +2,6 @@ package com.ecjtu.flesh.ui.fragment
 
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,9 +12,7 @@ import com.ecjtu.flesh.cache.impl.MeiPaiCacheHelper
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.model.ModelManager
 import com.ecjtu.flesh.model.models.MeiPaiModel
-import com.ecjtu.flesh.presenter.MainActivityDelegate
 import com.ecjtu.flesh.ui.adapter.MeiPaiPagerAdapter
-import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
@@ -27,49 +22,32 @@ import kotlin.concurrent.thread
 /**
  * Created by xiang on 2018/2/8.
  */
-class MeiPaiFragment : Fragment() {
+class MeiPaiFragment : BaseTabPagerFragment() {
     companion object {
         private const val TAG = "MeiPaiFragment"
     }
-
-    private var delegate: MainActivityDelegate? = null
-    private var mViewPager: ViewPager? = null
-    private var mTabLayout: TabLayout? = null
 
     private var mLoadingDialog: AlertDialog? = null
 
     private var mMeiPaiMenu: List<MenuModel>? = null
     private var mMeiPaiCache: Map<String, List<MeiPaiModel>>? = null
 
-    fun setDelegate(delegate: MainActivityDelegate) {
-        this.delegate = delegate
-    }
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         Log.i(TAG, "onCreateView")
-        return inflater?.inflate(R.layout.fragment_mzitu, container, false)
+        return inflater?.inflate(R.layout.fragment_base_tab_pager, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         Log.i(TAG, "onViewCreated")
-        initView()
-    }
-
-    protected fun initView() {
-        mViewPager = view!!.findViewById(R.id.view_pager) as ViewPager?
-        mTabLayout = delegate?.getTabLayout()
-        if (userVisibleHint) {
-            attachTabLayout()
-        }
-    }
-
-    private fun attachTabLayout() {
-        mTabLayout?.removeAllTabs()
-        mTabLayout?.setupWithViewPager(mViewPager)
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
+    }
+
+    override fun onUserVisibleHintChanged(isVisibleToUser: Boolean) {
+        super.onUserVisibleHintChanged(isVisibleToUser)
         if (isVisibleToUser) {
             attachTabLayout()
             val req = AsyncNetwork().apply {
@@ -86,14 +64,14 @@ class MeiPaiFragment : Fragment() {
                         mLoadingDialog?.cancel()
                         mLoadingDialog = null
                         activity.runOnUiThread {
-                            if (mViewPager != null && mViewPager?.adapter == null) {
-                                mViewPager?.adapter = MeiPaiPagerAdapter(menu, mViewPager!!)
-                                (mViewPager?.adapter as MeiPaiPagerAdapter).setMeiPaiList(maps)
-                                (mViewPager?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(true)
+                            if (getViewPager() != null && getViewPager()?.adapter == null) {
+                                getViewPager()?.adapter = MeiPaiPagerAdapter(menu, getViewPager()!!)
+                                (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(maps)
+                                (getViewPager()?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(true)
                             } else {
-                                (mViewPager?.adapter as MeiPaiPagerAdapter).menu = menu
-                                (mViewPager?.adapter as MeiPaiPagerAdapter).setMeiPaiList(maps)
-                                (mViewPager?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(false)
+                                (getViewPager()?.adapter as MeiPaiPagerAdapter).menu = menu
+                                (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(maps)
+                                (getViewPager()?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(false)
                             }
                             if (userVisibleHint) {
                                 attachTabLayout()
@@ -126,14 +104,14 @@ class MeiPaiFragment : Fragment() {
                 val localCache = mMeiPaiCache
                 activity.runOnUiThread {
                     if (localMenu != null && localCache != null) {
-                        if (mViewPager != null && mViewPager?.adapter == null) {
-                            mViewPager?.adapter = MeiPaiPagerAdapter(localMenu, mViewPager!!)
-                            (mViewPager?.adapter as MeiPaiPagerAdapter).setMeiPaiList(localCache as MutableMap<String, List<MeiPaiModel>>)
-                            (mViewPager?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(true)
+                        if (getViewPager() != null && getViewPager()?.adapter == null) {
+                            getViewPager()?.adapter = MeiPaiPagerAdapter(localMenu, getViewPager()!!)
+                            (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(localCache as MutableMap<String, List<MeiPaiModel>>)
+                            (getViewPager()?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(true)
                         } else {
-                            (mViewPager?.adapter as MeiPaiPagerAdapter).menu = localMenu
-                            (mViewPager?.adapter as MeiPaiPagerAdapter).setMeiPaiList(localCache as MutableMap<String, List<MeiPaiModel>>)
-                            (mViewPager?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(false)
+                            (getViewPager()?.adapter as MeiPaiPagerAdapter).menu = localMenu
+                            (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(localCache as MutableMap<String, List<MeiPaiModel>>)
+                            (getViewPager()?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(false)
                         }
                         if (userVisibleHint) {
                             attachTabLayout()
@@ -147,29 +125,8 @@ class MeiPaiFragment : Fragment() {
         }
     }
 
-
     override fun onStop() {
         super.onStop()
-        Log.i(TAG, "onStop tabIndex " + mTabLayout?.selectedTabPosition)
-        mViewPager?.let {
-            (mViewPager?.adapter as TabPagerAdapter?)?.onStop(context, mTabLayout?.selectedTabPosition ?: 0,
-                    delegate?.isAppbarLayoutExpand() ?: false)
-        }
-    }
 
-    override fun onResume() {
-        super.onResume()
-        Log.i(TAG, "onResume " + mTabLayout?.selectedTabPosition)
-        mViewPager?.adapter?.let {
-            (mViewPager?.adapter as TabPagerAdapter).onResume()
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i(TAG, "onDestroy " + mTabLayout?.selectedTabPosition)
-        mViewPager?.let {
-            (mViewPager?.adapter as TabPagerAdapter?)?.onDestroy()
-        }
     }
 }

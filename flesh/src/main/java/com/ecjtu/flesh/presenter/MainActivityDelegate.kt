@@ -18,7 +18,6 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.format.Formatter
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -31,21 +30,13 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem
 import com.bumptech.glide.Glide
 import com.ecjtu.componentes.activity.AppThemeActivity
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
-import com.ecjtu.flesh.cache.impl.V33CacheHelper
 import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.flesh.ui.activity.MainActivity
 import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
-import com.ecjtu.flesh.ui.adapter.VideoTabPagerAdapter
 import com.ecjtu.flesh.ui.fragment.*
 import com.ecjtu.flesh.util.file.FileUtil
 import com.ecjtu.netcore.model.MenuModel
-import com.ecjtu.netcore.network.AsyncNetwork
-import com.ecjtu.netcore.network.IRequestCallback
-import org.json.JSONArray
-import org.json.JSONObject
 import java.io.File
-import java.net.HttpURLConnection
 import kotlin.concurrent.thread
 import kotlin.reflect.KClass
 
@@ -137,6 +128,12 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                 .initialise()
         bottomNav.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
             override fun onTabUnselected(position: Int) {
+                if (mViewPager.adapter is FragmentPagerAdapter) {
+                    val fragment = (mViewPager.adapter as FragmentPagerAdapter).getItem(position)
+                    if (fragment is BaseTabPagerFragment) {
+                        fragment.onUnSelectTab()
+                    }
+                }
             }
 
             @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -153,8 +150,14 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
                     1 -> {
                         mViewPager.setCurrentItem(1)
                     }
-                    2->{
+                    2 -> {
                         mViewPager.setCurrentItem(2)
+                    }
+                }
+                if (mViewPager.adapter is FragmentPagerAdapter) {
+                    val fragment = (mViewPager.adapter as FragmentPagerAdapter).getItem(position)
+                    if (fragment is BaseTabPagerFragment) {
+                        fragment.onSelectTab()
                     }
                 }
                 //store view states
