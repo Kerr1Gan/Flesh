@@ -184,10 +184,6 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>, private val recyc
         }
     }
 
-    override fun setHeight(position: Int, height: Int) {
-        super.setHeight(position, height)
-    }
-
     open fun onRelease() {
         mDatabase?.close()
         mPlayViewHolder?.ijkVideoView?.apply {
@@ -206,7 +202,7 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>, private val recyc
 
     open fun onStop() {
         mIsInForeground = false
-        notifyDataSetChanged()
+        mPlayViewHolder?.ijkVideoView?.pause()
     }
 
     open fun onDestroy() {

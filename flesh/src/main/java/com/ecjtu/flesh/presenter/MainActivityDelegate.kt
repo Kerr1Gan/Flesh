@@ -212,8 +212,11 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         var recyclerView: RecyclerView? = null
         var size = 0
         mViewPager.adapter?.let {
-            recyclerView = (mViewPager.adapter as TabPagerAdapter).getViewStub(position) as RecyclerView?
-            size = (mViewPager.adapter as TabPagerAdapter).getListSize(position)
+            val fragment = (mViewPager.adapter as FragmentAdapter).getItem(mViewPager.currentItem)
+            val viewPager = (fragment as BaseTabPagerFragment).getViewPager()
+            val tabPager = viewPager?.adapter
+            recyclerView = (tabPager as TabPagerAdapter).getViewStub(position) as RecyclerView?
+            size = tabPager.getListSize(position)
         }
         val snake = Snackbar.make(findViewById(R.id.content)!!, "", Snackbar.LENGTH_SHORT)
         if (snake.view is LinearLayout) {

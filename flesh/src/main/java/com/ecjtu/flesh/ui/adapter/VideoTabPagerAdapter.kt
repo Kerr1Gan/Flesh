@@ -68,6 +68,7 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
     }
 
     override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+        super.instantiateItem(container, position)
         Log.i("ttttttt", "VideoTabPagerAdapter instantiateItem " + position + " container " + container?.childCount)
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
         container?.addView(item)

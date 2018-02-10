@@ -159,6 +159,14 @@ class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager
         mMenuChildList = mutableMap
     }
 
+    override fun getViewStub(position: Int): View? {
+        return mViewStub.get(menu[position].title)?.recyclerView
+    }
+
+    override fun getListSize(position: Int): Int {
+        return mViewStub.get(menu[position].title)?.getPageModel()?.size ?: 0
+    }
+
     private inner class VH(val itemView: View, private val menu: MenuModel, val key: String) {
         val recyclerView = itemView.findViewById(R.id.recycler_view) as RecyclerView?
         private var mPageModel: List<MeiPaiModel>? = null

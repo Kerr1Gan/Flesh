@@ -104,11 +104,6 @@ class MeiPaiCardListAdapter(pageModel: List<MeiPaiModel>, val recyclerView: Recy
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VH {
-        val v = LayoutInflater.from(parent?.context).inflate(R.layout.layout_video_card_view, parent, false)
-        return VH(v)
-    }
-
     override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
         return false
     }
