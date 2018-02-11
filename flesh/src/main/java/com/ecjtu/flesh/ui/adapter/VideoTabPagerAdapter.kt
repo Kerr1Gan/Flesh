@@ -121,14 +121,6 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
                 }
             }
         }
-        thread {
-            val helper = V33CacheHelper(context.filesDir.absolutePath)
-            val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
-            if (menu != null && mMenuChildList != null) {
-                helper2.put("v33menu", menu)
-                helper.put("v33cache", mMenuChildList)
-            }
-        }
         if (tabIndex >= 0) {
             Log.i("tttttttttt", "videoTabPager " + tabIndex)
             editor.putInt(KEY_LAST_TAB_ITEM + "_" + VideoTabPagerAdapter::class.java.simpleName, tabIndex)

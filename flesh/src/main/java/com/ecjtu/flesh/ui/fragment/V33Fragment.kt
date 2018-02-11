@@ -10,7 +10,6 @@ import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.cache.impl.V33CacheHelper
 import com.ecjtu.flesh.model.models.V33Model
-import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
 import com.ecjtu.flesh.ui.adapter.VideoTabPagerAdapter
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
@@ -85,6 +84,9 @@ class V33Fragment : BaseTabPagerFragment() {
 
                             mLoadingDialog?.cancel()
                             mLoadingDialog = null
+                            if (menuModel != null && map != null) {
+                                Log.i(TAG, "load from server")
+                            }
                             activity.runOnUiThread {
                                 if (getViewPager() != null && getViewPager()?.adapter == null) {
                                     getViewPager()?.adapter = VideoTabPagerAdapter(menuModel, getViewPager()!!)
@@ -130,6 +132,9 @@ class V33Fragment : BaseTabPagerFragment() {
                         mLoadingDialog?.cancel()
                         mLoadingDialog = null
                     }
+                    if (localMenu != null && localCache != null) {
+                        Log.i(TAG, "load from cache")
+                    }
                     activity.runOnUiThread {
                         if (localMenu != null && localCache != null) {
                             if (getViewPager() != null && getViewPager()?.adapter == null) {
@@ -155,11 +160,15 @@ class V33Fragment : BaseTabPagerFragment() {
 
     override fun onStop() {
         super.onStop()
-        Log.i(TAG, "onStop tabIndex " + getTabLayout()?.selectedTabPosition)
-        getViewPager()?.let {
-            (getViewPager()?.adapter as TabPagerAdapter?)?.onStop(context, getTabLayout()?.selectedTabPosition ?: 0,
-                    getDelegate()?.isAppbarLayoutExpand() ?: false)
+        thread {
+            val helper = V33CacheHelper(context.filesDir.absolutePath)
+            val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
+            if (mV33Menu != null && mV33Cache != null) {
+                helper2.put("v33menu", mV33Menu)
+                helper.put("v33cache", mV33Cache)
+            }
         }
+        Log.i(TAG, "onStop tabIndex " + getTabLayout()?.selectedTabPosition)
     }
 
 }

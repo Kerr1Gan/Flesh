@@ -95,9 +95,9 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
     override fun onStop() {
         super.onStop()
         Log.i(TAG, "onStop tabIndex " + mTabLayout?.selectedTabPosition)
-        mViewPager?.let {
-            (mViewPager?.adapter as TabPagerAdapter?)?.onStop(context, mTabLayout?.selectedTabPosition ?: 0,
-                    delegate?.isAppbarLayoutExpand() ?: false)
+        getViewPager()?.let {
+            (getViewPager()?.adapter as TabPagerAdapter?)?.onStop(context, getTabLayout()?.selectedTabPosition ?: 0,
+                    getDelegate()?.isAppbarLayoutExpand() ?: false)
         }
         if (getLastTabPosition() < 0) {
             setLastTabPosition(getCompatLastTabPosition())

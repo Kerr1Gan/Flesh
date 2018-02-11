@@ -127,6 +127,13 @@ class MeiPaiFragment : BaseTabPagerFragment() {
 
     override fun onStop() {
         super.onStop()
-
+        thread {
+            val helper = MeiPaiCacheHelper(context.filesDir.absolutePath)
+            val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
+            if (mMeiPaiMenu != null && mMeiPaiCache != null) {
+                helper2.put("meipaimenu", mMeiPaiMenu)
+                helper.put("meipaicache", mMeiPaiCache)
+            }
+        }
     }
 }

@@ -121,14 +121,6 @@ class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager
                 }
             }
         }
-        thread {
-            val helper = MeiPaiCacheHelper(context.filesDir.absolutePath)
-            val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
-            if (menu != null && mMenuChildList != null) {
-                helper2.put("meipaimenu", menu)
-                helper.put("meipaicache", mMenuChildList)
-            }
-        }
         if (tabIndex >= 0) {
             Log.i("tttttttttt", "videoTabPager " + tabIndex)
             editor.putInt(KEY_LAST_TAB_ITEM + "_" + VideoTabPagerAdapter::class.java.simpleName, tabIndex)
