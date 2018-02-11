@@ -6,10 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.load.DecodeFormat;
@@ -71,7 +67,7 @@ public class MainApplication extends Application {
         manager.registerTable(new HistoryTableImpl());
         manager.registerTable(new LikeTableImpl());
         manager.registerTable(new NotificationTableImpl());
-        manager.getHelper(this, "heaven", 2 + 1).getWritableDatabase();
+        manager.getHelper(this, "heaven", DatabaseManager.DATABASE_VERSION).getWritableDatabase();
     }
 
     private void initSDK() {

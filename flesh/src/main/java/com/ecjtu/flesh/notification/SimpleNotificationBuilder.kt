@@ -26,7 +26,6 @@ class SimpleNotificationBuilder(context: Context) : SimpleNotification(context) 
         val builder = super.buildNotification(ID, title, content, ticker)
         fullScreenIntent(getCurrentBuilder(), 0, null)
         var intent = ActionBarFragmentActivity.newInstance(context, WebViewFragment::class.java, WebViewFragment.openUrl(h5Url))
-        context.startActivity(intent)
         builder.setContentIntent(PendingIntent.getActivity(context, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT)) //requestCode 不能为0 否则MainActivity 将重建
     }
 

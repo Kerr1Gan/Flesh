@@ -25,12 +25,12 @@ class DatabaseManager(context: Context? = null) {
     fun getHelper(context: Context, name: String, version: Int = 1, factory: SQLiteDatabase.CursorFactory? = null,
                   errorHandler: DatabaseErrorHandler? = null): DataBaseHelper? {
         mDatabaseHelper = DataBaseHelper(context, name, factory, if (version >= 1) version else 0, errorHandler)
-        mDatabaseHelper?.setTables(mTableList)
+        mDatabaseHelper?.setTables(sTableList)
         return mDatabaseHelper
     }
 
     fun getDatabase(): SQLiteDatabase? {
-        return getDatabase(2+1)
+        return getDatabase(DATABASE_VERSION)
     }
 
     fun getDatabase(version: Int): SQLiteDatabase? {
@@ -47,11 +47,12 @@ class DatabaseManager(context: Context? = null) {
     }
 
     fun getTables(): List<BaseTable> {
-        return mTableList
+        return sTableList
     }
 
     companion object {
-        private val mTableList = ArrayList<BaseTableImpl>()
+        private val sTableList = ArrayList<BaseTableImpl>()
+        const val DATABASE_VERSION = 9
 
         @JvmStatic
         fun getInstance(context: Context? = null): DatabaseManager? {

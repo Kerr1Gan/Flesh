@@ -37,55 +37,8 @@ class NotificationTableImpl : BaseTableImpl() {
     }
 
     override fun updateTable(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (newVersion == 4) {
-            sqLiteDatabase.execSQL("PRAGMA foreign_keys = 0;\n" +
-                    "\n" +
-                    "CREATE TABLE sqlitestudio_temp_table AS SELECT *\n" +
-                    "                                          FROM tb_notification;\n" +
-                    "\n" +
-                    "DROP TABLE tb_notification;\n" +
-                    "\n" +
-                    "CREATE TABLE tb_notification (\n" +
-                    "    _id               INTEGER PRIMARY KEY ASC AUTOINCREMENT,\n" +
-                    "    title             STRING,\n" +
-                    "    content           STRING,\n" +
-                    "    ticker            STRING,\n" +
-                    "    [limit]           INTEGER,\n" +
-                    "    time              STRING,\n" +
-                    "    time_limit        STRING,\n" +
-                    "    action_detail_url STRING,\n" +
-                    "    occurs            INTEGER,\n" +
-                    "    h5_page           STRING,\n" +
-                    "    type     INTEGER,DEFAULT (0) \n" +
-                    ");\n" +
-                    "\n" +
-                    "INSERT INTO tb_notification (\n" +
-                    "                                _id,\n" +
-                    "                                title,\n" +
-                    "                                content,\n" +
-                    "                                ticker,\n" +
-                    "                                [limit],\n" +
-                    "                                time,\n" +
-                    "                                time_limit,\n" +
-                    "                                action_detail_url,\n" +
-                    "                                occurs,\n" +
-                    "                                h5_page\n" +
-                    "                            )\n" +
-                    "                            SELECT _id,\n" +
-                    "                                   title,\n" +
-                    "                                   content,\n" +
-                    "                                   ticker,\n" +
-                    "                                   \"limit\",\n" +
-                    "                                   time,\n" +
-                    "                                   time_limit,\n" +
-                    "                                   action_detail_url,\n" +
-                    "                                   occurs,\n" +
-                    "                                   h5_page\n" +
-                    "                              FROM sqlitestudio_temp_table;\n" +
-                    "\n" +
-                    "DROP TABLE sqlitestudio_temp_table;\n" +
-                    "\n" +
-                    "PRAGMA foreign_keys = 1;")
+        if (newVersion == 9) {
+            sqLiteDatabase.execSQL("alter table tb_notification add type INTEGER DEFAULT (0)")
         }
     }
 

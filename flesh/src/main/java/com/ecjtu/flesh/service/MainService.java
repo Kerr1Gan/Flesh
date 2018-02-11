@@ -91,7 +91,7 @@ public class MainService extends Service {
                                 if (model.getType() == 0) {
                                     builder.build(model.getTitle(), model.getContent(), model.getTicker(), model.getActionDetailUrl());
                                 } else if (model.getType() == 1) {
-                                    builder.build(model.getTitle(), model.getContent(), model.getTicker(), model.getH5Page());
+                                    builder.buildH5(model.getTitle(), model.getContent(), model.getTicker(), model.getH5Page());
                                 }
                                 builder.send(null);
                                 model.setOccurs(model.getOccurs() + 1);
