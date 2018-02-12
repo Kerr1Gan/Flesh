@@ -25,6 +25,7 @@ import kotlin.concurrent.thread
 class MeiPaiFragment : BaseTabPagerFragment() {
     companion object {
         private const val TAG = "MeiPaiFragment"
+
     }
 
     private var mLoadingDialog: AlertDialog? = null
@@ -48,77 +49,81 @@ class MeiPaiFragment : BaseTabPagerFragment() {
 
     override fun onUserVisibleHintChanged(isVisibleToUser: Boolean) {
         super.onUserVisibleHintChanged(isVisibleToUser)
+        val lastTabPosition = getLastTabPosition()
         if (isVisibleToUser) {
             attachTabLayout()
-            val req = AsyncNetwork().apply {
-                request(com.ecjtu.flesh.Constants.WEIPAI_URL, null)
-                setRequestCallback(object : IRequestCallback {
-                    override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
-                        val maps = ModelManager.getMeiPaiModelByJsonString(response)
-                        val menu = arrayListOf<MenuModel>()
-                        for (entry in maps) {
-                            val menuModel = MenuModel(entry.key, "")
-                            menu.add(menuModel)
-                        }
+            if (mMeiPaiMenu != null && mMeiPaiMenu?.size ?: 0 > 0) {
+                val req = AsyncNetwork().apply {
+                    request(com.ecjtu.flesh.Constants.WEIPAI_URL, null)
+                    setRequestCallback(object : IRequestCallback {
+                        override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
+                            val maps = ModelManager.getMeiPaiModelByJsonString(response)
+                            val menu = arrayListOf<MenuModel>()
+                            for (entry in maps) {
+                                val menuModel = MenuModel(entry.key, "")
+                                menu.add(menuModel)
+                            }
 
-                        mLoadingDialog?.cancel()
-                        mLoadingDialog = null
-                        activity.runOnUiThread {
+                            mLoadingDialog?.cancel()
+                            mLoadingDialog = null
+                            activity.runOnUiThread {
+                                if (getViewPager() != null && getViewPager()?.adapter == null) {
+                                    getViewPager()?.adapter = MeiPaiPagerAdapter(menu, getViewPager()!!)
+                                    (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(maps)
+                                    (getViewPager()?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(true)
+                                } else {
+                                    (getViewPager()?.adapter as MeiPaiPagerAdapter).menu = menu
+                                    (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(maps)
+                                    (getViewPager()?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(false)
+                                }
+                                if (userVisibleHint) {
+                                    attachTabLayout()
+                                }
+                            }
+                        }
+                    })
+                }
+                if (mLoadingDialog == null) {
+                    Handler().post {
+                        mLoadingDialog = AlertDialog.Builder(context).setTitle("加载中").setMessage("需要一小会时间")
+                                .setNegativeButton("取消", { dialog, which ->
+                                    thread {
+                                        req.cancel()
+                                    }
+                                })
+                                .setCancelable(false)
+                                .setOnCancelListener {
+                                    mLoadingDialog = null
+                                }.create()
+                        mLoadingDialog?.show()
+                    }
+                }
+                thread {
+                    val helper = MeiPaiCacheHelper(context.filesDir.absolutePath)
+                    val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
+                    mMeiPaiMenu = helper2.get("meipaimenu")
+                    mMeiPaiCache = helper.get("meipaicache")
+                    val localMenu = mMeiPaiMenu
+                    val localCache = mMeiPaiCache
+                    activity.runOnUiThread {
+                        if (localMenu != null && localCache != null) {
                             if (getViewPager() != null && getViewPager()?.adapter == null) {
-                                getViewPager()?.adapter = MeiPaiPagerAdapter(menu, getViewPager()!!)
-                                (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(maps)
+                                getViewPager()?.adapter = MeiPaiPagerAdapter(localMenu, getViewPager()!!)
+                                (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(localCache as MutableMap<String, List<MeiPaiModel>>)
                                 (getViewPager()?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(true)
                             } else {
-                                (getViewPager()?.adapter as MeiPaiPagerAdapter).menu = menu
-                                (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(maps)
+                                (getViewPager()?.adapter as MeiPaiPagerAdapter).menu = localMenu
+                                (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(localCache as MutableMap<String, List<MeiPaiModel>>)
                                 (getViewPager()?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(false)
                             }
                             if (userVisibleHint) {
                                 attachTabLayout()
                             }
-                        }
-                    }
-                })
-            }
-            if (mLoadingDialog == null) {
-                Handler().post {
-                    mLoadingDialog = AlertDialog.Builder(context).setTitle("加载中").setMessage("需要一小会时间")
-                            .setNegativeButton("取消", { dialog, which ->
-                                thread {
-                                    req.cancel()
-                                }
-                            })
-                            .setCancelable(false)
-                            .setOnCancelListener {
-                                mLoadingDialog = null
-                            }.create()
-                    mLoadingDialog?.show()
-                }
-            }
-            thread {
-                val helper = MeiPaiCacheHelper(context.filesDir.absolutePath)
-                val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
-                mMeiPaiMenu = helper2.get("meipaimenu")
-                mMeiPaiCache = helper.get("meipaicache")
-                val localMenu = mMeiPaiMenu
-                val localCache = mMeiPaiCache
-                activity.runOnUiThread {
-                    if (localMenu != null && localCache != null) {
-                        if (getViewPager() != null && getViewPager()?.adapter == null) {
-                            getViewPager()?.adapter = MeiPaiPagerAdapter(localMenu, getViewPager()!!)
-                            (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(localCache as MutableMap<String, List<MeiPaiModel>>)
-                            (getViewPager()?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(true)
-                        } else {
-                            (getViewPager()?.adapter as MeiPaiPagerAdapter).menu = localMenu
-                            (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(localCache as MutableMap<String, List<MeiPaiModel>>)
-                            (getViewPager()?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(false)
-                        }
-                        if (userVisibleHint) {
-                            attachTabLayout()
-                        }
-                        mLoadingDialog?.cancel()
-                        mLoadingDialog = null
+                            getViewPager()?.setCurrentItem(lastTabPosition)
+                            mLoadingDialog?.cancel()
+                            mLoadingDialog = null
 
+                        }
                     }
                 }
             }
@@ -136,4 +141,9 @@ class MeiPaiFragment : BaseTabPagerFragment() {
             }
         }
     }
+
+    override fun getLastTabPositionKey(): String {
+        return TAG + "_" + "last_tab_position"
+    }
+
 }

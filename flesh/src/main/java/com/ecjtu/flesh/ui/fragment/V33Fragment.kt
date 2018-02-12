@@ -151,6 +151,7 @@ class V33Fragment : BaseTabPagerFragment() {
                             if (userVisibleHint) {
                                 attachTabLayout()
                             }
+                            getViewPager()?.setCurrentItem(getLastTabPosition())
                         }
                     }
                 }
@@ -171,4 +172,7 @@ class V33Fragment : BaseTabPagerFragment() {
         Log.i(TAG, "onStop tabIndex " + getTabLayout()?.selectedTabPosition)
     }
 
+    override fun getLastTabPositionKey(): String {
+        return TAG + "_" + "last_tab_position"
+    }
 }

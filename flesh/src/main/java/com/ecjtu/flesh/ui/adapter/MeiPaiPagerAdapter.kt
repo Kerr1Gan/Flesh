@@ -12,12 +12,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.cache.impl.MeiPaiCacheHelper
-import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.model.models.MeiPaiModel
 import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.netcore.model.MenuModel
-import kotlin.concurrent.thread
 
 /**
  * Created by Ethan_Xiang on 2018/2/9.

@@ -86,7 +86,7 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
         Log.i(TAG, "onUserVisibleHintChanged " + isVisibleToUser)
         if (isVisibleToUser) {
             attachTabLayout()
-            mViewPager?.setCurrentItem(mLastTabItem)
+            mViewPager?.setCurrentItem(getLastTabPosition())
         } else {
             saveLastTabPosition()
         }
@@ -178,7 +178,7 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
      * @param position Position index of the new selected page.
      */
     override fun onPageSelected(position: Int) {
-
+        setLastTabPosition(position)
     }
 
     /**
