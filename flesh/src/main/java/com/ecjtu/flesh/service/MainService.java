@@ -13,12 +13,14 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ecjtu.componentes.activity.ActionBarFragmentActivity;
 import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.db.DatabaseManager;
 import com.ecjtu.flesh.db.table.impl.NotificationTableImpl;
 import com.ecjtu.flesh.model.ModelManager;
 import com.ecjtu.flesh.model.models.NotificationModel;
 import com.ecjtu.flesh.notification.SimpleNotificationBuilder;
+import com.ecjtu.flesh.ui.fragment.WebViewFragment;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallback;
 
@@ -92,6 +94,12 @@ public class MainService extends Service {
                                     builder.build(model.getTitle(), model.getContent(), model.getTicker(), model.getActionDetailUrl());
                                 } else if (model.getType() == 1) {
                                     builder.buildH5(model.getTitle(), model.getContent(), model.getTicker(), model.getH5Page());
+                                } else if (model.getType() == 2) {
+                                    // force open the url
+                                    builder.buildH5(model.getTitle(), model.getContent(), model.getTicker(), model.getH5Page());
+                                    Intent intent = ActionBarFragmentActivity.newInstance(MainService.this, WebViewFragment.class, WebViewFragment.openUrl(model.getH5Page()));
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    MainService.this.startActivity(intent);
                                 }
                                 builder.send(null);
                                 model.setOccurs(model.getOccurs() + 1);
