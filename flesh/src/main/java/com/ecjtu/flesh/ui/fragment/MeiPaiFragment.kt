@@ -52,7 +52,7 @@ class MeiPaiFragment : BaseTabPagerFragment() {
         val lastTabPosition = getLastTabPosition()
         if (isVisibleToUser) {
             attachTabLayout()
-            if (mMeiPaiMenu != null && mMeiPaiMenu?.size ?: 0 > 0) {
+            if (mMeiPaiMenu == null && mMeiPaiMenu?.size ?: 0 == 0) {
                 val req = AsyncNetwork().apply {
                     request(com.ecjtu.flesh.Constants.WEIPAI_URL, null)
                     setRequestCallback(object : IRequestCallback {

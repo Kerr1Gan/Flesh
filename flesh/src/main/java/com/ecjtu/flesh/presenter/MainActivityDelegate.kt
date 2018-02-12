@@ -124,7 +124,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         bottomNav
                 .addItem(BottomNavigationItem(R.drawable.ic_image, "Image"))
                 .addItem(BottomNavigationItem(R.drawable.ic_video, "Video"))
-                .addItem(BottomNavigationItem(R.drawable.ic_video, "More"))
+                .addItem(BottomNavigationItem(R.drawable.ic_girl, "More"))
                 .initialise()
         bottomNav.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
             override fun onTabUnselected(position: Int) {
