@@ -2,11 +2,16 @@ package com.ecjtu.flesh.ui.fragment
 
 import android.os.Bundle
 import android.os.Handler
+import android.support.design.widget.TabLayout
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import com.ecjtu.componentes.activity.BaseActionActivity
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.impl.MeiPaiCacheHelper
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
@@ -22,7 +27,7 @@ import kotlin.concurrent.thread
 /**
  * Created by xiang on 2018/2/8.
  */
-class MeiPaiFragment : BaseTabPagerFragment() {
+class MeiPaiFragment : BaseTabPagerFragment(), BaseTabPagerFragment.IDelegate {
     companion object {
         private const val TAG = "MeiPaiFragment"
 
@@ -32,15 +37,29 @@ class MeiPaiFragment : BaseTabPagerFragment() {
 
     private var mMeiPaiMenu: List<MenuModel>? = null
     private var mMeiPaiCache: Map<String, List<MeiPaiModel>>? = null
+    private var mTabLayout: TabLayout? = null
+    private var mToolbar: Toolbar? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         Log.i(TAG, "onCreateView")
-        return inflater?.inflate(R.layout.fragment_base_tab_pager, container, false)
+        setHasOptionsMenu(true)
+        return inflater?.inflate(R.layout.fragment_v33, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        Log.i(TAG, "onViewCreated")
+        setDelegate(this)
+        mTabLayout = view?.findViewById(R.id.tab_layout) as TabLayout
         super.onViewCreated(view, savedInstanceState)
+        Log.i(TAG, "onViewCreated")
+        userVisibleHint = true
+        mToolbar = view.findViewById(R.id.tool_bar) as Toolbar?
+        mToolbar?.setTitle("美拍")
+        if (activity is AppCompatActivity) {
+            val content = view.findViewById(R.id.content)
+            (activity as AppCompatActivity).setSupportActionBar(mToolbar)
+            (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            content?.setPadding(content.paddingLeft, content.paddingTop + getStatusBarHeight(), content.paddingRight, content.paddingBottom)
+        }
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
@@ -146,4 +165,25 @@ class MeiPaiFragment : BaseTabPagerFragment() {
         return TAG + "_" + "last_tab_position"
     }
 
+    override fun getTabLayout(): TabLayout {
+        return mTabLayout!!
+    }
+
+    override fun isAppbarLayoutExpand(): Boolean {
+        return false
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == android.R.id.home) {
+            activity.finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    fun getStatusBarHeight(): Int {
+        val resources = getResources()
+        val resourceId = resources.getIdentifier(BaseActionActivity.STATUS_BAR_HEIGHT, "dimen", "android")
+        return resources.getDimensionPixelSize(resourceId)
+    }
 }

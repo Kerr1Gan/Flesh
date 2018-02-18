@@ -16,14 +16,18 @@ import com.bumptech.glide.Glide;
 import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.R;
 import com.ecjtu.flesh.presenter.MainActivityDelegate;
+import com.ecjtu.flesh.util.encrypt.SecretKey;
+import com.ecjtu.flesh.util.encrypt.SecretKeyUtils;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.PREF_ZERO, false)) {
             mDelegate = new MainActivityDelegate(this);
         }
-
     }
 
     private void checkZero() {

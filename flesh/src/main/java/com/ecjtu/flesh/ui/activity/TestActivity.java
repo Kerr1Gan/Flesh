@@ -3,7 +3,7 @@ package com.ecjtu.flesh.ui.activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.MediaController;
+import android.support.v7.widget.Toolbar;
 
 import com.ecjtu.flesh.R;
 
@@ -22,6 +22,12 @@ public class TestActivity extends AppCompatActivity {
 //        Intent intent = RotateNoCreateActivity.newInstance(this, VideoFragment.class, null);
 //        startActivity(intent);
         setContentView(R.layout.activity_test);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        this.setSupportActionBar(toolbar);
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setPadding(toolbar.getPaddingLeft(), toolbar.getPaddingTop() + 50, toolbar.getPaddingRight(), toolbar.getPaddingBottom());
+
+
         IjkVideoView mVideoView = (IjkVideoView) findViewById(R.id.ijk);
         AndroidMediaController mediaController = new AndroidMediaController(this);
         mVideoView.setMediaController(mediaController);

@@ -21,6 +21,7 @@ import com.ecjtu.flesh.db.table.impl.HistoryTableImpl;
 import com.ecjtu.flesh.db.table.impl.LikeTableImpl;
 import com.ecjtu.flesh.db.table.impl.NotificationTableImpl;
 import com.ecjtu.flesh.service.MainService;
+import com.ecjtu.flesh.util.encrypt.MD5Utils;
 import com.tencent.bugly.Bugly;
 
 import java.util.List;

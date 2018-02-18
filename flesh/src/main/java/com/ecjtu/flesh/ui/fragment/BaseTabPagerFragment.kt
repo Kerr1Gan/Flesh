@@ -12,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.presenter.MainActivityDelegate
 import com.ecjtu.flesh.ui.adapter.IChangeTab
 import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
 
@@ -25,21 +24,20 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
         private const val TAG = "BaseTabPagerFragment"
     }
 
-    private var delegate: MainActivityDelegate? = null
+    private var delegate: IDelegate? = null
     private var mViewPager: ViewPager? = null
     private var mTabLayout: TabLayout? = null
-    private var mLastTabItem = 0
     private val mHandler = Handler()
     private var mLastTabPosition = -1
 
     constructor() : super()
 
     @SuppressLint("ValidFragment")
-    constructor(delegate: MainActivityDelegate) : super() {
+    constructor(delegate: IDelegate) : super() {
         this.delegate = delegate
     }
 
-    fun setDelegate(delegate: MainActivityDelegate) {
+    fun setDelegate(delegate: IDelegate) {
         this.delegate = delegate
     }
 
@@ -90,6 +88,10 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
         } else {
             saveLastTabPosition()
         }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
     }
 
     override fun onStop() {
@@ -146,7 +148,7 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
         return mViewPager
     }
 
-    open fun getDelegate(): MainActivityDelegate? {
+    open fun getDelegate(): IDelegate? {
         return delegate
     }
 
@@ -208,5 +210,10 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
             setLastTabPosition(getViewPager()?.currentItem ?: 0)
         }
         saveLastTabPosition()
+    }
+
+    interface IDelegate {
+        fun getTabLayout(): TabLayout
+        fun isAppbarLayoutExpand(): Boolean
     }
 }

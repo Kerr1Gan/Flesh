@@ -44,18 +44,14 @@ import kotlin.reflect.KClass
 /**
  * Created by KerriGan on 2017/6/2.
  */
-class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) {
+class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner), BaseTabPagerFragment.IDelegate {
 
     private val mFloatButton = owner.findViewById(R.id.float_button) as FloatingActionButton
     private var mViewPager = owner.findViewById(R.id.view_pager) as ViewPager
     private val mTabLayout = owner.findViewById(R.id.tab_layout) as TabLayout
     private val mAppbarLayout = owner.findViewById(R.id.app_bar) as AppBarLayout
     private var mAppbarExpand = true
-    private val mViewPagerArray = Array<ViewPager?>(2, { index -> null })
     private var mCurrentPagerIndex = 0
-    private var mLoadingDialog: AlertDialog? = null
-    private var mV33Menu: List<MenuModel>? = null
-    private var mV33Cache: Map<String, List<V33Model>>? = null
 
     init {
         mViewPager.adapter = FragmentAdapter(owner.supportFragmentManager)
@@ -124,7 +120,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
         bottomNav
                 .addItem(BottomNavigationItem(R.drawable.ic_image, "Image"))
                 .addItem(BottomNavigationItem(R.drawable.ic_video, "Video"))
-                .addItem(BottomNavigationItem(R.drawable.ic_girl, "More"))
+//                .addItem(BottomNavigationItem(R.drawable.ic_girl, "More"))
                 .initialise()
         bottomNav.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
             override fun onTabUnselected(position: Int) {
@@ -143,15 +139,17 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 //                    (this as TabPagerAdapter).onStop(owner, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
 //                }
                 when (position) {
+
+
+
                     0 -> {
+                        mTabLayout.visibility = View.VISIBLE
                         mViewPager.setCurrentItem(0)
                     }
 
                     1 -> {
+                        mTabLayout.visibility = View.GONE
                         mViewPager.setCurrentItem(1)
-                    }
-                    2 -> {
-                        mViewPager.setCurrentItem(2)
                     }
                 }
                 if (mViewPager.adapter is FragmentPagerAdapter) {
@@ -198,7 +196,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 //        }
     }
 
-    fun isAppbarLayoutExpand(): Boolean = mAppbarExpand
+    override fun isAppbarLayoutExpand(): Boolean = mAppbarExpand
 
     fun convertView2Bitmap(view: View, width: Int, height: Int): Bitmap {
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
@@ -294,21 +292,18 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 //        mTabLayout.setupWithViewPager((mViewPager.adapter as FragmentPagerAdapter).getItem(index))
     }
 
-    fun getTabLayout(): TabLayout {
+    override fun getTabLayout(): TabLayout {
         return mTabLayout
     }
 
     inner class FragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-        val fragments = Array<Fragment?>(3, { int ->
+        val fragments = Array<Fragment?>(2, { int ->
             when (int) {
                 0 -> {
                     MzituFragment().apply { setDelegate(this@MainActivityDelegate) }
                 }
                 1 -> {
-                    V33Fragment().apply { setDelegate(this@MainActivityDelegate) }
-                }
-                2 -> {
-                    MeiPaiFragment().apply { setDelegate(this@MainActivityDelegate) }
+                    VideoFragment().apply { setDelegate(this@MainActivityDelegate) }
                 }
                 else -> {
                     null

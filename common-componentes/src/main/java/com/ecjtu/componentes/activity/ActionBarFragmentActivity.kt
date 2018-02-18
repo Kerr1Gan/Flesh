@@ -31,6 +31,8 @@ class ActionBarFragmentActivity : BaseFragmentActivity() {
         if (!TextUtils.isEmpty(title)) {
             supportActionBar?.setTitle(title)
         }
+
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): kotlin.Boolean {
