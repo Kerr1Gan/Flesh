@@ -53,7 +53,7 @@ class MeiPaiFragment : BaseTabPagerFragment(), BaseTabPagerFragment.IDelegate {
         Log.i(TAG, "onViewCreated")
         userVisibleHint = true
         mToolbar = view.findViewById(R.id.tool_bar) as Toolbar?
-        mToolbar?.setTitle("美拍")
+        mToolbar?.setTitle("mei")
         if (activity is AppCompatActivity) {
             val content = view.findViewById(R.id.content)
             (activity as AppCompatActivity).setSupportActionBar(mToolbar)

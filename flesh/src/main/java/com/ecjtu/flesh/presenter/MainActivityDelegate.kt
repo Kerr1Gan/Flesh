@@ -30,12 +30,10 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem
 import com.bumptech.glide.Glide
 import com.ecjtu.componentes.activity.AppThemeActivity
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.flesh.ui.activity.MainActivity
 import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
 import com.ecjtu.flesh.ui.fragment.*
 import com.ecjtu.flesh.util.file.FileUtil
-import com.ecjtu.netcore.model.MenuModel
 import java.io.File
 import kotlin.concurrent.thread
 import kotlin.reflect.KClass
@@ -52,9 +50,36 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
     private val mAppbarLayout = owner.findViewById(R.id.app_bar) as AppBarLayout
     private var mAppbarExpand = true
     private var mCurrentPagerIndex = 0
+    private var mBottomNav: BottomNavigationBar? = null
 
     init {
         mViewPager.adapter = FragmentAdapter(owner.supportFragmentManager)
+        mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                when (position) {
+                    0 -> {
+                        mTabLayout.visibility = View.VISIBLE
+                    }
+                    1 -> {
+                        mTabLayout.visibility = View.GONE
+                    }
+                }
+                mBottomNav?.selectTab(position, false)
+                if (mViewPager.adapter is FragmentPagerAdapter) {
+                    val fragment = (mViewPager.adapter as FragmentPagerAdapter).getItem(position)
+                    if (fragment is BaseTabPagerFragment) {
+                        fragment.onSelectTab()
+                    }
+                }
+            }
+        })
+
         initView()
         recoverTab(0, isAppbarLayoutExpand())
     }
@@ -65,13 +90,13 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
         val glideSize = FileUtil.getGlideCacheSize(owner)
         val glideStr = Formatter.formatFileSize(owner, glideSize)
         val textView = findViewById(R.id.size) as TextView?
-        val bottomNav = findViewById(R.id.bottom_navigation_bar) as BottomNavigationBar
+        mBottomNav = findViewById(R.id.bottom_navigation_bar) as BottomNavigationBar
 
         textView?.let {
             textView.setText(String.format("%s/%s", glideStr, cacheStr))
         }
         mFloatButton.setOnClickListener {
-            doFloatButton(bottomNav)
+            doFloatButton(mBottomNav!!)
         }
 
         findViewById(R.id.like)?.setOnClickListener {
@@ -117,12 +142,12 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
             }
         }
 
-        bottomNav
+        mBottomNav!!
                 .addItem(BottomNavigationItem(R.drawable.ic_image, "Image"))
                 .addItem(BottomNavigationItem(R.drawable.ic_video, "Video"))
 //                .addItem(BottomNavigationItem(R.drawable.ic_girl, "More"))
                 .initialise()
-        bottomNav.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
+        mBottomNav!!.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
             override fun onTabUnselected(position: Int) {
                 if (mViewPager.adapter is FragmentPagerAdapter) {
                     val fragment = (mViewPager.adapter as FragmentPagerAdapter).getItem(position)
@@ -139,23 +164,12 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
 //                    (this as TabPagerAdapter).onStop(owner, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
 //                }
                 when (position) {
-
-
-
                     0 -> {
-                        mTabLayout.visibility = View.VISIBLE
                         mViewPager.setCurrentItem(0)
                     }
 
                     1 -> {
-                        mTabLayout.visibility = View.GONE
                         mViewPager.setCurrentItem(1)
-                    }
-                }
-                if (mViewPager.adapter is FragmentPagerAdapter) {
-                    val fragment = (mViewPager.adapter as FragmentPagerAdapter).getItem(position)
-                    if (fragment is BaseTabPagerFragment) {
-                        fragment.onSelectTab()
                     }
                 }
                 //store view states
