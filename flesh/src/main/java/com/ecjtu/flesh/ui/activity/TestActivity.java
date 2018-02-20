@@ -19,7 +19,7 @@ public class TestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Intent intent = RotateNoCreateActivity.newInstance(this, VideoFragment.class, null);
+//        Intent intent = RotateNoCreateActivity.newInstance(this, VideoTabFragment.class, null);
 //        startActivity(intent);
         setContentView(R.layout.activity_test);
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);

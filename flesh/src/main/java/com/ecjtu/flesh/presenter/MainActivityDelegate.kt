@@ -317,7 +317,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
                     MzituFragment().apply { setDelegate(this@MainActivityDelegate) }
                 }
                 1 -> {
-                    VideoFragment().apply { setDelegate(this@MainActivityDelegate) }
+                    VideoTabFragment().apply { setDelegate(this@MainActivityDelegate) }
                 }
                 else -> {
                     null
