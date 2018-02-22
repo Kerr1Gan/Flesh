@@ -113,6 +113,8 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>, private val recyc
         }
         imageView?.setTag(R.id.extra_tag, position)
         holder?.textView?.setText(pageModel.get(position).title)
+        val bottom = holder?.itemView?.findViewById(R.id.bottom)
+        bottom?.visibility = View.VISIBLE
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VH {

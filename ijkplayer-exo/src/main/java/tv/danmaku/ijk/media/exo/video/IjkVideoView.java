@@ -202,9 +202,6 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         }
     }
 
-    public void setVideoInputStream(final FilterInputStream inputStream) {
-    }
-
     /**
      * Sets video path.
      *

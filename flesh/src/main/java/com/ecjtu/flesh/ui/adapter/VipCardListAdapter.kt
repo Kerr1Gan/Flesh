@@ -1,6 +1,5 @@
 package com.ecjtu.flesh.ui.adapter
 
-import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.amazonaws.services.s3.AmazonS3Client
@@ -9,6 +8,7 @@ import com.ecjtu.componentes.activity.RotateNoCreateActivity
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.model.models.V33Model
 import com.ecjtu.flesh.ui.fragment.IjkVideoFragment
+import com.ecjtu.flesh.ui.fragment.WebViewFragment
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -23,8 +23,8 @@ class VipCardListAdapter(pageModel: List<V33Model>, recyclerView: RecyclerView, 
             endDate.add(Calendar.HOUR, 1)
             val url = s3Client?.generatePresignedUrl(bucket.name, pageModel.get(position!!).title, endDate.time)
             v?.post {
-                val intent = RotateNoCreateActivity.newInstance(v.context, IjkVideoFragment::class.java
-                        , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, url.toString()) })
+                val intent = RotateNoCreateActivity.newInstance(v.context, WebViewFragment::class.java
+                        , WebViewFragment.openUrl(url.toString()))
                 v.context.startActivity(intent)
             }
         }
