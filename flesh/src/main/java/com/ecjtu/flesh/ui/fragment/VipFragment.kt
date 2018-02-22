@@ -2,6 +2,7 @@ package com.ecjtu.flesh.ui.fragment
 
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.s3.AmazonS3Client
+import com.ecjtu.flesh.util.encrypt.DesUtils
 import com.ecjtu.flesh.util.encrypt.SecretKeyUtils
 import kotlin.concurrent.thread
 
@@ -16,10 +17,10 @@ class VipFragment : VideoListFragment() {
         if (isVisibleToUser) {
             thread {
                 var secretKey = SecretKeyUtils.getKeyFromServer()
-                SecretKeyUtils.encode("")
+                DesUtils.decryptBytes("1234".toByteArray(), secretKey!!.key)
+                val provider = BasicAWSCredentials("", "")
+                val s3 = AmazonS3Client(provider)
             }
-            val provider = BasicAWSCredentials("", "")
-            val s3 = AmazonS3Client(provider)
         }
 
 
