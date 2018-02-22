@@ -7,7 +7,6 @@ import android.support.v4.view.ViewPager
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,43 +20,13 @@ import com.ecjtu.netcore.model.MenuModel
  */
 class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager) : VideoTabPagerAdapter(menu, viewPager) {
 
-    private val KEY_CARD_CACHE = "meipai_card_cache_"
     private val KEY_LAST_POSITION = "meipai_last_position_"
     private val KEY_LAST_POSITION_OFFSET = "meipai_last_position_offset_"
 
     private val mViewStub = HashMap<String, VH>()
 
     private var mMenuChildList: Map<String, List<MeiPaiModel>>? = null
-    private var mLastScrolledPosition = 0
 
-
-    init {
-        viewPager.addOnPageChangeListener(this)
-    }
-
-    override fun onPageScrollStateChanged(state: Int) {
-    }
-
-    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-    }
-
-    override fun onPageSelected(position: Int) {
-        if (position != mLastScrolledPosition) {
-            var recyclerView = mViewStub.get(getPageTitle(position))?.recyclerView
-            recyclerView?.let {
-                if (recyclerView?.adapter is IChangeTab) {
-                    (recyclerView?.adapter as IChangeTab).onSelectTab()
-                }
-            }
-            recyclerView = mViewStub.get(getPageTitle(mLastScrolledPosition))?.recyclerView
-            recyclerView?.let {
-                if (recyclerView?.adapter is IChangeTab) {
-                    (recyclerView?.adapter as IChangeTab).onUnSelectTab()
-                }
-            }
-        }
-        mLastScrolledPosition = position
-    }
 
     override fun isViewFromObject(view: View?, `object`: Any?): Boolean = view == `object`
 
@@ -66,7 +35,6 @@ class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager
     }
 
     override fun instantiateItem(container: ViewGroup?, position: Int): Any {
-        Log.i("ttttttt", "VideoTabPagerAdapter instantiateItem " + position + " container " + container?.childCount)
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
         container?.addView(item)
         val title = getPageTitle(position) as String
@@ -79,7 +47,6 @@ class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager
     }
 
     override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
-        Log.i("ttttttt", "VideoTabPagerAdapter remove view " + position)
         container?.removeView(`object` as View)
         val vh: VH? = mViewStub.remove(getPageTitle(position))
         onDestroyItem(container?.context!!, getPageTitle(position).toString(), vh?.recyclerView, vh?.getPageModel())
@@ -90,13 +57,7 @@ class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager
         return menu[position].title
     }
 
-    override fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?, pageModel: List<V33Model>?) {
-//        thread {
-//            val helper = PageListCacheHelper(context.filesDir.absolutePath)
-//            if (pageModel != null) {
-//                helper.put(KEY_CARD_CACHE + key, pageModel)
-//            }
-//        }
+     fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?, pageModel: List<V33Model>?) {
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         if (recyclerView != null) {
             editor.putInt(KEY_LAST_POSITION + key, getScrollYPosition(recyclerView)).
@@ -119,29 +80,10 @@ class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager
             }
         }
         if (tabIndex >= 0) {
-            Log.i("tttttttttt", "videoTabPager " + tabIndex)
             editor.putInt(KEY_LAST_TAB_ITEM + "_" + VideoTabPagerAdapter::class.java.simpleName, tabIndex)
         }
         editor.putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isExpand)
         editor.apply()
-    }
-
-    override fun onResume() {
-        for (entry in mViewStub) {
-            if (entry.value.recyclerView?.adapter is VideoCardListAdapter) {
-                (entry.value.recyclerView?.adapter as VideoCardListAdapter).onResume()
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        for (entry in mViewStub) {
-            if (entry.value.recyclerView?.adapter is VideoCardListAdapter) {
-                (entry.value.recyclerView?.adapter as VideoCardListAdapter).onDestroy()
-            }
-        }
-        viewPager.removeOnPageChangeListener(this)
     }
 
     fun setMeiPaiList(mutableMap: MutableMap<String, List<MeiPaiModel>>) {

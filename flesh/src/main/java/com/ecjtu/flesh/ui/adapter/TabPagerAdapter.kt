@@ -145,12 +145,12 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
             }
         }
         val helper = MenuListCacheHelper(context.filesDir.absolutePath)
-        helper.put(CACHE_MENU_LIST + "_" + TabPagerAdapter::class.java.toString(), menu)
+        helper.put(CACHE_MENU_LIST + "_" + this::class.java.toString(), menu)
 
         editor.putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isExpand)
         if (tabIndex >= 0) {
             Log.i("tttttttttt", "tabPager " + tabIndex)
-            editor.putInt(KEY_LAST_TAB_ITEM + "_" + TabPagerAdapter::class.java.simpleName, tabIndex)
+            editor.putInt(KEY_LAST_TAB_ITEM + "_" + this::class.java.simpleName, tabIndex)
         }
         editor.apply()
     }

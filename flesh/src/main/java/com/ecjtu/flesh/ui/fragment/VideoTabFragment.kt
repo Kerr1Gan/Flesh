@@ -18,7 +18,8 @@ class VideoTabFragment : BaseTabPagerFragment() {
     private var mRecyclerView: RecyclerView? = null
     private val mItemInfo = arrayOf(ItemInfo("爱恋", arrayOf(), V33Fragment::class.java),
             ItemInfo("美拍", arrayOf(), MeiPaiFragment::class.java),
-            ItemInfo("22CM", arrayOf(), String::class.java))
+            ItemInfo("22CM", arrayOf(), String::class.java),
+            ItemInfo("Vip", arrayOf(), VipFragment::class.java))
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_video_tab, container, false)

@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -104,12 +105,14 @@ open class VideoCardListAdapter(var pageModel: List<V33Model>, private val recyc
                 .addHeader("Host", host)
                 .addHeader("Proxy-Connection", "keep-alive")
                 .addHeader("Referer", "http://m.mzitu.com/")
-        val glideUrl = GlideUrl(url, builder.build())
-        url.let {
-            imageView?.setTag(R.id.extra_tag, position)
-            Glide.with(context).asBitmap().load(glideUrl).listener(this).apply(options).into(imageView)
-            holder?.textView?.setText(pageModel.get(position).title)
+        if (!TextUtils.isEmpty(url)) {
+            val glideUrl = GlideUrl(url, builder.build())
+            url.let {
+                Glide.with(context).asBitmap().load(glideUrl).listener(this).apply(options).into(imageView)
+            }
         }
+        imageView?.setTag(R.id.extra_tag, position)
+        holder?.textView?.setText(pageModel.get(position).title)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VH {

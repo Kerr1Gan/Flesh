@@ -7,7 +7,7 @@ import android.view.View
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.cache.impl.V33CacheHelper
 import com.ecjtu.flesh.model.models.V33Model
-import com.ecjtu.flesh.ui.adapter.VideoTabPagerAdapter
+import com.ecjtu.flesh.ui.adapter.V33TabPagerAdapter
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
@@ -81,13 +81,13 @@ class V33Fragment : VideoListFragment() {
                             }
                             activity.runOnUiThread {
                                 if (getViewPager() != null && getViewPager()?.adapter == null) {
-                                    getViewPager()?.adapter = VideoTabPagerAdapter(menuModel, getViewPager()!!)
-                                    (getViewPager()?.adapter as VideoTabPagerAdapter).setMenuChildList(map)
-                                    (getViewPager()?.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(true)
+                                    getViewPager()?.adapter = V33TabPagerAdapter(menuModel, getViewPager()!!)
+                                    (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(map)
+                                    (getViewPager()?.adapter as V33TabPagerAdapter?)?.notifyDataSetChanged(true)
                                 } else {
-                                    (getViewPager()?.adapter as VideoTabPagerAdapter).menu = menuModel
-                                    (getViewPager()?.adapter as VideoTabPagerAdapter).setMenuChildList(map)
-                                    (getViewPager()?.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(false)
+                                    (getViewPager()?.adapter as V33TabPagerAdapter).menu = menuModel
+                                    (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(map)
+                                    (getViewPager()?.adapter as V33TabPagerAdapter?)?.notifyDataSetChanged(false)
                                 }
                                 mV33Menu = menuModel
                                 mV33Cache = map
@@ -130,13 +130,13 @@ class V33Fragment : VideoListFragment() {
                     activity.runOnUiThread {
                         if (localMenu != null && localCache != null) {
                             if (getViewPager() != null && getViewPager()?.adapter == null) {
-                                getViewPager()?.adapter = VideoTabPagerAdapter(localMenu, getViewPager()!!)
-                                (getViewPager()?.adapter as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
-                                (getViewPager()?.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(true)
+                                getViewPager()?.adapter = V33TabPagerAdapter(localMenu, getViewPager()!!)
+                                (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
+                                (getViewPager()?.adapter as V33TabPagerAdapter?)?.notifyDataSetChanged(true)
                             } else {
-                                (getViewPager()?.adapter as VideoTabPagerAdapter).menu = localMenu
-                                (getViewPager()?.adapter as VideoTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
-                                (getViewPager()?.adapter as VideoTabPagerAdapter?)?.notifyDataSetChanged(false)
+                                (getViewPager()?.adapter as V33TabPagerAdapter).menu = localMenu
+                                (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
+                                (getViewPager()?.adapter as V33TabPagerAdapter?)?.notifyDataSetChanged(false)
                             }
                             if (userVisibleHint) {
                                 attachTabLayout()

@@ -23,12 +23,7 @@ import com.ecjtu.flesh.db.table.impl.NotificationTableImpl;
 import com.ecjtu.flesh.service.MainService;
 import com.tencent.bugly.Bugly;
 
-import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
-
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
 
 /**
  * Created by Ethan_Xiang on 2017/9/7.

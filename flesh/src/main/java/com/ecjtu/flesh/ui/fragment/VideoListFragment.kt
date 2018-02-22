@@ -46,7 +46,6 @@ open class VideoListFragment : BaseTabPagerFragment(), BaseTabPagerFragment.IDel
         Log.i(TAG, "onViewCreated")
         userVisibleHint = true
         mToolbar = view.findViewById(R.id.tool_bar) as Toolbar?
-        mToolbar?.setTitle("爱恋")
         if (activity is AppCompatActivity) {
             val content = view.findViewById(R.id.content)
             (activity as AppCompatActivity).setSupportActionBar(mToolbar)
