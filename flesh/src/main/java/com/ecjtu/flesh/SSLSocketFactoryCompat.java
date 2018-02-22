@@ -36,7 +36,7 @@ public class SSLSocketFactoryCompat extends SSLSocketFactory {
                 // - remove all SSL versions (especially SSLv3) because they're insecure now
                 List<String> protocols = new LinkedList<>();
                 for (String protocol : socket.getSupportedProtocols())
-                    if (!protocol.toUpperCase().contains("SSL"))
+                    if (!protocol.toUpperCase().contains("SSL") || true)
                         protocols.add(protocol);
                 SSLSocketFactoryCompat.protocols = protocols.toArray(new String[protocols.size()]);
                /* set up reasonable cipher suites */
@@ -98,6 +98,7 @@ public class SSLSocketFactoryCompat extends SSLSocketFactory {
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && cipherSuites != null) {
             ssl.setEnabledCipherSuites(cipherSuites);
+//            ssl.setEnabledProtocols(new String[]{"TLSv1.1", "TLSv1.2"});
         }
     }
 

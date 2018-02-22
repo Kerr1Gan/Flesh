@@ -31,4 +31,7 @@ object Constants {
 
     @JvmField
     val SECRETE_KEY = "https://Kerr1Gan.github.io/flesh/key"
+
+    @JvmField
+    val S3_KEY = "https://Kerr1Gan.github.io/flesh/apps_s3"
 }
