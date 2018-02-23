@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.View
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.cache.impl.V33CacheHelper
-import com.ecjtu.flesh.model.models.V33Model
+import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.flesh.ui.adapter.V33TabPagerAdapter
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
@@ -26,7 +26,7 @@ class V33Fragment : VideoListFragment() {
 
     private var mLoadingDialog: AlertDialog? = null
     private var mV33Menu: List<MenuModel>? = null
-    private var mV33Cache: Map<String, List<V33Model>>? = null
+    private var mV33Cache: Map<String, List<VideoModel>>? = null
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,16 +49,16 @@ class V33Fragment : VideoListFragment() {
                     setRequestCallback(object : IRequestCallback {
                         override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                             val menuModel = arrayListOf<MenuModel>()
-                            val map = linkedMapOf<String, List<V33Model>>()
+                            val map = linkedMapOf<String, List<VideoModel>>()
                             try {
                                 val jObj = JSONArray(response)
                                 for (i in 0 until jObj.length()) {
                                     val jTitle = jObj[i] as JSONObject
                                     val title = jTitle.optString("title")
                                     val list = jTitle.optJSONArray("list")
-                                    val modelList = arrayListOf<V33Model>()
+                                    val modelList = arrayListOf<VideoModel>()
                                     for (j in 0 until list.length()) {
-                                        val v33Model = V33Model()
+                                        val v33Model = VideoModel()
                                         val jItem = list[j] as JSONObject
                                         v33Model.baseUrl = jItem.optString("baseUrl")
                                         v33Model.imageUrl = jItem.optString("imageUrl")
@@ -131,11 +131,11 @@ class V33Fragment : VideoListFragment() {
                         if (localMenu != null && localCache != null) {
                             if (getViewPager() != null && getViewPager()?.adapter == null) {
                                 getViewPager()?.adapter = V33TabPagerAdapter(localMenu, getViewPager()!!)
-                                (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
+                                (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<VideoModel>>)
                                 (getViewPager()?.adapter as V33TabPagerAdapter?)?.notifyDataSetChanged(true)
                             } else {
                                 (getViewPager()?.adapter as V33TabPagerAdapter).menu = localMenu
-                                (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<V33Model>>)
+                                (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<VideoModel>>)
                                 (getViewPager()?.adapter as V33TabPagerAdapter?)?.notifyDataSetChanged(false)
                             }
                             if (userVisibleHint) {
@@ -152,11 +152,13 @@ class V33Fragment : VideoListFragment() {
     override fun onStop() {
         super.onStop()
         thread {
-            val helper = V33CacheHelper(context.filesDir.absolutePath)
-            val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
-            if (mV33Menu != null && mV33Cache != null) {
-                helper2.put("v33menu", mV33Menu)
-                helper.put("v33cache", mV33Cache)
+            if (context != null) {
+                val helper = V33CacheHelper(context.filesDir.absolutePath)
+                val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
+                if (mV33Menu != null && mV33Cache != null) {
+                    helper2.put("v33menu", mV33Menu)
+                    helper.put("v33cache", mV33Cache)
+                }
             }
         }
         Log.i(TAG, "onStop tabIndex " + getTabLayout()?.selectedTabPosition)

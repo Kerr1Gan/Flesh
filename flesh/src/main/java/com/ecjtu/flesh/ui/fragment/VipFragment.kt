@@ -1,12 +1,12 @@
 package com.ecjtu.flesh.ui.fragment
 
 import com.amazonaws.ClientConfiguration
+import com.amazonaws.Protocol
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.regions.Region
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.Bucket
-import com.amazonaws.services.s3.model.ObjectListing
 import com.ecjtu.flesh.ui.adapter.VipTabPagerAdapter
 import com.ecjtu.flesh.util.encrypt.SecretKeyUtils
 import com.ecjtu.netcore.model.MenuModel
@@ -30,6 +30,7 @@ class VipFragment : VideoListFragment() {
                     val params = content.split(",")
                     val provider = BasicAWSCredentials(params[0], params[1])
                     val config = ClientConfiguration()
+                    config.protocol = Protocol.HTTP
                     mS3 = AmazonS3Client(provider, config)
                     val region = Region.getRegion(Regions.CN_NORTH_1)
                     mS3?.setRegion(region)
@@ -45,18 +46,20 @@ class VipFragment : VideoListFragment() {
                             val menu = MenuModel(bucket.name, "")
                             menuModel.add(menu)
                         }
-                        activity.runOnUiThread {
-                            if (getViewPager() != null && getViewPager()?.adapter == null) {
-                                getViewPager()?.adapter = VipTabPagerAdapter(menuModel, getViewPager()!!)
-                                (getViewPager()?.adapter as VipTabPagerAdapter?)?.setBucketsList(mBuckets!!, mS3!!)
-                                (getViewPager()?.adapter as VipTabPagerAdapter?)?.notifyDataSetChanged(true)
-                            } else {
-                                (getViewPager()?.adapter as VipTabPagerAdapter).menu = menuModel
-                                (getViewPager()?.adapter as VipTabPagerAdapter?)?.setBucketsList(mBuckets!!, mS3!!)
-                                (getViewPager()?.adapter as VipTabPagerAdapter?)?.notifyDataSetChanged(false)
-                            }
-                            if (userVisibleHint) {
-                                attachTabLayout()
+                        if (activity != null) {
+                            activity.runOnUiThread {
+                                if (getViewPager() != null && getViewPager()?.adapter == null) {
+                                    getViewPager()?.adapter = VipTabPagerAdapter(menuModel, getViewPager()!!)
+                                    (getViewPager()?.adapter as VipTabPagerAdapter?)?.setBucketsList(mBuckets!!, mS3!!)
+                                    (getViewPager()?.adapter as VipTabPagerAdapter?)?.notifyDataSetChanged(true)
+                                } else {
+                                    (getViewPager()?.adapter as VipTabPagerAdapter).menu = menuModel
+                                    (getViewPager()?.adapter as VipTabPagerAdapter?)?.setBucketsList(mBuckets!!, mS3!!)
+                                    (getViewPager()?.adapter as VipTabPagerAdapter?)?.notifyDataSetChanged(false)
+                                }
+                                if (userVisibleHint) {
+                                    attachTabLayout()
+                                }
                             }
                         }
                     }

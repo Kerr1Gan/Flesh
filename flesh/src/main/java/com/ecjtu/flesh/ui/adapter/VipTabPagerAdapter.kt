@@ -11,7 +11,7 @@ import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.Bucket
 import com.amazonaws.services.s3.model.ObjectListing
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.model.models.V33Model
+import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.netcore.model.MenuModel
 import kotlin.concurrent.thread
 
@@ -59,15 +59,23 @@ class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
             if (mObjectListing != null) {
                 val summary = mObjectListing?.objectSummaries
                 if (summary != null) {
-                    val v33List = arrayListOf<V33Model>()
+                    val v33List = arrayListOf<VideoModel>()
                     for (s3Obj in summary) {
-                        val v33 = V33Model()
+                        val v33 = VideoModel()
                         v33.title = s3Obj.key
                         v33.videoUrl = ""
                         v33.imageUrl = ""
                         v33List.add(v33)
                     }
-                    recyclerView?.adapter = VipCardListAdapter(v33List, recyclerView!!, mS3!!, mBuckets!![menu.indexOf(this.innerMenu)])
+                    var index = 0
+                    for (model in this@VipTabPagerAdapter.menu) {
+                        if (model.title.equals(innerMenu.title)) {
+                            break
+                        }
+                        index++
+                    }
+
+                    recyclerView?.adapter = VipCardListAdapter(v33List, recyclerView!!, mS3!!, mBuckets!![index])
                     val lastPosition = PreferenceManager.getDefaultSharedPreferences(context).getInt(getLastPositionKey() + key, -1)
                     if (lastPosition >= 0) {
                         val yOffset = PreferenceManager.getDefaultSharedPreferences(context).getInt(getLastPositionOffsetKey() + key, 0)

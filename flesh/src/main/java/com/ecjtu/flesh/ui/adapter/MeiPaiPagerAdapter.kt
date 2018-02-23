@@ -12,7 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.model.models.MeiPaiModel
-import com.ecjtu.flesh.model.models.V33Model
+import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.netcore.model.MenuModel
 
 /**
@@ -57,7 +57,7 @@ class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager
         return menu[position].title
     }
 
-     fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?, pageModel: List<V33Model>?) {
+     fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?, pageModel: List<VideoModel>?) {
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         if (recyclerView != null) {
             editor.putInt(KEY_LAST_POSITION + key, getScrollYPosition(recyclerView)).

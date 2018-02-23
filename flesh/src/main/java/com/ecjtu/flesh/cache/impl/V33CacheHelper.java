@@ -2,7 +2,7 @@ package com.ecjtu.flesh.cache.impl;
 
 import android.os.Parcel;
 
-import com.ecjtu.flesh.model.models.V33Model;
+import com.ecjtu.flesh.model.models.VideoModel;
 import com.ecjtu.parcel.base.ParcelableFileCacheHelper;
 
 import java.util.LinkedHashMap;
@@ -22,7 +22,7 @@ public class V33CacheHelper extends ParcelableFileCacheHelper {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T readParcel(Parcel parcel) {
-        Map<String, List<V33Model>> out = new LinkedHashMap<>();
+        Map<String, List<VideoModel>> out = new LinkedHashMap<>();
         parcel.readMap(out, getClass().getClassLoader());
         return (T) out;
     }
@@ -33,7 +33,7 @@ public class V33CacheHelper extends ParcelableFileCacheHelper {
         if (!(object instanceof Map)) {
             return null;
         }
-        Map<String, List<V33Model>> local = (Map<String, List<V33Model>>) object;
+        Map<String, List<VideoModel>> local = (Map<String, List<VideoModel>>) object;
         parcel.writeMap(local);
         return parcel;
     }

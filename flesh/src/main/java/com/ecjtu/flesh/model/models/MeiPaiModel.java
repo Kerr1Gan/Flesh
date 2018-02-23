@@ -8,7 +8,7 @@ import java.io.Serializable;
  * Created by xiang on 2018/2/8.
  */
 
-public class MeiPaiModel extends V33Model implements Serializable {
+public class MeiPaiModel extends VideoModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

@@ -81,7 +81,7 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
         return menu[position].title
     }
 
-//    open fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?, pageModel: List<V33Model>?) {
+//    open fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?, pageModel: List<VideoModel>?) {
 //        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
 //        if (recyclerView != null) {
 //            editor.putInt(getLastPositionKey() + key, getScrollYPosition(recyclerView)).
@@ -128,18 +128,22 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
     }
 
     override fun onResume() {
-        for (entry in getViewStub()!!) {
-            if (entry.value.recyclerView?.adapter is VideoCardListAdapter) {
-                (entry.value.recyclerView?.adapter as VideoCardListAdapter).onResume()
+        if (getViewStub() != null) {
+            for (entry in getViewStub()!!) {
+                if (entry.value.recyclerView?.adapter is VideoCardListAdapter) {
+                    (entry.value.recyclerView?.adapter as VideoCardListAdapter).onResume()
+                }
             }
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        for (entry in getViewStub()!!) {
-            if (entry.value.recyclerView?.adapter is VideoCardListAdapter) {
-                (entry.value.recyclerView?.adapter as VideoCardListAdapter).onDestroy()
+        if (getViewStub() != null) {
+            for (entry in getViewStub()!!) {
+                if (entry.value.recyclerView?.adapter is VideoCardListAdapter) {
+                    (entry.value.recyclerView?.adapter as VideoCardListAdapter).onDestroy()
+                }
             }
         }
         viewPager.removeOnPageChangeListener(this)
@@ -154,12 +158,12 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
             initRefreshLayout()
         }
 
-//        fun load(v33ModelList: List<V33Model>) {
+//        fun load(v33ModelList: List<VideoModel>) {
 //            mPageModel = v33ModelList
 //            loadCache(itemView.context, key)
 //        }
 //
-//        fun getPageModel(): List<V33Model>? {
+//        fun getPageModel(): List<VideoModel>? {
 //            return mPageModel
 //        }
 //

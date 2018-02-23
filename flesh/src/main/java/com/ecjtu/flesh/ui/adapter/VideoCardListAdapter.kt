@@ -24,7 +24,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.ecjtu.componentes.activity.RotateNoCreateActivity
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.model.models.V33Model
+import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.flesh.ui.fragment.IjkVideoFragment
 import tv.danmaku.ijk.media.exo.video.AndroidMediaController
 import tv.danmaku.ijk.media.exo.video.IjkVideoView
@@ -34,7 +34,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer
 /**
  * Created by Ethan_Xiang on 2018/1/16.
  */
-open class VideoCardListAdapter(var pageModel: List<V33Model>, private val recyclerView: RecyclerView) : RecyclerViewWrapAdapter<VideoCardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener, IChangeTab {
+open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val recyclerView: RecyclerView) : RecyclerViewWrapAdapter<VideoCardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener, IChangeTab {
 
     private var mDatabase: SQLiteDatabase? = null
 

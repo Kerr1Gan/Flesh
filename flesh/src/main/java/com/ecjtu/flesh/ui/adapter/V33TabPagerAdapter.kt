@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.model.models.V33Model
+import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.netcore.model.MenuModel
 
 /**
@@ -20,7 +20,7 @@ class V33TabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
 
     private val mViewStub = HashMap<String, VH>()
 
-    private var mMenuChildList: Map<String, List<V33Model>>? = null
+    private var mMenuChildList: Map<String, List<VideoModel>>? = null
 
     override fun instantiateItem(container: ViewGroup?, position: Int): Any {
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
@@ -35,14 +35,14 @@ class V33TabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
     }
 
     private inner class VH(itemView: View, menu: MenuModel, key: String) : VideoTabPagerAdapter.VH(itemView, menu, key) {
-        private var mPageModel: List<V33Model>? = null
+        private var mPageModel: List<VideoModel>? = null
 
-        fun load(v33ModelList: List<V33Model>) {
+        fun load(v33ModelList: List<VideoModel>) {
             mPageModel = v33ModelList
             loadCache(itemView.context, key)
         }
 
-        fun getPageModel(): List<V33Model>? {
+        fun getPageModel(): List<VideoModel>? {
             return mPageModel
         }
 
@@ -70,7 +70,7 @@ class V33TabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
         return mViewStub.get(menu[position].title)?.getSize() ?: 0
     }
 
-    fun setMenuChildList(mutableMap: MutableMap<String, List<V33Model>>) {
+    fun setMenuChildList(mutableMap: MutableMap<String, List<VideoModel>>) {
         mMenuChildList = mutableMap
     }
 

@@ -2,7 +2,7 @@ package com.ecjtu.flesh.model;
 
 import com.ecjtu.flesh.model.models.MeiPaiModel;
 import com.ecjtu.flesh.model.models.NotificationModel;
-import com.ecjtu.flesh.model.models.VideoModel;
+import com.ecjtu.flesh.model.models.V33VideoModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,14 +47,14 @@ public class ModelManager {
         return model;
     }
 
-    public static List<VideoModel> getVideoModelByJsonString(String json) {
+    public static List<V33VideoModel> getVideoModelByJsonString(String json) {
         try {
             JSONObject root = new JSONObject(json);
             JSONArray arr = root.getJSONArray("data");
-            List<VideoModel> ret = new ArrayList<>();
+            List<V33VideoModel> ret = new ArrayList<>();
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject obj = arr.getJSONObject(i);
-                VideoModel model = new VideoModel();
+                V33VideoModel model = new V33VideoModel();
                 model.setK(obj.optString("k"));
                 model.setId(obj.optString("id"));
                 model.setTitle(obj.optString("title"));
