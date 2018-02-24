@@ -2,15 +2,9 @@ package com.ecjtu.flesh.ui.fragment
 
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.TabLayout
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
-import com.ecjtu.componentes.activity.BaseActionActivity
-import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.impl.MeiPaiCacheHelper
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.model.ModelManager
@@ -65,7 +59,7 @@ class MeiPaiFragment : VideoListFragment(), BaseTabPagerFragment.IDelegate {
 
                             mLoadingDialog?.cancel()
                             mLoadingDialog = null
-                            activity.runOnUiThread {
+                            activity?.runOnUiThread {
                                 if (getViewPager() != null && getViewPager()?.adapter == null) {
                                     getViewPager()?.adapter = MeiPaiPagerAdapter(menu, getViewPager()!!)
                                     (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(maps)
@@ -84,6 +78,7 @@ class MeiPaiFragment : VideoListFragment(), BaseTabPagerFragment.IDelegate {
                 }
                 if (mLoadingDialog == null) {
                     Handler().post {
+                        if (context == null) return@post
                         mLoadingDialog = AlertDialog.Builder(context).setTitle("加载中").setMessage("需要一小会时间")
                                 .setNegativeButton("取消", { dialog, which ->
                                     thread {
@@ -98,30 +93,32 @@ class MeiPaiFragment : VideoListFragment(), BaseTabPagerFragment.IDelegate {
                     }
                 }
                 thread {
-                    val helper = MeiPaiCacheHelper(context.filesDir.absolutePath)
-                    val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
-                    mMeiPaiMenu = helper2.get("meipaimenu")
-                    mMeiPaiCache = helper.get("meipaicache")
-                    val localMenu = mMeiPaiMenu
-                    val localCache = mMeiPaiCache
-                    activity.runOnUiThread {
-                        if (localMenu != null && localCache != null) {
-                            if (getViewPager() != null && getViewPager()?.adapter == null) {
-                                getViewPager()?.adapter = MeiPaiPagerAdapter(localMenu, getViewPager()!!)
-                                (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(localCache as MutableMap<String, List<MeiPaiModel>>)
-                                (getViewPager()?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(true)
-                            } else {
-                                (getViewPager()?.adapter as MeiPaiPagerAdapter).menu = localMenu
-                                (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(localCache as MutableMap<String, List<MeiPaiModel>>)
-                                (getViewPager()?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(false)
-                            }
-                            if (userVisibleHint) {
-                                attachTabLayout()
-                            }
-                            getViewPager()?.setCurrentItem(lastTabPosition)
-                            mLoadingDialog?.cancel()
-                            mLoadingDialog = null
+                    if (context != null) {
+                        val helper = MeiPaiCacheHelper(context.filesDir.absolutePath)
+                        val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
+                        mMeiPaiMenu = helper2.get("meipaimenu")
+                        mMeiPaiCache = helper.get("meipaicache")
+                        val localMenu = mMeiPaiMenu
+                        val localCache = mMeiPaiCache
+                        activity?.runOnUiThread {
+                            if (localMenu != null && localCache != null) {
+                                if (getViewPager() != null && getViewPager()?.adapter == null) {
+                                    getViewPager()?.adapter = MeiPaiPagerAdapter(localMenu, getViewPager()!!)
+                                    (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(localCache as MutableMap<String, List<MeiPaiModel>>)
+                                    (getViewPager()?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(true)
+                                } else {
+                                    (getViewPager()?.adapter as MeiPaiPagerAdapter).menu = localMenu
+                                    (getViewPager()?.adapter as MeiPaiPagerAdapter).setMeiPaiList(localCache as MutableMap<String, List<MeiPaiModel>>)
+                                    (getViewPager()?.adapter as MeiPaiPagerAdapter?)?.notifyDataSetChanged(false)
+                                }
+                                if (userVisibleHint) {
+                                    attachTabLayout()
+                                }
+                                getViewPager()?.setCurrentItem(lastTabPosition)
+                                mLoadingDialog?.cancel()
+                                mLoadingDialog = null
 
+                            }
                         }
                     }
                 }
@@ -132,11 +129,13 @@ class MeiPaiFragment : VideoListFragment(), BaseTabPagerFragment.IDelegate {
     override fun onStop() {
         super.onStop()
         thread {
-            val helper = MeiPaiCacheHelper(context.filesDir.absolutePath)
-            val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
-            if (mMeiPaiMenu != null && mMeiPaiCache != null) {
-                helper2.put("meipaimenu", mMeiPaiMenu)
-                helper.put("meipaicache", mMeiPaiCache)
+            if (context != null) {
+                val helper = MeiPaiCacheHelper(context.filesDir.absolutePath)
+                val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
+                if (mMeiPaiMenu != null && mMeiPaiCache != null) {
+                    helper2.put("meipaimenu", mMeiPaiMenu)
+                    helper.put("meipaicache", mMeiPaiCache)
+                }
             }
         }
     }

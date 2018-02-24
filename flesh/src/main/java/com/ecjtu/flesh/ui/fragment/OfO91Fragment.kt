@@ -17,11 +17,11 @@ import java.net.HttpURLConnection
 import kotlin.concurrent.thread
 
 /**
- * Created by KerriGan on 2018/2/20.
+ * Created by KerriGan on 2018/2/24.
  */
-class V33Fragment : VideoListFragment() {
+class OfO91Fragment : VideoListFragment() {
     companion object {
-        private const val TAG = "V33Fragment"
+        private const val TAG = "OfO91Fragment"
     }
 
     private var mLoadingDialog: AlertDialog? = null
@@ -31,12 +31,7 @@ class V33Fragment : VideoListFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.i(TAG, "onViewCreated")
-        getToolbar().setTitle("爱恋")
-    }
-
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        Log.i(TAG, "setUserVisibleHint " + isVisibleToUser)
+        getToolbar().setTitle("OfO")
     }
 
     override fun onUserVisibleHintChanged(isVisibleToUser: Boolean) {
@@ -45,7 +40,7 @@ class V33Fragment : VideoListFragment() {
             attachTabLayout()
             if (mV33Menu == null || mV33Menu?.size == 0) {
                 val req = AsyncNetwork().apply {
-                    request(com.ecjtu.flesh.Constants.V33_URL, null)
+                    request(com.ecjtu.flesh.Constants.OFO_URL, null)
                     setRequestCallback(object : IRequestCallback {
                         override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                             val menuModel = arrayListOf<MenuModel>()
@@ -55,15 +50,15 @@ class V33Fragment : VideoListFragment() {
                                 for (i in 0 until jObj.length()) {
                                     val jTitle = jObj[i] as JSONObject
                                     val title = jTitle.optString("title")
-                                    val list = jTitle.optJSONArray("list")
+                                    val list = jTitle.optJSONArray("array")
                                     val modelList = arrayListOf<VideoModel>()
                                     for (j in 0 until list.length()) {
                                         val v33Model = VideoModel()
                                         val jItem = list[j] as JSONObject
-                                        v33Model.baseUrl = jItem.optString("baseUrl")
+                                        v33Model.baseUrl = jItem.optString("videoUrl")
                                         v33Model.imageUrl = jItem.optString("imageUrl")
                                         v33Model.title = jItem.optString("title")
-                                        v33Model.videoUrl = jItem.optString("videoUrl")
+                                        v33Model.videoUrl = jItem.optString("innerVideoUrl")
                                         modelList.add(v33Model)
                                     }
                                     map.put(title, modelList)
@@ -117,8 +112,8 @@ class V33Fragment : VideoListFragment() {
                     if (context != null) {
                         val helper = VideoCacheHelper(context.filesDir.absolutePath)
                         val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
-                        mV33Menu = helper2.get("v33menu")
-                        mV33Cache = helper.get("v33cache")
+                        mV33Menu = helper2.get("ofoMenu")
+                        mV33Cache = helper.get("ofoCache")
                         val localMenu = mV33Menu
                         val localCache = mV33Cache
                         if (localMenu != null && localCache != null) {
@@ -158,8 +153,8 @@ class V33Fragment : VideoListFragment() {
                 val helper = VideoCacheHelper(context.filesDir.absolutePath)
                 val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
                 if (mV33Menu != null && mV33Cache != null) {
-                    helper2.put("v33menu", mV33Menu)
-                    helper.put("v33cache", mV33Cache)
+                    helper2.put("ofoMenu", mV33Menu)
+                    helper.put("ofoCache", mV33Cache)
                 }
             }
         }

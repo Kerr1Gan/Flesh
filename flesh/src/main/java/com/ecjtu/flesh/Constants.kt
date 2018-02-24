@@ -30,6 +30,9 @@ object Constants {
     val WEIPAI_URL = "https://Kerr1Gan.github.io/flesh/WeiPai.json"
 
     @JvmField
+    val OFO_URL = "https://Kerr1Gan.github.io/flesh/ofo91.json"
+
+    @JvmField
     val SECRETE_KEY = "https://Kerr1Gan.github.io/flesh/key"
 
     @JvmField

@@ -18,6 +18,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.format.Formatter
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -62,6 +63,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
             }
 
             override fun onPageSelected(position: Int) {
+                Log.i("FragmentAdapter", "onPageSelected position $position")
                 when (position) {
                     0 -> {
                         mTabLayout.visibility = View.VISIBLE
@@ -314,10 +316,12 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
         val fragments = Array<Fragment?>(2, { int ->
             when (int) {
                 0 -> {
-                    MzituFragment().apply { setDelegate(this@MainActivityDelegate) }
+                    Log.i("FragmentAdapter", "new MzituFragment")
+                    MzituFragment()
                 }
                 1 -> {
-                    VideoTabFragment().apply { setDelegate(this@MainActivityDelegate) }
+                    Log.i("FragmentAdapter", "new VideoTabFragment")
+                    VideoTabFragment()
                 }
                 else -> {
                     null
@@ -329,11 +333,23 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
         }
 
         override fun getItem(position: Int): Fragment {
+            Log.i("FragmentAdapter", "getItem position $position id " + fragments[position]!!.toString())
             return fragments[position]!!
         }
 
         override fun getCount(): Int {
             return fragments.size
+        }
+
+        override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+            val ret = super.instantiateItem(container, position)
+            Log.i("FragmentAdapter", "instantiateItem position $position")
+            if (ret is BaseTabPagerFragment) {
+                ret.setDelegate(this@MainActivityDelegate)
+                ret.setTabLayout(getTabLayout())
+                fragments[position] = ret
+            }
+            return ret
         }
     }
 }
