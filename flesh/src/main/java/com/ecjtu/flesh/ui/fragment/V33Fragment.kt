@@ -5,7 +5,7 @@ import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
-import com.ecjtu.flesh.cache.impl.V33CacheHelper
+import com.ecjtu.flesh.cache.impl.VideoCacheHelper
 import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.flesh.ui.adapter.V33TabPagerAdapter
 import com.ecjtu.netcore.model.MenuModel
@@ -114,7 +114,7 @@ class V33Fragment : VideoListFragment() {
                     mLoadingDialog?.show()
                 }
                 thread {
-                    val helper = V33CacheHelper(context.filesDir.absolutePath)
+                    val helper = VideoCacheHelper(context.filesDir.absolutePath)
                     val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
                     mV33Menu = helper2.get("v33menu")
                     mV33Cache = helper.get("v33cache")
@@ -153,7 +153,7 @@ class V33Fragment : VideoListFragment() {
         super.onStop()
         thread {
             if (context != null) {
-                val helper = V33CacheHelper(context.filesDir.absolutePath)
+                val helper = VideoCacheHelper(context.filesDir.absolutePath)
                 val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
                 if (mV33Menu != null && mV33Cache != null) {
                     helper2.put("v33menu", mV33Menu)

@@ -13,9 +13,9 @@ import java.util.Map;
  * Created by Ethan_Xiang on 2018/1/26.
  */
 
-public class V33CacheHelper extends ParcelableFileCacheHelper {
+public class VideoCacheHelper extends ParcelableFileCacheHelper {
 
-    public V33CacheHelper(String path) {
+    public VideoCacheHelper(String path) {
         super(path);
     }
 
