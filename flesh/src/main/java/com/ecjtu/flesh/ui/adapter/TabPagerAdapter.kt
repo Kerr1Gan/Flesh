@@ -95,7 +95,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
             }
         }
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-        if (recyclerView != null) {
+        if (recyclerView != null && getScrollYPosition(recyclerView) >= 0) {
             editor.putInt(KEY_LAST_POSITION + key,
                     getScrollYPosition(recyclerView)).
                     putInt(KEY_LAST_POSITION_OFFSET + key, getScrollYOffset(recyclerView))
@@ -107,7 +107,6 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         for (entry in mViewStub) {
             val recyclerView = entry.value.recyclerView
-
             val helper = PageListCacheHelper(context.filesDir.absolutePath)
             if (entry.value.getPageModel() != null) {
                 val pageModel = entry.value.getPageModel()
@@ -134,7 +133,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
 //                    }
 //                }
                 helper.put(KEY_CARD_CACHE + entry.key, pageModel)
-                if (recyclerView != null) {
+                if (recyclerView != null && getScrollYPosition(recyclerView) >= 0) {
                     editor.putInt(KEY_LAST_POSITION + entry.key,
                             getScrollYPosition(recyclerView)).
                             putInt(KEY_LAST_POSITION_OFFSET + entry.key, getScrollYOffset(recyclerView))
@@ -147,7 +146,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
         val helper = MenuListCacheHelper(context.filesDir.absolutePath)
         helper.put(CACHE_MENU_LIST + "_" + this::class.java.toString(), menu)
 
-        editor.putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isExpand)
+        editor.putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED + "_" + this::class.java.simpleName, isExpand)
         if (tabIndex >= 0) {
             Log.i("tttttttttt", "tabPager " + tabIndex)
             editor.putInt(KEY_LAST_TAB_ITEM + "_" + this::class.java.simpleName, tabIndex)

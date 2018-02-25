@@ -14,7 +14,7 @@ import com.ecjtu.netcore.model.MenuModel
 /**
  * Created by Ethan_Xiang on 2018/2/22.
  */
-class V33TabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTabPagerAdapter(menu, viewPager) {
+open class V33TabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTabPagerAdapter(menu, viewPager) {
     private val KEY_LAST_POSITION = "v33_last_position_"
     private val KEY_LAST_POSITION_OFFSET = "v33_last_position_offset_"
 

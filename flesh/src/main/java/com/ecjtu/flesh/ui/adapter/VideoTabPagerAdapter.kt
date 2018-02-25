@@ -90,26 +90,31 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
 //        editor.apply()
 //    }
 
-//    override fun onStop(context: Context, tabIndex: Int, isExpand: Boolean) {
-//        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-//        for (entry in mViewStub) {
-//            val recyclerView = entry.value.recyclerView
-//            if (recyclerView != null) {
-//                editor.putInt(getLastPositionKey() + entry.key,
-//                        getScrollYPosition(recyclerView)).
-//                        putInt(getLastPositionOffsetKey() + entry.key, getScrollYOffset(recyclerView))
-//                if (recyclerView.adapter is VideoCardListAdapter) {
-//                    (recyclerView.adapter as VideoCardListAdapter).onStop()
-//                }
-//            }
-//        }
-//        if (tabIndex >= 0) {
-//            Log.i("tttttttttt", "videoTabPager " + tabIndex)
-//            editor.putInt(KEY_LAST_TAB_ITEM + "_" + this::class.java.simpleName, tabIndex)
-//        }
-//        editor.putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED + this::class.java.simpleName, isExpand)
-//        editor.apply()
-//    }
+    override fun onStop(context: Context, tabIndex: Int, isExpand: Boolean) {
+        super.onStop(context, tabIndex, isExpand)
+        val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        val stub = getViewStub()
+        if (stub != null) {
+            for (entry in stub) {
+                val recyclerView = entry.value.recyclerView
+                if (recyclerView != null) {
+                    if (getScrollYPosition(recyclerView) >= 0) {
+                        editor.putInt(getLastPositionKey() + entry.key,
+                                getScrollYPosition(recyclerView)).
+                                putInt(getLastPositionOffsetKey() + entry.key, getScrollYOffset(recyclerView))
+                    }
+                    if (recyclerView.adapter is VideoCardListAdapter) {
+                        (recyclerView.adapter as VideoCardListAdapter).onStop()
+                    }
+                }
+            }
+        }
+        if (tabIndex >= 0) {
+            editor.putInt(KEY_LAST_TAB_ITEM + "_" + this::class.java.simpleName, tabIndex)
+        }
+        editor.putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED + "_" + this::class.java.simpleName, isExpand)
+        editor.apply()
+    }
 
     override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
         container?.removeView(`object` as View)
@@ -120,7 +125,7 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
 
     open fun onDestroyItem(context: Context, key: String, recyclerView: RecyclerView?) {
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-        if (recyclerView != null) {
+        if (recyclerView != null && getScrollYPosition(recyclerView) >= 0) {
             editor.putInt(getLastPositionKey() + key, getScrollYPosition(recyclerView)).
                     putInt(getLastPositionOffsetKey() + key, getScrollYOffset(recyclerView))
         }

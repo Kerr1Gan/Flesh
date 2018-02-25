@@ -7,7 +7,7 @@ import android.view.View
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.cache.impl.VideoCacheHelper
 import com.ecjtu.flesh.model.models.VideoModel
-import com.ecjtu.flesh.ui.adapter.V33TabPagerAdapter
+import com.ecjtu.flesh.ui.adapter.OfOTabPagerAdapter
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
@@ -76,13 +76,13 @@ class OfO91Fragment : VideoListFragment() {
                             }
                             activity?.runOnUiThread {
                                 if (getViewPager() != null && getViewPager()?.adapter == null) {
-                                    getViewPager()?.adapter = V33TabPagerAdapter(menuModel, getViewPager()!!)
-                                    (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(map)
-                                    (getViewPager()?.adapter as V33TabPagerAdapter?)?.notifyDataSetChanged(true)
+                                    getViewPager()?.adapter = OfOTabPagerAdapter(menuModel, getViewPager()!!)
+                                    (getViewPager()?.adapter as OfOTabPagerAdapter).setMenuChildList(map)
+                                    (getViewPager()?.adapter as OfOTabPagerAdapter?)?.notifyDataSetChanged(true)
                                 } else {
-                                    (getViewPager()?.adapter as V33TabPagerAdapter).menu = menuModel
-                                    (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(map)
-                                    (getViewPager()?.adapter as V33TabPagerAdapter?)?.notifyDataSetChanged(false)
+                                    (getViewPager()?.adapter as OfOTabPagerAdapter).menu = menuModel
+                                    (getViewPager()?.adapter as OfOTabPagerAdapter).setMenuChildList(map)
+                                    (getViewPager()?.adapter as OfOTabPagerAdapter?)?.notifyDataSetChanged(false)
                                 }
                                 mV33Menu = menuModel
                                 mV33Cache = map
@@ -126,13 +126,13 @@ class OfO91Fragment : VideoListFragment() {
                         activity?.runOnUiThread {
                             if (localMenu != null && localCache != null) {
                                 if (getViewPager() != null && getViewPager()?.adapter == null) {
-                                    getViewPager()?.adapter = V33TabPagerAdapter(localMenu, getViewPager()!!)
-                                    (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<VideoModel>>)
-                                    (getViewPager()?.adapter as V33TabPagerAdapter?)?.notifyDataSetChanged(true)
+                                    getViewPager()?.adapter = OfOTabPagerAdapter(localMenu, getViewPager()!!)
+                                    (getViewPager()?.adapter as OfOTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<VideoModel>>)
+                                    (getViewPager()?.adapter as OfOTabPagerAdapter?)?.notifyDataSetChanged(true)
                                 } else {
-                                    (getViewPager()?.adapter as V33TabPagerAdapter).menu = localMenu
-                                    (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<VideoModel>>)
-                                    (getViewPager()?.adapter as V33TabPagerAdapter?)?.notifyDataSetChanged(false)
+                                    (getViewPager()?.adapter as OfOTabPagerAdapter).menu = localMenu
+                                    (getViewPager()?.adapter as OfOTabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<VideoModel>>)
+                                    (getViewPager()?.adapter as OfOTabPagerAdapter?)?.notifyDataSetChanged(false)
                                 }
                                 if (userVisibleHint) {
                                     attachTabLayout()

@@ -106,4 +106,13 @@ class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
     override fun getViewStub(): HashMap<String, out VideoTabPagerAdapter.VH>? {
         return mViewStub
     }
+
+    override fun getViewStub(position: Int): View? {
+        return mViewStub.get(menu[position].title)?.recyclerView
+    }
+
+    override fun getListSize(position: Int): Int {
+        return mViewStub.get(menu[position].title)?.getSize() ?: 0
+    }
+
 }
