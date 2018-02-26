@@ -228,7 +228,7 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
     }
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val ijkVideoView = itemView.findViewById(R.id.ijk_video) as IjkVideoView
+        val ijkVideoView: IjkVideoView? = /*itemView.findViewById(R.id.ijk_video) as IjkVideoView?*/null
         val textView = itemView.findViewById(R.id.title) as TextView
         val heart = itemView.findViewById(R.id.heart) as ImageView
         val description = itemView.findViewById(R.id.description) as TextView
@@ -253,8 +253,8 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
 //                db.close()
 //            }
             heart.visibility = View.GONE
-            ijkVideoView.setMediaController(mediaController)
-            ijkVideoView.setOnInfoListener { mp, what, extra ->
+            ijkVideoView?.setMediaController(mediaController)
+            ijkVideoView?.setOnInfoListener { mp, what, extra ->
                 if (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
                 }
                 return@setOnInfoListener false

@@ -13,6 +13,7 @@ android {
 //        jackOptions{
 //            enabled true
 //        }
+        multiDexEnabled true
 
     }
     buildTypes {
@@ -53,5 +54,6 @@ dependencies {
     compile project(':ijkplayer-exo')
 
     compile 'com.ashokvarma.android:bottom-navigation-bar:2.0.4'
-//    compile 'com.google.android.gms:play-services-ads:11.8.0'
+    compile 'com.google.android.gms:play-services-ads:11.8.0'
+    compile 'com.android.support:multidex:1.0.0'
 }

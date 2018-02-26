@@ -37,7 +37,8 @@
         android:clickable="true"
         android:foreground="@drawable/item_background_material"
         app:cardCornerRadius="10dp"
-        app:cardElevation="20dp">
+        app:cardElevation="20dp"
+        android:visibility="gone">
 
 
         <LinearLayout
@@ -114,6 +115,17 @@
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/admob_hengfu">
+    </com.google.android.gms.ads.AdView>
 
 
 </LinearLayout>

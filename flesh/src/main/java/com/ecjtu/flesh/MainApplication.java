@@ -1,9 +1,9 @@
 package com.ecjtu.flesh;
 
 import android.app.ActivityManager;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
@@ -21,6 +21,7 @@ import com.ecjtu.flesh.db.table.impl.HistoryTableImpl;
 import com.ecjtu.flesh.db.table.impl.LikeTableImpl;
 import com.ecjtu.flesh.db.table.impl.NotificationTableImpl;
 import com.ecjtu.flesh.service.MainService;
+import com.google.android.gms.ads.MobileAds;
 import com.tencent.bugly.Bugly;
 
 import java.util.List;
@@ -29,7 +30,7 @@ import java.util.List;
  * Created by Ethan_Xiang on 2017/9/7.
  */
 
-public class MainApplication extends Application {
+public class MainApplication extends MultiDexApplication {
 
     @Override
     public void onCreate() {
@@ -73,7 +74,7 @@ public class MainApplication extends Application {
     private void initSDK() {
 //        CrashReport.initCrashReport(getApplicationContext(), "bea4125c41", true);
         Bugly.init(getApplicationContext(), getString(R.string.bugly), Boolean.parseBoolean(getString(R.string.bugly_isDebug)));
-
+        MobileAds.initialize(this,  getString(R.string.admob_app_id));
     }
 
     private void init() {

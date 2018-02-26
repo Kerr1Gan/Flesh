@@ -149,26 +149,26 @@ class MeiPaiCardListAdapter(pageModel: List<MeiPaiModel>, val recyclerView: Recy
             }
         }
         val videoUrl = v?.getTag(R.id.extra_tag_2) as String?
-        videoUrl?.let {
-            val videoView = v?.findViewById(R.id.ijk_video) as IjkVideoView
-            val thumb = v.findViewById(R.id.thumb) as ImageView?
-            (videoView.mediaController as SimpleMediaController?)?.updatePausePlay()
-            if (videoView.isPlaying) {
-                thumb?.visibility = View.INVISIBLE
-                return@let
-            }
-            mPlayViewHolder = v.getTag(R.id.extra_tag_3) as VH?
-            thumb?.visibility = View.INVISIBLE
-            if (isInSamePos && videoView.isInPlaybackState) {
-                videoView.start()
-                Log.i("VideoCardListAdapter", "start 1 video position " + mLastClickPosition)
-            } else {
-                videoView.setVideoPath(videoUrl)
-                videoView.start()
-                Log.i("VideoCardListAdapter", "start 2 video position " + mLastClickPosition)
-            }
-            (videoView.mediaController as SimpleMediaController?)?.updatePausePlay()
-        }
+//        videoUrl?.let {
+//            val videoView = v?.findViewById(R.id.ijk_video) as IjkVideoView
+//            val thumb = v.findViewById(R.id.thumb) as ImageView?
+//            (videoView.mediaController as SimpleMediaController?)?.updatePausePlay()
+//            if (videoView.isPlaying) {
+//                thumb?.visibility = View.INVISIBLE
+//                return@let
+//            }
+//            mPlayViewHolder = v.getTag(R.id.extra_tag_3) as VH?
+//            thumb?.visibility = View.INVISIBLE
+//            if (isInSamePos && videoView.isInPlaybackState) {
+//                videoView.start()
+//                Log.i("VideoCardListAdapter", "start 1 video position " + mLastClickPosition)
+//            } else {
+//                videoView.setVideoPath(videoUrl)
+//                videoView.start()
+//                Log.i("VideoCardListAdapter", "start 2 video position " + mLastClickPosition)
+//            }
+//            (videoView.mediaController as SimpleMediaController?)?.updatePausePlay()
+//        }
     }
 
     override fun setHeight(position: Int, height: Int) {

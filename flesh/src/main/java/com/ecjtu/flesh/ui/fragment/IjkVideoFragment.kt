@@ -13,6 +13,9 @@ import android.util.Log
 import android.view.*
 import com.ecjtu.componentes.activity.BaseActionActivity
 import com.ecjtu.flesh.R
+import com.ecjtu.flesh.util.admob.AdmobCallbackV2
+import com.ecjtu.flesh.util.admob.AdmobManager
+import com.google.android.gms.ads.reward.RewardItem
 import tv.danmaku.ijk.media.exo.video.AndroidMediaController
 import tv.danmaku.ijk.media.exo.video.IjkVideoView
 import tv.danmaku.ijk.media.exo.video.SimpleMediaController
@@ -42,13 +45,47 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
 
     private var mProgressBar: ContentLoadingProgressBar? = null
 
+    private var mAdMob: AdmobManager? = null
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_ijk_video_player, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        init(view)
+        mAdMob = AdmobManager(context)
+        mAdMob?.loadRewardAd(getString(R.string.admob_ad_02), object : AdmobCallbackV2 {
+
+            var isReward = false
+            override fun onLoaded() {
+                if (mAdMob?.getLatestRewardAd()?.isLoaded == true) {
+                    mAdMob?.getLatestRewardAd()?.show()
+                }
+            }
+
+            override fun onError() {
+                Log.i("IjkVideoFragment", "AdMob onError")
+                init(view)
+            }
+
+            override fun onOpened() {
+            }
+
+            override fun onClosed() {
+                Log.i("IjkVideoFragment", "AdMob onClosed")
+                if (isReward) {
+                    init(view)
+                    isReward = false
+                } else {
+                    this@IjkVideoFragment.activity?.finish()
+                }
+            }
+
+            override fun onReward(item: RewardItem?) {
+                Log.i("IjkVideoFragment", "AdMob onReward")
+                isReward = true
+            }
+        })
     }
 
     private fun init(view: View?) {
@@ -119,6 +156,7 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
             mVideoView?.resume()
         }
         mOrientationListener?.enable()
+        mAdMob?.onResume()
     }
 
     override fun onStop() {
@@ -130,9 +168,15 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
         mOrientationListener?.disable()
     }
 
+    override fun onPause() {
+        super.onPause()
+        mAdMob?.onPause()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         mVideoView?.release(true)
+        mAdMob?.onDestroy()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
