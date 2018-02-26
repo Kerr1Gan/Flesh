@@ -109,7 +109,7 @@ abstract class BaseActionActivity : AppCompatActivity(), WeakHandler.IHandleMess
             val realSize = Point()
             display.getSize(size)
             display.getRealSize(realSize)
-            return realSize.y !== size.y
+            return realSize.y != size.y
         } else {
             val menu = ViewConfiguration.get(activity).hasPermanentMenuKey()
             val back = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)

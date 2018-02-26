@@ -7,7 +7,9 @@ import android.graphics.Point
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.ContentLoadingProgressBar
 import android.text.TextUtils
+import android.util.Log
 import android.view.*
 import com.ecjtu.componentes.activity.BaseActionActivity
 import com.ecjtu.flesh.R
@@ -38,6 +40,8 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
 
     private var mIgnoreOrientation: Boolean = false
 
+    private var mProgressBar: ContentLoadingProgressBar? = null
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_ijk_video_player, container, false)
     }
@@ -59,8 +63,25 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
 //                mVideoView.setVisibility(View.VISIBLE)
 //                mLoading.setVisibility(View.GONE)
             }
+            Log.i("IjkVideoFragment", "onInfoListener what = $what extra = $extra")
             false
         }
+
+        mVideoView?.setOnPreparedListener { mp: IMediaPlayer? ->
+            Log.i("IjkVideoFragment", "onPrepared")
+            mProgressBar?.hide()
+        }
+
+        mVideoView?.setOnErrorListener { mp, what, extra ->
+            Log.i("IjkVideoFragment", "onErrorListener what = $what extra = $extra")
+            mProgressBar?.hide()
+            false
+        }
+
+        mProgressBar = view.findViewById(R.id.progress_bar) as ContentLoadingProgressBar?
+
+        mProgressBar?.show()
+
         var arg = arguments
         if (arg != null) {
             val uri = arg.getString(EXTRA_URI_PATH, "")
@@ -107,6 +128,11 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
             mVideoView?.pause()
         }
         mOrientationListener?.disable()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mVideoView?.release(true)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -198,7 +224,7 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
             val realSize = Point()
             display.getSize(size)
             display.getRealSize(realSize)
-            return realSize.y !== size.y
+            return realSize.y != size.y
         } else {
             val menu = ViewConfiguration.get(activity).hasPermanentMenuKey()
             val back = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)

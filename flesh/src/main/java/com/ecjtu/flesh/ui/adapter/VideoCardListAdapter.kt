@@ -28,7 +28,6 @@ import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.flesh.ui.fragment.IjkVideoFragment
 import tv.danmaku.ijk.media.exo.video.AndroidMediaController
 import tv.danmaku.ijk.media.exo.video.IjkVideoView
-import tv.danmaku.ijk.media.exo.video.SimpleMediaController
 import tv.danmaku.ijk.media.player.IMediaPlayer
 
 /**
@@ -158,35 +157,42 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
     override fun onClick(v: View?) {
         val position = v?.getTag(R.id.extra_tag) as Int?
         val isInSamePos = mLastClickPosition == position
-        position?.let {
-            val lastPos = mLastClickPosition
-            mLastClickPosition = position
-            if (!isInSamePos) {
-                mPlayViewHolder?.ijkVideoView?.pause()
-                Log.i("VideoCardListAdapter", "pause 5 video position " + lastPos)
-            }
-        }
+//        position?.let {
+//            val lastPos = mLastClickPosition
+//            mLastClickPosition = position
+//            if (!isInSamePos) {
+//                mPlayViewHolder?.ijkVideoView?.pause()
+//                Log.i("VideoCardListAdapter", "pause 5 video position " + lastPos)
+//            }
+//        }
         val videoUrl = v?.getTag(R.id.extra_tag_2) as String?
-        videoUrl?.let {
-            val videoView = v?.findViewById(R.id.ijk_video) as IjkVideoView
-            val thumb = v.findViewById(R.id.thumb) as ImageView?
-            (videoView.mediaController as SimpleMediaController?)?.updatePausePlay()
-            if (videoView.isPlaying) {
-                thumb?.visibility = View.INVISIBLE
-                return@let
-            }
-            mPlayViewHolder = v.getTag(R.id.extra_tag_3) as VH?
-            thumb?.visibility = View.INVISIBLE
-            if (isInSamePos && videoView.isInPlaybackState) {
-                videoView.start()
-                Log.i("VideoCardListAdapter", "start 1 video position " + mLastClickPosition)
-            } else {
-                videoView.setVideoPath(videoUrl)
-                videoView.start()
-                Log.i("VideoCardListAdapter", "start 2 video position " + mLastClickPosition)
-            }
-            (videoView.mediaController as SimpleMediaController?)?.updatePausePlay()
+        val context = v?.context
+        if (videoUrl != null && context != null) {
+            val intent = RotateNoCreateActivity.newInstance(context, IjkVideoFragment::class.java
+                    , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, videoUrl.toString()) })
+            context.startActivity(intent)
         }
+
+//        videoUrl?.let {
+//            val videoView = v?.findViewById(R.id.ijk_video) as IjkVideoView
+//            val thumb = v.findViewById(R.id.thumb) as ImageView?
+//            (videoView.mediaController as SimpleMediaController?)?.updatePausePlay()
+//            if (videoView.isPlaying) {
+//                thumb?.visibility = View.INVISIBLE
+//                return@let
+//            }
+//            mPlayViewHolder = v.getTag(R.id.extra_tag_3) as VH?
+//            thumb?.visibility = View.INVISIBLE
+//            if (isInSamePos && videoView.isInPlaybackState) {
+//                videoView.start()
+//                Log.i("VideoCardListAdapter", "start 1 video position " + mLastClickPosition)
+//            } else {
+//                videoView.setVideoPath(videoUrl)
+//                videoView.start()
+//                Log.i("VideoCardListAdapter", "start 2 video position " + mLastClickPosition)
+//            }
+//            (videoView.mediaController as SimpleMediaController?)?.updatePausePlay()
+//        }
     }
 
     open fun onRelease() {
