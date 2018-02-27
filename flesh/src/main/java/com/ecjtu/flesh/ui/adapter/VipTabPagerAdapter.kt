@@ -11,8 +11,11 @@ import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.Bucket
 import com.amazonaws.services.s3.model.ObjectListing
 import com.ecjtu.flesh.R
+import com.ecjtu.flesh.db.DatabaseManager
+import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
 import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.netcore.model.MenuModel
+import com.ecjtu.netcore.model.PageModel
 import kotlin.concurrent.thread
 
 /**
@@ -67,6 +70,24 @@ class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
                         v33.imageUrl = ""
                         v33List.add(v33)
                     }
+
+                    val impl = ClassPageTableImpl()
+                    val db = DatabaseManager.getInstance(context)?.getDatabase()
+                    val itemListModel = arrayListOf<PageModel.ItemModel>()
+                    for (videoModel in v33List) {
+                        val model = PageModel.ItemModel(videoModel.videoUrl, videoModel.title, videoModel.imageUrl, 1)
+                        itemListModel.add(model)
+                    }
+                    val pageModel = PageModel(itemListModel)
+                    pageModel.nextPage = ""
+                    db?.let {
+                        db.beginTransaction()
+                        impl.addPage(db, pageModel)
+                        db.setTransactionSuccessful()
+                        db.endTransaction()
+                    }
+                    db?.close()
+
                     var index = 0
                     for (model in this@VipTabPagerAdapter.menu) {
                         if (model.title.equals(innerMenu.title)) {

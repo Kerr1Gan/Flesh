@@ -6,9 +6,12 @@ import android.util.Log
 import android.view.View
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.cache.impl.VideoCacheHelper
+import com.ecjtu.flesh.db.DatabaseManager
+import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
 import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.flesh.ui.adapter.OfOTabPagerAdapter
 import com.ecjtu.netcore.model.MenuModel
+import com.ecjtu.netcore.model.PageModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
 import org.json.JSONArray
@@ -64,6 +67,25 @@ class OfO91Fragment : VideoListFragment() {
                                     map.put(title, modelList)
                                     val model = MenuModel(title, "")
                                     menuModel.add(model)
+
+                                    if (context != null) {
+                                        val impl = ClassPageTableImpl()
+                                        val db = DatabaseManager.getInstance(context)?.getDatabase()
+                                        val itemListModel = arrayListOf<PageModel.ItemModel>()
+                                        for (videoModel in modelList) {
+                                            val model = PageModel.ItemModel(videoModel.videoUrl, videoModel.title, videoModel.imageUrl, 1)
+                                            itemListModel.add(model)
+                                        }
+                                        val pageModel = PageModel(itemListModel)
+                                        pageModel.nextPage = ""
+                                        db?.let {
+                                            db.beginTransaction()
+                                            impl.addPage(db, pageModel)
+                                            db.setTransactionSuccessful()
+                                            db.endTransaction()
+                                        }
+                                        db?.close()
+                                    }
                                 }
                             } catch (ex: Exception) {
                                 ex.printStackTrace()

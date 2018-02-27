@@ -44,10 +44,10 @@ class HistoryTableImpl : BaseTableImpl() {
 
     fun getAllHistory(sqLiteDatabase: SQLiteDatabase): List<PageModel.ItemModel> {
         val ret = ArrayList<PageModel.ItemModel>()
-        val cursor = sqLiteDatabase.rawQuery("SELECT tb2.href,tb2.description,tb2.image_url FROM $TABLE_NAME tb1,${ClassPageListTableImpl.TABLE_NAME} tb2 where tb1.href_class_page_list = tb2.href", arrayOf())
+        val cursor = sqLiteDatabase.rawQuery("SELECT tb2.href,tb2.description,tb2.image_url,tb2.type FROM $TABLE_NAME tb1,${ClassPageListTableImpl.TABLE_NAME} tb2 where tb1.href_class_page_list = tb2.href", arrayOf())
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast) {
-                val model = PageModel.ItemModel(cursor.getString(0), cursor.getString(1), cursor.getString(2))
+                val model = PageModel.ItemModel(cursor.getString(0), cursor.getString(1), cursor.getString(2),cursor.getInt(3))
                 ret.add(model)
                 cursor.moveToNext()
             }

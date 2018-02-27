@@ -1,5 +1,6 @@
 package com.ecjtu.flesh.ui.adapter
 
+import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -7,6 +8,8 @@ import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.Bucket
 import com.ecjtu.componentes.activity.RotateNoCreateActivity
 import com.ecjtu.flesh.R
+import com.ecjtu.flesh.db.DatabaseManager
+import com.ecjtu.flesh.db.table.impl.HistoryTableImpl
 import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.flesh.ui.fragment.IjkVideoFragment
 import java.util.*
@@ -23,12 +26,16 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
             endDate.add(Calendar.HOUR, 1)
             val url = s3Client?.generatePresignedUrl(bucket.name, pageModel.get(position!!).title, endDate.time)
             v?.post {
-//                val intent = Intent("android.intent.action.VIEW")
+                //                val intent = Intent("android.intent.action.VIEW")
 //                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 //                intent.putExtra("oneshot", 0)
 //                intent.putExtra("configchange", 0)
 //                val uri = Uri.parse(url.toString())
 //                intent.setDataAndType(uri, "video/*")
+                val db = DatabaseManager.getInstance(v.context)?.getDatabase() as SQLiteDatabase
+                val impl = HistoryTableImpl()
+                impl.addHistory(db, url.toString())
+                db.close()
                 val intent = RotateNoCreateActivity.newInstance(v.context, IjkVideoFragment::class.java
                         , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, url.toString()) })
                 v.context.startActivity(intent)

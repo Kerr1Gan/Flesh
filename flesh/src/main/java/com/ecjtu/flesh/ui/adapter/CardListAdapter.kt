@@ -37,7 +37,7 @@ import java.net.HttpURLConnection
 /**
  * Created by Ethan_Xiang on 2017/9/8.
  */
-open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<CardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener ,IChangeTab{
+open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<CardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener, IChangeTab {
 
     private var mDatabase: SQLiteDatabase? = null
 
@@ -220,7 +220,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
                     db.close()
                 }
             }
-            mLastClickPosition = position
+            setLastClickPosition(position)
         }
     }
 
@@ -234,10 +234,10 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
     }
 
     open fun onResume() {
-        if (mLastClickPosition >= 0) {
-            notifyItemChanged(mLastClickPosition)
+        if (getLastClickPosition() >= 0) {
+            notifyItemChanged(getLastClickPosition())
         }
-        mLastClickPosition = -1
+        setLastClickPosition(-1)
     }
 
     open fun onStop() {
@@ -248,6 +248,14 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
     }
 
     override fun onUnSelectTab() {
+    }
+
+    open fun getLastClickPosition(): Int {
+        return mLastClickPosition
+    }
+
+    open fun setLastClickPosition(position: Int) {
+        mLastClickPosition = position
     }
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {

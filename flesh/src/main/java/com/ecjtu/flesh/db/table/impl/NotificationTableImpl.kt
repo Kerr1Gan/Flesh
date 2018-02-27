@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import com.ecjtu.flesh.model.ModelManager
 import com.ecjtu.flesh.model.models.NotificationModel
-import java.lang.Exception
 
 /**
  * Created by Ethan_Xiang on 2017/9/22.
@@ -37,8 +36,12 @@ class NotificationTableImpl : BaseTableImpl() {
     }
 
     override fun updateTable(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (newVersion == 9) {
-            sqLiteDatabase.execSQL("alter table tb_notification add type INTEGER DEFAULT (0)")
+        if (newVersion >= 9) {
+            try {
+                sqLiteDatabase.execSQL("alter table tb_notification add type INTEGER DEFAULT (0)")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

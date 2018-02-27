@@ -3,7 +3,6 @@ package com.ecjtu.flesh.db.table.impl
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import com.ecjtu.netcore.model.PageDetailModel
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,40 +33,12 @@ class DetailPageTableImpl : BaseTableImpl() {
 
     override fun updateTable(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
 //        createTable(sqLiteDatabase)
-        if (newVersion == 2) {
-            sqLiteDatabase.execSQL("PRAGMA foreign_keys = 0;\n" +
-                    "\n" +
-                    "CREATE TABLE sqlitestudio_temp_table AS SELECT *\n" +
-                    "                                          FROM tb_detail_page;\n" +
-                    "\n" +
-                    "DROP TABLE tb_detail_page;\n" +
-                    "\n" +
-                    "CREATE TABLE tb_detail_page (\n" +
-                    "    _id      INTEGER PRIMARY KEY ASC AUTOINCREMENT,\n" +
-                    "    base_url STRING  UNIQUE,\n" +
-                    "    max_len  INTEGER,\n" +
-                    "    img_url  STRING,\n" +
-                    "    time     STRING,\n" +
-                    "    type     INTEGER,DEFAULT (0) \n" +
-                    ");\n" +
-                    "\n" +
-                    "INSERT INTO tb_detail_page (\n" +
-                    "                               _id,\n" +
-                    "                               base_url,\n" +
-                    "                               max_len,\n" +
-                    "                               img_url,\n" +
-                    "                               time\n" +
-                    "                           )\n" +
-                    "                           SELECT _id,\n" +
-                    "                                  base_url,\n" +
-                    "                                  max_len,\n" +
-                    "                                  img_url,\n" +
-                    "                                  time\n" +
-                    "                             FROM sqlitestudio_temp_table;\n" +
-                    "\n" +
-                    "DROP TABLE sqlitestudio_temp_table;\n" +
-                    "\n" +
-                    "PRAGMA foreign_keys = 1;")
+        if (newVersion >= 10) {
+            try {
+                sqLiteDatabase.execSQL("alter table tb_detail_page add type INTEGER DEFAULT (0)")
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
     }
 
@@ -78,7 +49,7 @@ class DetailPageTableImpl : BaseTableImpl() {
         value.put("max_len", pageDetailModel.maxLen)
         value.put("img_url", pageDetailModel.imgUrl)
         value.put("time", dateFormat.format(Date()))
-        value.put("type",pageDetailModel.type)
+        value.put("type", pageDetailModel.type)
         try {
             var id = sqLiteDatabase.update(TABLE_NAME, value, "base_url=?", arrayOf(pageDetailModel.baseUrl)) * 1L
             if (id <= 0) {

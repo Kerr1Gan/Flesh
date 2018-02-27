@@ -40,7 +40,7 @@ class DataBaseHelper : SQLiteOpenHelper {
         Log.e(TAG, "onUpgrade db table size " + mTables?.size)
         if (mTables != null) {
             for (table in mTables!!) {
-                Log.e(TAG, "upgrade db " + table::class.java)
+                Log.e(TAG, "upgrade db " + table::class.java + " oldVersion=$oldVersion newVersion=$newVersion")
                 table.updateTable(db!!, oldVersion, newVersion)
             }
         }

@@ -24,6 +24,9 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.ecjtu.componentes.activity.RotateNoCreateActivity
 import com.ecjtu.flesh.R
+import com.ecjtu.flesh.db.DatabaseManager
+import com.ecjtu.flesh.db.table.impl.HistoryTableImpl
+import com.ecjtu.flesh.db.table.impl.LikeTableImpl
 import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.flesh.ui.fragment.IjkVideoFragment
 import tv.danmaku.ijk.media.exo.video.AndroidMediaController
@@ -60,15 +63,28 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
                 }
             }
         }
+
+        val context = holder?.itemView?.context
+        val model = pageModel.get(position)
+        holder?.textView?.text = model.title
+
+        //db
+        if (mDatabase == null) {
+            val manager = DatabaseManager.getInstance(context)
+            mDatabase = manager?.getDatabase()
+        }
+        val href = pageModel[position].videoUrl
+        if (mDatabase != null && mDatabase?.isOpen == true) {
+            val impl = LikeTableImpl()
+            holder?.heart?.isActivated = impl.isLike(mDatabase!!, href)
+        }
+
         if (!mIsInForeground) {
             mPlayViewHolder?.ijkVideoView?.pause()
             holder?.ijkVideoView?.pause()
             holder?.thumb?.visibility = View.VISIBLE
             Log.i("VideoCardListAdapter", "pause video 2 position " + mLastClickPosition)
         }
-        val context = holder?.itemView?.context
-        val model = pageModel.get(position)
-        holder?.textView?.text = model.title
 
         if (mLastClickPosition != position) {
             holder?.ijkVideoView?.pause()
@@ -83,6 +99,9 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
         holder?.itemView?.setTag(R.id.extra_tag_3, holder)
         holder?.itemView?.setOnClickListener(this)
         holder?.itemView?.setTag(R.id.extra_tag, position)
+
+        holder?.heart?.setTag(R.id.extra_tag, videoUrl)
+
 
         val imageView = holder?.thumb
         val options = RequestOptions()
@@ -168,6 +187,10 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
         val videoUrl = v?.getTag(R.id.extra_tag_2) as String?
         val context = v?.context
         if (videoUrl != null && context != null) {
+            val db = DatabaseManager.getInstance(v.context)?.getDatabase() as SQLiteDatabase
+            val impl = HistoryTableImpl()
+            impl.addHistory(db, videoUrl)
+            db.close()
             val intent = RotateNoCreateActivity.newInstance(context, IjkVideoFragment::class.java
                     , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, videoUrl.toString()) })
             context.startActivity(intent)
@@ -236,23 +259,22 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
         val mediaController = AndroidMediaController(itemView.context)
 
         init {
-//            heart.setOnClickListener { v: View? ->
-//                val manager = DatabaseManager.getInstance(v?.context)
-//                val db = manager?.getDatabase() as SQLiteDatabase
-//                val url = v?.getTag(R.id.extra_tag) as PageModel.ItemModel?
-//                if (url != null) {
-//                    val impl = LikeTableImpl()
-//                    if (impl.isLike(db, url.href)) {
-//                        impl.deleteLike(db, url.href)
-//                        v?.isActivated = false
-//                    } else {
-//                        impl.addLike(db, url.href)
-//                        v?.isActivated = true
-//                    }
-//                }
-//                db.close()
-//            }
-            heart.visibility = View.GONE
+            heart.setOnClickListener { v: View? ->
+                val manager = DatabaseManager.getInstance(v?.context)
+                val db = manager?.getDatabase() as SQLiteDatabase
+                val url = v?.getTag(R.id.extra_tag) as String?
+                if (url != null) {
+                    val impl = LikeTableImpl()
+                    if (impl.isLike(db, url)) {
+                        impl.deleteLike(db, url)
+                        v?.isActivated = false
+                    } else {
+                        impl.addLike(db, url)
+                        v?.isActivated = true
+                    }
+                }
+                db.close()
+            }
             ijkVideoView?.setMediaController(mediaController)
             ijkVideoView?.setOnInfoListener { mp, what, extra ->
                 if (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {

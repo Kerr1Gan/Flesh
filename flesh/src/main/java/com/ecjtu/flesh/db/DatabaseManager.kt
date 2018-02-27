@@ -52,7 +52,7 @@ class DatabaseManager(context: Context? = null) {
 
     companion object {
         private val sTableList = ArrayList<BaseTableImpl>()
-        const val DATABASE_VERSION = 9
+        const val DATABASE_VERSION = 11
 
         @JvmStatic
         fun getInstance(context: Context? = null): DatabaseManager? {

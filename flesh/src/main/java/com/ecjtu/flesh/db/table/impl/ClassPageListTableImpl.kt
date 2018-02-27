@@ -34,7 +34,13 @@ class ClassPageListTableImpl : BaseTableImpl() {
     }
 
     override fun updateTable(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-//        createTable(sqLiteDatabase)
+        if (newVersion >= 11) {
+            try {
+                sqLiteDatabase.execSQL("alter table tb_class_page_list add type INTEGER DEFAULT (0)")
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
     }
 
     fun addPageList(sqLiteDatabase: SQLiteDatabase, pageModel: PageModel) {
@@ -47,6 +53,7 @@ class ClassPageListTableImpl : BaseTableImpl() {
             value.put("image_url", item.imgUrl)
             value.put("id_class_page", pageModel.id)
             value.put("[index]", index++)
+            value.put("type", item.type)
             try {
                 var id = sqLiteDatabase.update(TABLE_NAME, value, "href=?", arrayOf(item.href)) * 1L
                 if (id <= 0) {

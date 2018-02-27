@@ -36,7 +36,7 @@ public class PageSoup extends MenuSoup {
                 String href = item.attr("href");
                 String des = item.attr("title");
                 String imgUrl = item.childNode(0).attr("data-original");
-                PageModel.ItemModel model = new PageModel.ItemModel(href, des, imgUrl);
+                PageModel.ItemModel model = new PageModel.ItemModel(href, des, imgUrl, 0);
                 value.add(model);
             }
 
@@ -61,7 +61,7 @@ public class PageSoup extends MenuSoup {
                 Element element = localChild.getElementsByTag("img").get(0);
                 String url = element.attr("src");
                 String des = element.attr("alt");
-                PageModel.ItemModel model = new PageModel.ItemModel(url.substring(url.lastIndexOf("/") + 1), des, url);
+                PageModel.ItemModel model = new PageModel.ItemModel(url.substring(url.lastIndexOf("/") + 1), des, url, 0);
                 value.add(model);
             }
 

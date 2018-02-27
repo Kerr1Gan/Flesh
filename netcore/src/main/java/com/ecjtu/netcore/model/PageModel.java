@@ -49,11 +49,13 @@ public class PageModel {
         String description;
         String imgUrl;
         int height;
+        int type; // 0 is image , 1 is video
 
-        public ItemModel(String href, String description, String imgUrl) {
+        public ItemModel(String href, String description, String imgUrl,int type) {
             this.href = href;
             this.description = description;
             this.imgUrl = imgUrl;
+            this.type = type;
         }
 
         public String getHref() {
@@ -94,6 +96,14 @@ public class PageModel {
 
         public int getHeight(){
             return this.height;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public void setType(int type) {
+            this.type = type;
         }
 
         @Override

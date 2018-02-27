@@ -89,6 +89,9 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
     }
 
     private fun init(view: View?) {
+        if (context == null) {
+            return
+        }
         if (mMediaController == null)
             mMediaController = AndroidMediaController(context)
         mMediaController?.setMediaPlayerCallback(mCallback)

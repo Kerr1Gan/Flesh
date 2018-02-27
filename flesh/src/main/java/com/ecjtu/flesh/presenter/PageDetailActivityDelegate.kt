@@ -37,11 +37,11 @@ class PageDetailActivityDelegate(owner: PageDetailActivity, val url: String) : D
                 val ret = SoupFactory.parseHtml(PageDetailSoup::class.java, response, url)
                 val model = ret.get(PageDetailSoup::class.java.simpleName)
                 if (model != null) {
-                    val local = model as PageDetailModel
+                    val localModel = model as PageDetailModel
                     owner.runOnUiThread {
                         if (mPageModel == null) {
-                            mPageModel = local
-                            mRecyclerView.adapter = PageDetailAdapter(local)
+                            mPageModel = localModel
+                            mRecyclerView.adapter = PageDetailAdapter(localModel)
                         } else {
                             mPageModel = model
                             (mRecyclerView.adapter as PageDetailAdapter).pageModel = model
@@ -51,7 +51,7 @@ class PageDetailActivityDelegate(owner: PageDetailActivity, val url: String) : D
                     val db = DatabaseManager.getInstance(owner)?.getDatabase() as SQLiteDatabase
                     val impl = DetailPageTableImpl()
                     //todo 获取到高度缓存加入数据库
-                    impl.addDetailPage(db,local)
+                    impl.addDetailPage(db,localModel)
                     db.close()
                 }
             }
