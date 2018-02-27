@@ -11,6 +11,7 @@ import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
 import com.ecjtu.flesh.db.table.impl.HistoryTableImpl
+import com.ecjtu.flesh.db.table.impl.LikeTableImpl
 import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.flesh.ui.fragment.IjkVideoFragment
 import com.ecjtu.netcore.model.PageModel
@@ -21,6 +22,19 @@ import kotlin.concurrent.thread
  * Created by Ethan_Xiang on 2018/2/22.
  */
 class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView, private val s3Client: AmazonS3Client, private val bucket: Bucket) : VideoCardListAdapter(pageModel, recyclerView) {
+
+    override fun onBindViewHolder(holder: VH?, position: Int) {
+        super.onBindViewHolder(holder, position)
+        val url = bucket.name + pageModel.get(position).title
+        holder?.heart?.setTag(R.id.extra_tag_2, url)
+        //db
+        val href = url
+        if (getDatabase() != null && getDatabase()?.isOpen == true) {
+            val impl = LikeTableImpl()
+            holder?.heart?.isActivated = impl.isLike(getDatabase()!!, href)
+        }
+    }
+
     override fun onClick(v: View?) {
         val position = v?.getTag(R.id.extra_tag) as Int?
         thread {
@@ -55,6 +69,25 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
                         , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, url.toString()) })
                 v.context.startActivity(intent)
             }
+        }
+    }
+
+    override fun getHeartClickListener(): (View?) -> Unit {
+        return { v ->
+            val manager = DatabaseManager.getInstance(v?.context)
+            val db = manager?.getDatabase() as SQLiteDatabase
+            val url = v?.getTag(R.id.extra_tag_2) as String?
+            if (url != null) {
+                val impl = LikeTableImpl()
+                if (impl.isLike(db, url)) {
+                    impl.deleteLike(db, url)
+                    v?.isActivated = false
+                } else {
+                    impl.addLike(db, url)
+                    v?.isActivated = true
+                }
+            }
+            db.close()
         }
     }
 }

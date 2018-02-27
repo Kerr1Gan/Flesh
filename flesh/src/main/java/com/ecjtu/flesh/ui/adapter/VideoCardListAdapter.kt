@@ -250,7 +250,28 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
         onRelease()
     }
 
-    class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    open fun getHeartClickListener() = { v: View? ->
+        val manager = DatabaseManager.getInstance(v?.context)
+        val db = manager?.getDatabase() as SQLiteDatabase
+        val url = v?.getTag(R.id.extra_tag) as String?
+        if (url != null) {
+            val impl = LikeTableImpl()
+            if (impl.isLike(db, url)) {
+                impl.deleteLike(db, url)
+                v?.isActivated = false
+            } else {
+                impl.addLike(db, url)
+                v?.isActivated = true
+            }
+        }
+        db.close()
+    }
+
+    open fun getDatabase():SQLiteDatabase?{
+        return mDatabase
+    }
+
+    inner class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ijkVideoView: IjkVideoView? = /*itemView.findViewById(R.id.ijk_video) as IjkVideoView?*/null
         val textView = itemView.findViewById(R.id.title) as TextView
         val heart = itemView.findViewById(R.id.heart) as ImageView
@@ -259,22 +280,7 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
         val mediaController = AndroidMediaController(itemView.context)
 
         init {
-            heart.setOnClickListener { v: View? ->
-                val manager = DatabaseManager.getInstance(v?.context)
-                val db = manager?.getDatabase() as SQLiteDatabase
-                val url = v?.getTag(R.id.extra_tag) as String?
-                if (url != null) {
-                    val impl = LikeTableImpl()
-                    if (impl.isLike(db, url)) {
-                        impl.deleteLike(db, url)
-                        v?.isActivated = false
-                    } else {
-                        impl.addLike(db, url)
-                        v?.isActivated = true
-                    }
-                }
-                db.close()
-            }
+            heart.setOnClickListener(this@VideoCardListAdapter.getHeartClickListener())
             ijkVideoView?.setMediaController(mediaController)
             ijkVideoView?.setOnInfoListener { mp, what, extra ->
                 if (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
