@@ -35,12 +35,17 @@ class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
         val title = getPageTitle(position) as String
         val vh = VH(item, menu[position], title)
         thread {
-            val listing = mS3?.listObjects(mBuckets?.get(position)?.name)
-            container?.post {
-                if (listing != null) {
-                    vh.load(listing)
+            try {
+                val listing = mS3?.listObjects(mBuckets?.get(position)?.name)
+                container?.post {
+                    if (listing != null) {
+                        vh.load(listing)
+                    }
                 }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
+
         }
         mViewStub.put(getPageTitle(position).toString(), vh)
         return item

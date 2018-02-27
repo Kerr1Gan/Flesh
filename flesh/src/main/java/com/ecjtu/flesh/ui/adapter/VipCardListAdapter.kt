@@ -9,9 +9,11 @@ import com.amazonaws.services.s3.model.Bucket
 import com.ecjtu.componentes.activity.RotateNoCreateActivity
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
+import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
 import com.ecjtu.flesh.db.table.impl.HistoryTableImpl
 import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.flesh.ui.fragment.IjkVideoFragment
+import com.ecjtu.netcore.model.PageModel
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -32,9 +34,22 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
 //                intent.putExtra("configchange", 0)
 //                val uri = Uri.parse(url.toString())
 //                intent.setDataAndType(uri, "video/*")
+                val itemListModel = arrayListOf<PageModel.ItemModel>()
+                val vModel = pageModel.get(position!!)
+                val model = PageModel.ItemModel(vModel.videoUrl, vModel.title, vModel.imageUrl, 1)
+                itemListModel.add(model)
+                val pageModel = PageModel(itemListModel)
+                pageModel.nextPage = ""
+
                 val db = DatabaseManager.getInstance(v.context)?.getDatabase() as SQLiteDatabase
-                val impl = HistoryTableImpl()
-                impl.addHistory(db, url.toString())
+                db.beginTransaction()
+                val impl = ClassPageTableImpl()
+                impl.addPage(db, pageModel)
+                db.setTransactionSuccessful()
+                db.endTransaction()
+
+                val impl2 = HistoryTableImpl()
+                impl2.addHistory(db, url.toString())
                 db.close()
                 val intent = RotateNoCreateActivity.newInstance(v.context, IjkVideoFragment::class.java
                         , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, url.toString()) })
