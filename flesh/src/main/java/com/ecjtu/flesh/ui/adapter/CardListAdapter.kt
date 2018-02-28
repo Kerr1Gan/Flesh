@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -70,6 +71,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
                 }
             }
         }
+        Log.i("CardListAdapter", "onBindViewHolder position = $position ,height = ${params?.height}")
 
         //set empty
         holder?.itemView?.findViewById(R.id.bottom)?.visibility = View.INVISIBLE
@@ -116,8 +118,9 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
                 holder?.textView?.setText(pageModel.itemList[position].description)
             }
         } else {
+            Glide.with(context).asBitmap().load(R.drawable.selector_drawable_white).listener(this).apply(options).into(imageView)
             holder?.textView?.setText(pageModel.itemList[position].description)
-            holder?.imageView?.setImageDrawable(ColorDrawable(Color.WHITE))
+//            holder?.imageView?.setImageDrawable(ColorDrawable(Color.WHITE))
             val bottom = holder?.itemView?.findViewById(R.id.bottom)
             bottom?.visibility = View.VISIBLE
         }
@@ -179,7 +182,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
             val parent = target.view.parent?.parent
             val layoutParams = (parent as View).layoutParams
             var height = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
-
+            Log.i("CardListAdapter", "onResourceReady height = $height")
             val bottom = parent.findViewById(R.id.bottom)
             height += bottom.height
             if (layoutParams.height != height) {
