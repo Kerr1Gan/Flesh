@@ -2,8 +2,6 @@ package com.ecjtu.flesh.ui.adapter
 
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.util.Log
@@ -118,7 +116,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
                 holder?.textView?.setText(pageModel.itemList[position].description)
             }
         } else {
-            Glide.with(context).asBitmap().load(R.drawable.selector_drawable_white).listener(this).apply(options).into(imageView)
+            Glide.with(context).asBitmap().load(R.drawable.shape_drawable_white).listener(this).apply(options).into(imageView)
             holder?.textView?.setText(pageModel.itemList[position].description)
 //            holder?.imageView?.setImageDrawable(ColorDrawable(Color.WHITE))
             val bottom = holder?.itemView?.findViewById(R.id.bottom)
