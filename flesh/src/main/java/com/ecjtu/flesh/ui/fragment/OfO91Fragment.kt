@@ -73,7 +73,7 @@ class OfO91Fragment : VideoListFragment() {
                                     activity.runOnUiThread {
                                         if (activity == null)
                                             return@runOnUiThread
-                                        AlertDialog.Builder(context).setTitle("回答问题才能进入").
+                                        AlertDialog.Builder(context).setTitle("成年问答,未成年请赶紧离开！").
                                                 setMessage(question).
                                                 setPositiveButton(answer1, listener).
                                                 setNegativeButton(answer2, listener).
