@@ -2,6 +2,8 @@ package com.ecjtu.flesh.ui.adapter
 
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.util.TypedValue
@@ -94,7 +96,9 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
         } else if (url.startsWith("http://")) {
             host = url.replace("http://", "")
         }
-        host = host.substring(0, host.indexOf("/"))
+        if (host.indexOf("/") >= 0) {
+            host = host.substring(0, host.indexOf("/"))
+        }
         val builder = LazyHeaders.Builder()
                 .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E)  Chrome/60.0.3112.90 Mobile Safari/537.36")
                 .addHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8")
@@ -103,11 +107,19 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
                 .addHeader("Host", host)
                 .addHeader("Proxy-Connection", "keep-alive")
                 .addHeader("Referer", "http://m.mzitu.com/")
-        val glideUrl = GlideUrl(url, builder.build())
-        url.let {
-            imageView?.setTag(R.id.extra_tag, position)
-            Glide.with(context).asBitmap().load(glideUrl).listener(this).apply(options).into(imageView)
+
+        if (!TextUtils.isEmpty(url)) {
+            val glideUrl = GlideUrl(url, builder.build())
+            url.let {
+                imageView?.setTag(R.id.extra_tag, position)
+                Glide.with(context).asBitmap().load(glideUrl).listener(this).apply(options).into(imageView)
+                holder?.textView?.setText(pageModel.itemList[position].description)
+            }
+        } else {
             holder?.textView?.setText(pageModel.itemList[position].description)
+            holder?.imageView?.setImageDrawable(ColorDrawable(Color.WHITE))
+            val bottom = holder?.itemView?.findViewById(R.id.bottom)
+            bottom?.visibility = View.VISIBLE
         }
 
         if (position == itemCount - 1) {

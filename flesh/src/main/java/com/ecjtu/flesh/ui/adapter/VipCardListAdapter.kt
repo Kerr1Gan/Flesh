@@ -25,7 +25,7 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
 
     override fun onBindViewHolder(holder: VH?, position: Int) {
         super.onBindViewHolder(holder, position)
-        val url = bucket.name + pageModel.get(position).title
+        val url = pageModel.get(position).videoUrl
         holder?.heart?.setTag(R.id.extra_tag_2, url)
         //db
         val href = url
@@ -38,36 +38,40 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
     override fun onClick(v: View?) {
         val position = v?.getTag(R.id.extra_tag) as Int?
         thread {
-            val endDate = Calendar.getInstance()
-            endDate.add(Calendar.HOUR, 1)
-            val url = s3Client?.generatePresignedUrl(bucket.name, pageModel.get(position!!).title, endDate.time)
-            v?.post {
-                //                val intent = Intent("android.intent.action.VIEW")
+            try {
+                val endDate = Calendar.getInstance()
+                endDate.add(Calendar.HOUR, 1)
+                val url = s3Client?.generatePresignedUrl(bucket.name, pageModel.get(position!!).title, endDate.time)
+                v?.post {
+                    //                val intent = Intent("android.intent.action.VIEW")
 //                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 //                intent.putExtra("oneshot", 0)
 //                intent.putExtra("configchange", 0)
 //                val uri = Uri.parse(url.toString())
 //                intent.setDataAndType(uri, "video/*")
-                val itemListModel = arrayListOf<PageModel.ItemModel>()
-                val vModel = pageModel.get(position!!)
-                val model = PageModel.ItemModel(vModel.videoUrl, vModel.title, vModel.imageUrl, 1)
-                itemListModel.add(model)
-                val pageModel = PageModel(itemListModel)
-                pageModel.nextPage = ""
+                    val itemListModel = arrayListOf<PageModel.ItemModel>()
+                    val vModel = pageModel.get(position!!)
+                    val model = PageModel.ItemModel(vModel.videoUrl, vModel.title, vModel.imageUrl, 1)
+                    itemListModel.add(model)
+                    val pageModel = PageModel(itemListModel)
+                    pageModel.nextPage = ""
 
-                val db = DatabaseManager.getInstance(v.context)?.getDatabase() as SQLiteDatabase
-                db.beginTransaction()
-                val impl = ClassPageTableImpl()
-                impl.addPage(db, pageModel)
-                db.setTransactionSuccessful()
-                db.endTransaction()
+                    val db = DatabaseManager.getInstance(v.context)?.getDatabase() as SQLiteDatabase
+                    db.beginTransaction()
+                    val impl = ClassPageTableImpl()
+                    impl.addPage(db, pageModel)
+                    db.setTransactionSuccessful()
+                    db.endTransaction()
 
-                val impl2 = HistoryTableImpl()
-                impl2.addHistory(db, url.toString())
-                db.close()
-                val intent = RotateNoCreateActivity.newInstance(v.context, IjkVideoFragment::class.java
-                        , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, url.toString()) })
-                v.context.startActivity(intent)
+                    val impl2 = HistoryTableImpl()
+                    impl2.addHistory(db, this@VipCardListAdapter.pageModel.get(position).videoUrl)
+                    db.close()
+                    val intent = RotateNoCreateActivity.newInstance(v.context, IjkVideoFragment::class.java
+                            , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, url.toString()) })
+                    v.context.startActivity(intent)
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }

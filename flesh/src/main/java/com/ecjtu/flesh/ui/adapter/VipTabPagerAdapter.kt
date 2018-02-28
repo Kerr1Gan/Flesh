@@ -71,7 +71,7 @@ class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
                     for (s3Obj in summary) {
                         val v33 = VideoModel()
                         v33.title = s3Obj.key
-                        v33.videoUrl = ""
+                        v33.videoUrl = mObjectListing?.bucketName + "@,@" + s3Obj.key
                         v33.imageUrl = ""
                         v33List.add(v33)
                     }
