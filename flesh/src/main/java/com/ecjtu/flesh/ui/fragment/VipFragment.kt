@@ -1,7 +1,9 @@
 package com.ecjtu.flesh.ui.fragment
 
 import android.content.DialogInterface
+import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.view.View
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.Protocol
 import com.amazonaws.auth.BasicAWSCredentials
@@ -31,6 +33,12 @@ class VipFragment : VideoListFragment() {
     private var mBuckets: List<Bucket>? = null
     private var mRequest: Thread? = null
     private var mAccessible = false
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        getToolbar().setTitle("Vip")
+    }
+
     override fun onUserVisibleHintChanged(isVisibleToUser: Boolean) {
         super.onUserVisibleHintChanged(isVisibleToUser)
         if (isVisibleToUser) {
@@ -69,7 +77,7 @@ class VipFragment : VideoListFragment() {
                                                 setPositiveButton(answer1, listener).
                                                 setNegativeButton(answer2, listener).
                                                 setNeutralButton(answer3, listener).
-                                                setOnCancelListener { if(!mAccessible && activity!=null) activity.finish() }.
+                                                setOnCancelListener { if (!mAccessible && activity != null) activity.finish() }.
                                                 create().
                                                 show()
                                     }
@@ -84,7 +92,7 @@ class VipFragment : VideoListFragment() {
         }
     }
 
-    private fun doLoading(){
+    private fun doLoading() {
         if (mS3 == null) {
             mRequest = thread {
                 try {

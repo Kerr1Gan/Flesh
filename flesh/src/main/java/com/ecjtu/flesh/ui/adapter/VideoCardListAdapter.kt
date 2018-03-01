@@ -69,7 +69,8 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
         holder?.textView?.text = model.title
 
         //db
-        if (mDatabase == null) {
+        if (mDatabase == null || mDatabase?.isOpen == false) {
+            mDatabase?.close()
             val manager = DatabaseManager.getInstance(context)
             mDatabase = manager?.getDatabase()
         }
@@ -267,7 +268,7 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
         db.close()
     }
 
-    open fun getDatabase():SQLiteDatabase?{
+    open fun getDatabase(): SQLiteDatabase? {
         return mDatabase
     }
 

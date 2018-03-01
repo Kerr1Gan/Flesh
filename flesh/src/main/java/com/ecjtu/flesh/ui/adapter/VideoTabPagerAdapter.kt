@@ -39,7 +39,7 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
                     (recyclerView?.adapter as IChangeTab).onSelectTab()
                 }
             }
-            recyclerView = getViewStub(position) as RecyclerView?
+            recyclerView = getViewStub(mLastScrolledPosition) as RecyclerView?
             recyclerView?.let {
                 if (recyclerView?.adapter is IChangeTab) {
                     (recyclerView?.adapter as IChangeTab).onUnSelectTab()

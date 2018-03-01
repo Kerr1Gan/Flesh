@@ -178,6 +178,8 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
 
     override fun onDestroy() {
         super.onDestroy()
+        mVideoView?.pause()
+        mVideoView?.stopPlayback()
         mVideoView?.release(true)
         mAdMob?.onDestroy()
     }

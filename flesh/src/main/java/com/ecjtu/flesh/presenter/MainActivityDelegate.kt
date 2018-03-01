@@ -228,7 +228,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
         mViewPager.adapter?.let {
             val fragment = (mViewPager.adapter as FragmentAdapter).getItem(mViewPager.currentItem)
             val viewPager = (fragment as BaseTabPagerFragment).getViewPager()
-            val tabPager = viewPager?.adapter
+            val tabPager = viewPager?.adapter ?: return@doFloatButton
             recyclerView = (tabPager as TabPagerAdapter).getViewStub(position) as RecyclerView?
             size = tabPager.getListSize(position)
         }
