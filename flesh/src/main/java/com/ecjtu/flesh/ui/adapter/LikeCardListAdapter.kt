@@ -80,6 +80,10 @@ class LikeCardListAdapter(pageModel: PageModel) : CardListAdapter(pageModel) {
                     val intent = RotateNoCreateActivity.newInstance(v.context, IjkVideoFragment::class.java
                             , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, url.toString()) })
                     v.context.startActivity(intent)
+                    val db = DatabaseManager.getInstance(v.context)?.getDatabase() as SQLiteDatabase
+                    val impl = HistoryTableImpl()
+                    impl.addHistory(db, url)
+                    db.close()
                 } else {
                     thread {
                         try {
@@ -104,10 +108,14 @@ class LikeCardListAdapter(pageModel: PageModel) : CardListAdapter(pageModel) {
                                     v.post {
                                         val endDate = Calendar.getInstance()
                                         endDate.add(Calendar.HOUR, 1)
-                                        val url = mS3?.generatePresignedUrl(bucketName, key, endDate.time)
+                                        val innerUrl = mS3?.generatePresignedUrl(bucketName, key, endDate.time)
                                         val intent = RotateNoCreateActivity.newInstance(v.context, IjkVideoFragment::class.java
-                                                , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, url.toString()) })
+                                                , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, innerUrl.toString()) })
                                         v.context.startActivity(intent)
+                                        val db = DatabaseManager.getInstance(v.context)?.getDatabase() as SQLiteDatabase
+                                        val impl = HistoryTableImpl()
+                                        impl.addHistory(db, url)
+                                        db.close()
                                     }
                                 }
                             }
