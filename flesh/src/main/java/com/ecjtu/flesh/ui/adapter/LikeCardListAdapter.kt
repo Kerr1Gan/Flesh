@@ -11,6 +11,7 @@ import com.amazonaws.regions.Region
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3Client
 import com.ecjtu.componentes.activity.RotateNoCreateActivity
+import com.ecjtu.flesh.Constants
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.HistoryTableImpl
@@ -100,7 +101,7 @@ class LikeCardListAdapter(pageModel: PageModel) : CardListAdapter(pageModel) {
                                 mS3 = AmazonS3Client(provider, config)
                                 val region = Region.getRegion(Regions.CN_NORTH_1)
                                 mS3?.setRegion(region)
-                                mS3?.setEndpoint("s3.ap-northeast-2.amazonaws.com")
+                                mS3?.setEndpoint(Constants.S3_URL)
                             }
 
                             if (mS3 != null) {

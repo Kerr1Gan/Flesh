@@ -1,8 +1,10 @@
 package com.ecjtu.flesh.ui.fragment
 
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.telephony.TelephonyManager
 import android.view.View
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.Protocol
@@ -42,6 +44,8 @@ class VipFragment : VideoListFragment() {
     override fun onUserVisibleHintChanged(isVisibleToUser: Boolean) {
         super.onUserVisibleHintChanged(isVisibleToUser)
         if (isVisibleToUser) {
+            val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+            val deviceId = telephonyManager.getDeviceId()
             AsyncNetwork().apply {
                 request(Constants.QUESTION).setRequestCallback(object : IRequestCallback {
                     override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
@@ -105,7 +109,7 @@ class VipFragment : VideoListFragment() {
                     mS3 = AmazonS3Client(provider, config)
                     val region = Region.getRegion(Regions.CN_NORTH_1)
                     mS3?.setRegion(region)
-                    mS3?.setEndpoint("s3.ap-northeast-2.amazonaws.com")
+                    mS3?.setEndpoint(Constants.S3_URL)
                     val buckets = mS3?.listBuckets()
                     mBuckets = buckets
                     val menuModel = mutableListOf<MenuModel>()

@@ -3,6 +3,7 @@ package com.ecjtu.flesh;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
@@ -35,7 +36,7 @@ public class MainApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (isAppMainProcess("com.ecjtu.flesh")) {
+        if (isAppMainProcess(BuildConfig.APPLICATION_ID)) {
             Log.i("Flesh", "application init");
             SimpleGlideModule module = new SimpleGlideModule();
             GlideBuilder builder = new GlideBuilder();

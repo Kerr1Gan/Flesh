@@ -3,10 +3,16 @@ package com.ecjtu.flesh.ui.adapter
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.View
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.Bucket
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
+import com.bumptech.glide.request.RequestOptions
 import com.ecjtu.componentes.activity.RotateNoCreateActivity
+import com.ecjtu.flesh.Constants
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
@@ -23,6 +29,11 @@ import kotlin.concurrent.thread
  */
 class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView, private val s3Client: AmazonS3Client, private val bucket: Bucket) : VideoCardListAdapter(pageModel, recyclerView) {
 
+    companion object {
+        const val S3_URL_FORMAT = "https://${Constants.S3_URL}/%s/%s"
+        const val S3_IMAGE_FORMAT = "%s_image_%s.png"
+    }
+
     override fun onBindViewHolder(holder: VH?, position: Int) {
         super.onBindViewHolder(holder, position)
         val url = pageModel.get(position).videoUrl
@@ -32,6 +43,16 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
         if (getDatabase() != null && getDatabase()?.isOpen == true) {
             val impl = LikeTableImpl()
             holder?.heart?.isActivated = impl.isLike(getDatabase()!!, href)
+        }
+        if (!TextUtils.isEmpty(url)) {
+            val options = RequestOptions()
+            options.centerCrop()
+            val imageUrl = String.format(S3_URL_FORMAT, "fleshbucketimage", pageModel.get(position).title + ".png")
+            val builder = LazyHeaders.Builder()
+            val glideUrl = GlideUrl(imageUrl, builder.build())
+            url.let {
+                Glide.with(holder?.itemView?.context).asBitmap().load(glideUrl).listener(this).apply(options).into(holder?.thumb)
+            }
         }
     }
 

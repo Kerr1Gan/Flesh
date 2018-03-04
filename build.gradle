@@ -18,6 +18,11 @@ allprojects {
         jcenter()
         mavenCentral() // jcenter() works as well because it pulls from Maven Central
         maven { url 'http://maven.google.com' }
+//        maven {
+//            // Used for downloading dependency com.github.lkorth:device-automator
+//            url "https://jitpack.io"
+//        }
+
     }
 }
 
