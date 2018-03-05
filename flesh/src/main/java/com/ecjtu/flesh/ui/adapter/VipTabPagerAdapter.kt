@@ -10,10 +10,10 @@ import android.view.ViewGroup
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.Bucket
 import com.amazonaws.services.s3.model.ObjectListing
+import com.ecjtu.flesh.Constants
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
-import com.ecjtu.flesh.model.models.S3BucketModel
 import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.model.PageModel
@@ -23,6 +23,12 @@ import kotlin.concurrent.thread
  * Created by Ethan_Xiang on 2018/2/22.
  */
 class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTabPagerAdapter(menu, viewPager) {
+    companion object {
+        const val S3_URL_FORMAT = "http://${Constants.S3_URL}/%s/%s"
+        const val S3_IMAGE_FORMAT = "%s_image_%s.png"
+        const val S3_IMAGE_BUCKET = "fleshbucketimage"
+    }
+
     private val KEY_LAST_POSITION = "vip_last_position_"
     private val KEY_LAST_POSITION_OFFSET = "vip_last_position_offset_"
 
@@ -73,8 +79,10 @@ class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
                     for (s3Obj in summary) {
                         val v33 = VideoModel()
                         v33.title = s3Obj.key
-                        v33.videoUrl = mObjectListing?.bucketName + "@,@" + s3Obj.key
-                        v33.imageUrl = ""
+                        if (mObjectListing != null) {
+                            v33.videoUrl = mObjectListing?.bucketName + "@,@" + s3Obj.key
+                            v33.imageUrl = getImageUrlByS3(s3Obj.key, mObjectListing?.bucketName ?: "")
+                        }
                         v33List.add(v33)
                     }
 
@@ -143,4 +151,7 @@ class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
         return mViewStub.get(menu[position].title)?.getSize() ?: 0
     }
 
+    private fun getImageUrlByS3(title: String, bucketName: String): String {
+        return String.format(S3_URL_FORMAT, S3_IMAGE_BUCKET, String.format(S3_IMAGE_FORMAT, bucketName, title))
+    }
 }

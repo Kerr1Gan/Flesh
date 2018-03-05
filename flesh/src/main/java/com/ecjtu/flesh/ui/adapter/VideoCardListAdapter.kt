@@ -140,6 +140,17 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
     }
 
     override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
+        if (target is BitmapImageViewTarget) {
+            var parent: View = target.view
+            while (true) {
+                if (parent.id == R.id.container) {
+                    break
+                }
+                parent = parent.parent as View
+            }
+            val bottom = parent.findViewById(R.id.bottom)
+            bottom.visibility = View.VISIBLE
+        }
         return false
     }
 
@@ -279,6 +290,7 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
 //        val mediaController = AndroidMediaController(itemView.context)
 
         val thumb = itemView.findViewById(R.id.image) as ImageView
+
         init {
             heart.setOnClickListener(this@VideoCardListAdapter.getHeartClickListener())
 //            ijkVideoView?.setMediaController(mediaController)

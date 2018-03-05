@@ -172,6 +172,11 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
     }
 
     override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
+        if (target is BitmapImageViewTarget) {
+            val parent = target.view.parent?.parent as View
+            val bottom = parent.findViewById(R.id.bottom)
+            bottom.visibility = View.VISIBLE
+        }
         return false
     }
 
