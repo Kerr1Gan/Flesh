@@ -49,7 +49,7 @@ public class PageModel {
         String description;
         String imgUrl;
         int height;
-        int type; // 0 is image , 1 is video
+        int type; // 0 is image , 1 is s3 video
 
         public ItemModel(String href, String description, String imgUrl,int type) {
             this.href = href;

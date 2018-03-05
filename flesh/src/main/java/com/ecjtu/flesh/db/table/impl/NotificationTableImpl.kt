@@ -21,7 +21,8 @@ class NotificationTableImpl : BaseTableImpl() {
                 "    time_limit        STRING,\n" +
                 "    action_detail_url STRING,\n" +
                 "    occurs            INTEGER,\n" +
-                "    h5_page           STRING\n" +
+                "    h5_page           STRING,\n" +
+                "    type              INTEGER DEFAULT (0)\n" +
                 ");\n"
 
     companion object {

@@ -30,14 +30,16 @@ import kotlin.concurrent.thread
 class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView, private val s3Client: AmazonS3Client, private val bucket: Bucket) : VideoCardListAdapter(pageModel, recyclerView) {
 
     companion object {
-        const val S3_URL_FORMAT = "https://${Constants.S3_URL}/%s/%s"
+        const val S3_URL_FORMAT = "http://${Constants.S3_URL}/%s/%s"
         const val S3_IMAGE_FORMAT = "%s_image_%s.png"
+        const val S3_IMAGE_BUCKET = "fleshbucketimage"
     }
 
     override fun onBindViewHolder(holder: VH?, position: Int) {
         super.onBindViewHolder(holder, position)
         val url = pageModel.get(position).videoUrl
         holder?.heart?.setTag(R.id.extra_tag_2, url)
+        holder?.heart?.setTag(R.id.extra_tag_3, position)
         //db
         val href = url
         if (getDatabase() != null && getDatabase()?.isOpen == true) {
@@ -47,7 +49,7 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
         if (!TextUtils.isEmpty(url)) {
             val options = RequestOptions()
             options.centerCrop()
-            val imageUrl = String.format(S3_URL_FORMAT, "fleshbucketimage", pageModel.get(position).title + ".png")
+            val imageUrl = String.format(S3_URL_FORMAT, S3_IMAGE_BUCKET, String.format(S3_IMAGE_FORMAT, bucket.name, pageModel.get(position).title))
             val builder = LazyHeaders.Builder()
             val glideUrl = GlideUrl(imageUrl, builder.build())
             url.let {
@@ -102,6 +104,7 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
             val manager = DatabaseManager.getInstance(v?.context)
             val db = manager?.getDatabase() as SQLiteDatabase
             val url = v?.getTag(R.id.extra_tag_2) as String?
+            val position = v?.getTag(R.id.extra_tag_3) as Int?
             if (url != null) {
                 val impl = LikeTableImpl()
                 if (impl.isLike(db, url)) {
@@ -111,6 +114,21 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
                     impl.addLike(db, url)
                     v?.isActivated = true
                 }
+            }
+            if (position != null) {
+                val itemListModel = arrayListOf<PageModel.ItemModel>()
+                val vModel = pageModel.get(position)
+                val model = PageModel.ItemModel(vModel.videoUrl, vModel.title,
+                        String.format(S3_URL_FORMAT, S3_IMAGE_BUCKET, String.format(S3_IMAGE_FORMAT, bucket.name, pageModel.get(position).title)),
+                        1)
+                itemListModel.add(model)
+                val pageModel = PageModel(itemListModel)
+                pageModel.nextPage = ""
+                db.beginTransaction()
+                val impl = ClassPageTableImpl()
+                impl.addPage(db, pageModel)
+                db.setTransactionSuccessful()
+                db.endTransaction()
             }
             db.close()
         }

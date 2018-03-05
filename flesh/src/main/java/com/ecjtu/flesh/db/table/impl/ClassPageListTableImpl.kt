@@ -18,7 +18,8 @@ class ClassPageListTableImpl : BaseTableImpl() {
                 "    image_url     STRING,\n" +
                 "    id_class_page INTEGER REFERENCES tb_class_page (_id) ON DELETE CASCADE\n" +
                 "                                                         ON UPDATE CASCADE,\n" +
-                "    [index]       INTEGER\n" +
+                "    [index]       INTEGER,\n" +
+                "    type          INTEGER DEFAULT (0)\n" +
                 ");\n"
 
     companion object {

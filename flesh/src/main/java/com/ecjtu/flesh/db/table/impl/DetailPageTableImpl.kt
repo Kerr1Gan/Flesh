@@ -16,7 +16,8 @@ class DetailPageTableImpl : BaseTableImpl() {
                 "    base_url STRING  UNIQUE,\n" +
                 "    max_len  INTEGER,\n" +
                 "    img_url  STRING,\n" +
-                "    time     STRING\n" +
+                "    time     STRING,\n" +
+                "    type     INTEGER DEFAULT (0)\n" +
                 ");"
 
     companion object {
