@@ -216,7 +216,7 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
     private fun initOrientationListener() {
         mOrientationListener = object : OrientationEventListener(context) {
             override fun onOrientationChanged(rotation: Int) {
-                if (mIgnoreOrientation) {
+                if (mIgnoreOrientation || activity == null) {
                     return
                 }
                 // 设置竖屏
