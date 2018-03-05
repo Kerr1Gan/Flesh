@@ -2,7 +2,6 @@ package com.ecjtu.flesh.db.table.impl
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
-import com.ecjtu.flesh.model.ModelManager
 import com.ecjtu.flesh.model.models.NotificationModel
 
 /**
@@ -70,7 +69,7 @@ class NotificationTableImpl : BaseTableImpl() {
         val cursor = sqLiteDatabase.rawQuery("SELECT * FROM $TABLE_NAME", arrayOf())
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast) {
-                val model = ModelManager.getNotificationModel(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3),
+                val model = NotificationModel.getNotificationModel(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3),
                         cursor.getInt(4),
                         cursor.getString(5), cursor.getString(6), cursor.getString(7), cursor.getString(9), cursor.getInt(10))
                 model.occurs = cursor.getInt(8)

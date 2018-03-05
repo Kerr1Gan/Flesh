@@ -128,4 +128,32 @@ public class NotificationModel {
 
         return local.getId() == this.getId();
     }
+
+    /**
+     * @param id
+     * @param title
+     * @param content
+     * @param ticker
+     * @param limit
+     * @param time
+     * @param timeLimit
+     * @param actionDetailUrl
+     * @param h5Page
+     * @param type            0 is anli page, 1 is h5 page
+     * @return
+     */
+    public static NotificationModel getNotificationModel(int id, String title, String content, String ticker, int limit, String time, String timeLimit, String actionDetailUrl, String h5Page, int type) {
+        NotificationModel model = new NotificationModel();
+        model.setId(id);
+        model.setTitle(title);
+        model.setContent(content);
+        model.setTicker(ticker);
+        model.setLimit(limit);
+        model.setTime(time);
+        model.setTimeLimit(timeLimit);
+        model.setActionDetailUrl(actionDetailUrl);
+        model.setH5Page(h5Page);
+        model.setType(type);
+        return model;
+    }
 }

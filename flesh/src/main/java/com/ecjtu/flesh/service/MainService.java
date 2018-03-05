@@ -163,7 +163,7 @@ public class MainService extends Service {
                     JSONArray arr = new JSONArray(response);
                     for (int i = 0; i < arr.length(); i++) {
                         JSONObject obj = arr.getJSONObject(i);
-                        NotificationModel model = ModelManager.getNotificationModel(obj.getInt("id"), obj.getString("title"),
+                        NotificationModel model = NotificationModel.getNotificationModel(obj.getInt("id"), obj.getString("title"),
                                 obj.getString("content"), obj.getString("ticker"),
                                 obj.getInt("limit"), obj.getString("time"), obj.getString("timeLimit"), obj.getString("actionDetailUrl"),
                                 obj.getString("h5Page"), obj.getInt("type"));

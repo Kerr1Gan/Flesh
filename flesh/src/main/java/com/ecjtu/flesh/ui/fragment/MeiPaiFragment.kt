@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import com.ecjtu.flesh.cache.impl.MeiPaiCacheHelper
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
-import com.ecjtu.flesh.model.ModelManager
 import com.ecjtu.flesh.model.models.MeiPaiModel
 import com.ecjtu.flesh.ui.adapter.MeiPaiPagerAdapter
 import com.ecjtu.netcore.model.MenuModel
@@ -50,7 +49,7 @@ class MeiPaiFragment : VideoListFragment(), BaseTabPagerFragment.IDelegate {
                     request(com.ecjtu.flesh.Constants.WEIPAI_URL, null)
                     setRequestCallback(object : IRequestCallback {
                         override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
-                            val maps = ModelManager.getMeiPaiModelByJsonString(response)
+                            val maps = MeiPaiModel.getMeiPaiModelByJsonString(response)
                             val menu = arrayListOf<MenuModel>()
                             for (entry in maps) {
                                 val menuModel = MenuModel(entry.key, "")

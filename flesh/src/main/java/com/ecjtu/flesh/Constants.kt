@@ -42,4 +42,7 @@ object Constants {
     val QUESTION = "https://Kerr1Gan.github.io/flesh/question"
 
     const val S3_URL = "s3.ap-northeast-2.amazonaws.com"
+
+    @JvmField
+    val S3BUCKET_MAPPING = "https://Kerr1Gan.github.io/flesh/s3bucket"
 }

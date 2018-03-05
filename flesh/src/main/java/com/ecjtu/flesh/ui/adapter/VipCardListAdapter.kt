@@ -49,7 +49,7 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
         if (!TextUtils.isEmpty(url)) {
             val options = RequestOptions()
             options.centerCrop()
-            val imageUrl = String.format(S3_URL_FORMAT, S3_IMAGE_BUCKET, String.format(S3_IMAGE_FORMAT, bucket.name, pageModel.get(position).title))
+            val imageUrl = getImageUrlByS3(pageModel.get(position).title)
             val builder = LazyHeaders.Builder()
             val glideUrl = GlideUrl(imageUrl, builder.build())
             url.let {
@@ -74,7 +74,7 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
 //                intent.setDataAndType(uri, "video/*")
                     val itemListModel = arrayListOf<PageModel.ItemModel>()
                     val vModel = pageModel.get(position!!)
-                    val model = PageModel.ItemModel(vModel.videoUrl, vModel.title, vModel.imageUrl, 1)
+                    val model = PageModel.ItemModel(vModel.videoUrl, vModel.title, getImageUrlByS3(vModel.title), 1)
                     itemListModel.add(model)
                     val pageModel = PageModel(itemListModel)
                     pageModel.nextPage = ""
@@ -119,7 +119,7 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
                 val itemListModel = arrayListOf<PageModel.ItemModel>()
                 val vModel = pageModel.get(position)
                 val model = PageModel.ItemModel(vModel.videoUrl, vModel.title,
-                        String.format(S3_URL_FORMAT, S3_IMAGE_BUCKET, String.format(S3_IMAGE_FORMAT, bucket.name, pageModel.get(position).title)),
+                        getImageUrlByS3(pageModel.get(position).title),
                         1)
                 itemListModel.add(model)
                 val pageModel = PageModel(itemListModel)
@@ -132,5 +132,9 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
             }
             db.close()
         }
+    }
+
+    private fun getImageUrlByS3(title: String): String {
+        return String.format(S3_URL_FORMAT, S3_IMAGE_BUCKET, String.format(S3_IMAGE_FORMAT, bucket.name, title))
     }
 }

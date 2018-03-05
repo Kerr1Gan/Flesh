@@ -13,6 +13,7 @@ import com.amazonaws.services.s3.model.ObjectListing
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
+import com.ecjtu.flesh.model.models.S3BucketModel
 import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.model.PageModel
@@ -29,6 +30,7 @@ class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
 
     private var mBuckets: List<Bucket>? = null
     private var mS3: AmazonS3Client? = null
+
     override fun instantiateItem(container: ViewGroup?, position: Int): Any {
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
         container?.addView(item)

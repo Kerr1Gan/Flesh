@@ -2,7 +2,15 @@ package com.ecjtu.flesh.model.models;
 
 import android.os.Parcel;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by xiang on 2018/2/8.
@@ -96,4 +104,32 @@ public class MeiPaiModel extends VideoModel implements Serializable {
             return new MeiPaiModel[size];
         }
     };
+
+    public static Map<String, List<MeiPaiModel>> getMeiPaiModelByJsonString(String json) {
+        try {
+            JSONArray jArray = new JSONArray(json);
+            Map<String, List<MeiPaiModel>> ret = new LinkedHashMap<>();
+            for (int i = 0; i < jArray.length(); i++) {
+                JSONObject jObj = jArray.getJSONObject(i);
+                String key = jObj.optString("key", "");
+                JSONArray array = jObj.optJSONArray("array");
+                List<MeiPaiModel> list = new ArrayList<>();
+                for (int j = 0; j < array.length(); j++) {
+                    JSONObject obj = array.getJSONObject(j);
+                    MeiPaiModel model = new MeiPaiModel();
+                    model.setHref(obj.optString("href", ""));
+                    model.setImgUrl(obj.optString("imgURl", ""));
+                    model.setTitle(obj.optString("title", ""));
+                    model.setVideoUrl(obj.optString("videoUrl", ""));
+                    model.setVideoImageUrl(obj.optString("videoImageUrl", ""));
+                    list.add(model);
+                }
+                ret.put(key, list);
+            }
+            return ret;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -200,7 +200,7 @@ public class ExampleInstrumentedTest {
 
         List<PageModel.ItemModel> itemModels = new ArrayList<PageModel.ItemModel>();
         for (int i = 0; i < 50000; i++) {
-            itemModels.add(new PageModel.ItemModel("", "", ""));
+            itemModels.add(new PageModel.ItemModel("", "", "",0));
         }
 
         //db begin
