@@ -70,7 +70,7 @@
                     android:padding="3dp"
                     android:textSize="16dp" />
 
-                <FrameLayout
+                <View
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />

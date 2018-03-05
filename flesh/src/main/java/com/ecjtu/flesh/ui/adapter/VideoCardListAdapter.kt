@@ -29,9 +29,7 @@ import com.ecjtu.flesh.db.table.impl.HistoryTableImpl
 import com.ecjtu.flesh.db.table.impl.LikeTableImpl
 import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.flesh.ui.fragment.IjkVideoFragment
-import tv.danmaku.ijk.media.exo.video.AndroidMediaController
 import tv.danmaku.ijk.media.exo.video.IjkVideoView
-import tv.danmaku.ijk.media.player.IMediaPlayer
 
 /**
  * Created by Ethan_Xiang on 2018/1/16.
@@ -137,7 +135,7 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VH {
-        val v = LayoutInflater.from(parent?.context).inflate(R.layout.layout_video_card_view, parent, false)
+        val v = LayoutInflater.from(parent?.context).inflate(R.layout.layout_card_view, parent, false)
         return VH(v)
     }
 
@@ -277,23 +275,24 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
         val textView = itemView.findViewById(R.id.title) as TextView
         val heart = itemView.findViewById(R.id.heart) as ImageView
         val description = itemView.findViewById(R.id.description) as TextView
-        val thumb = itemView.findViewById(R.id.thumb) as ImageView
-        val mediaController = AndroidMediaController(itemView.context)
+//        val thumb = itemView.findViewById(R.id.thumb) as ImageView
+//        val mediaController = AndroidMediaController(itemView.context)
 
+        val thumb = itemView.findViewById(R.id.image) as ImageView
         init {
             heart.setOnClickListener(this@VideoCardListAdapter.getHeartClickListener())
-            ijkVideoView?.setMediaController(mediaController)
-            ijkVideoView?.setOnInfoListener { mp, what, extra ->
-                if (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                }
-                return@setOnInfoListener false
-            }
-            mediaController.setMediaPlayerCallback {
-                val videoUrl = itemView.getTag(R.id.extra_tag_2) as String?
-                val intent = RotateNoCreateActivity.newInstance(itemView.context, IjkVideoFragment::class.java
-                        , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, videoUrl) })
-                itemView.context.startActivity(intent)
-            }
+//            ijkVideoView?.setMediaController(mediaController)
+//            ijkVideoView?.setOnInfoListener { mp, what, extra ->
+//                if (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+//                }
+//                return@setOnInfoListener false
+//            }
+//            mediaController.setMediaPlayerCallback {
+//                val videoUrl = itemView.getTag(R.id.extra_tag_2) as String?
+//                val intent = RotateNoCreateActivity.newInstance(itemView.context, IjkVideoFragment::class.java
+//                        , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, videoUrl) })
+//                itemView.context.startActivity(intent)
+//            }
         }
     }
 }
