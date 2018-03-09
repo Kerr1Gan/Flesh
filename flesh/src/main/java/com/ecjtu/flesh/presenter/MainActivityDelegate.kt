@@ -33,6 +33,7 @@ import com.ecjtu.componentes.activity.AppThemeActivity
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.ui.activity.MainActivity
 import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
+import com.ecjtu.flesh.ui.dialog.GetVipDialogHelper
 import com.ecjtu.flesh.ui.fragment.*
 import com.ecjtu.flesh.util.file.FileUtil
 import java.io.File
@@ -133,6 +134,10 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
             owner.startActivity(intent)
             val drawerLayout = findViewById(R.id.drawer_layout) as DrawerLayout
             drawerLayout.closeDrawer(Gravity.START)
+        }
+
+        findViewById(R.id.vip_info)?.setOnClickListener {
+            GetVipDialogHelper(owner).getDialog()?.show()
         }
 
         mAppbarExpand = PreferenceManager.getDefaultSharedPreferences(owner).getBoolean(TabPagerAdapter.KEY_APPBAR_LAYOUT_COLLAPSED, false)

@@ -4,24 +4,20 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ecjtu.flesh.R;
 import com.paypal.android.sdk.payments.PayPalAuthorization;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalFuturePaymentActivity;
-import com.paypal.android.sdk.payments.PayPalItem;
 import com.paypal.android.sdk.payments.PayPalOAuthScopes;
 import com.paypal.android.sdk.payments.PayPalPayment;
-import com.paypal.android.sdk.payments.PayPalPaymentDetails;
 import com.paypal.android.sdk.payments.PayPalProfileSharingActivity;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
-import com.paypal.android.sdk.payments.ShippingAddress;
 
 import org.json.JSONException;
 
@@ -31,15 +27,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * THIS FILE IS OVERWRITTEN BY `androidSDK/src/<general|partner>sampleAppJava.
- * ANY UPDATES TO THIS FILE WILL BE REMOVED IN RELEASES.
- * <p>
- * Basic sample using the SDK to make a payment or consent to future payments.
- * <p>
- * For sample mobile backend interactions, see
- * https://github.com/paypal/rest-api-sdk-python/tree/master/samples/mobile_backend
+ * Created by xiang on 2018/3/9.
  */
-public class PayPalSampleActivity extends Activity {
+
+public class PayPalActivity extends AppCompatActivity {
     private static final String TAG = "paymentExample";
     /**
      * - Set to PayPalConfiguration.ENVIRONMENT_PRODUCTION to move real money.
@@ -70,52 +61,19 @@ public class PayPalSampleActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_paypal_sample);
 
         Intent intent = new Intent(this, PayPalService.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
         startService(intent);
-//
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                PayPalVerifyPayment payment = new PayPalVerifyPayment();
-//                boolean success = false;
-//                try {
-//                    success = payment.verifyPayment("PAY-87X20470C98270520LKB2XBI");
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                System.out.println(success ? "支付完成" : "支付校验失败");
-//            }
-//        }).start();
-    }
 
-    public void onBuyPressed(View pressed) {
-        /* 
-         * PAYMENT_INTENT_SALE will cause the payment to complete immediately.
-         * Change PAYMENT_INTENT_SALE to 
-         *   - PAYMENT_INTENT_AUTHORIZE to only authorize payment and capture funds later.
-         *   - PAYMENT_INTENT_ORDER to create a payment for authorization and capture
-         *     later via calls from your server.
-         * 
-         * Also, to include additional payment details and an item list, see getStuffToBuy() below.
-         */
         PayPalPayment thingToBuy = getThingToBuy(PayPalPayment.PAYMENT_INTENT_SALE);
-
-        /*
-         * See getStuffToBuy(..) for examples of some available payment options.
-         */
-
-        Intent intent = new Intent(PayPalSampleActivity.this, PaymentActivity.class);
-
+        Intent activityIntent = new Intent(PayPalActivity.this, PaymentActivity.class);
         // send the same configuration for restart resiliency
-        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
-
-        intent.putExtra(PaymentActivity.EXTRA_PAYMENT, thingToBuy);
-
-        startActivityForResult(intent, REQUEST_CODE_PAYMENT);
+        activityIntent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+        activityIntent.putExtra(PaymentActivity.EXTRA_PAYMENT, thingToBuy);
+        startActivityForResult(activityIntent, REQUEST_CODE_PAYMENT);
     }
+
 
     private PayPalPayment getThingToBuy(String paymentIntent) {
 //        return new PayPalPayment(new BigDecimal("0.01"), "USD", "sample item",
@@ -125,62 +83,8 @@ public class PayPalSampleActivity extends Activity {
                 paymentIntent);
     }
 
-    /* 
-     * This method shows use of optional payment details and item list.
-     */
-    private PayPalPayment getStuffToBuy(String paymentIntent) {
-        //--- include an item list, payment amount details
-        PayPalItem[] items =
-                {
-                        new PayPalItem("sample item #1", 2, new BigDecimal("87.50"), "USD",
-                                "sku-12345678"),
-                        new PayPalItem("free sample item #2", 1, new BigDecimal("0.00"),
-                                "USD", "sku-zero-price"),
-                        new PayPalItem("sample item #3 with a longer name", 6, new BigDecimal("37.99"),
-                                "USD", "sku-33333")
-                };
-        BigDecimal subtotal = PayPalItem.getItemTotal(items);
-        BigDecimal shipping = new BigDecimal("7.21");
-        BigDecimal tax = new BigDecimal("4.67");
-        PayPalPaymentDetails paymentDetails = new PayPalPaymentDetails(shipping, subtotal, tax);
-        BigDecimal amount = subtotal.add(shipping).add(tax);
-        PayPalPayment payment = new PayPalPayment(amount, "USD", "sample item", paymentIntent);
-        payment.items(items).paymentDetails(paymentDetails);
-
-        //--- set other optional fields like invoice_number, custom field, and soft_descriptor
-        payment.custom("This is text that will be associated with the payment that the app can use.");
-
-        return payment;
-    }
-
-    /*
-     * Add app-provided shipping address to payment
-     */
-    private void addAppProvidedShippingAddress(PayPalPayment paypalPayment) {
-        ShippingAddress shippingAddress =
-                new ShippingAddress().recipientName("Mom Parker").line1("52 North Main St.")
-                        .city("Austin").state("TX").postalCode("78729").countryCode("US");
-        paypalPayment.providedShippingAddress(shippingAddress);
-    }
-
-    /*
-     * Enable retrieval of shipping addresses from buyer's PayPal account
-     */
-    private void enableShippingAddressRetrieval(PayPalPayment paypalPayment, boolean enable) {
-        paypalPayment.enablePayPalShippingAddressesRetrieval(enable);
-    }
-
-    public void onFuturePaymentPressed(View pressed) {
-        Intent intent = new Intent(PayPalSampleActivity.this, PayPalFuturePaymentActivity.class);
-
-        // send the same configuration for restart resiliency
-        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
-
-        startActivityForResult(intent, REQUEST_CODE_FUTURE_PAYMENT);
-    }
-
     public void onProfileSharingPressed(View pressed) {
-        Intent intent = new Intent(PayPalSampleActivity.this, PayPalProfileSharingActivity.class);
+        Intent intent = new Intent(PayPalActivity.this, PayPalProfileSharingActivity.class);
 
         // send the same configuration for restart resiliency
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
@@ -201,7 +105,6 @@ public class PayPalSampleActivity extends Activity {
     }
 
     protected void displayResultText(String result) {
-        ((TextView) findViewById(R.id.txtResult)).setText("Result : " + result);
         Toast.makeText(
                 getApplicationContext(),
                 result, Toast.LENGTH_LONG)
@@ -310,21 +213,11 @@ public class PayPalSampleActivity extends Activity {
 
     }
 
-    public void onFuturePaymentPurchasePressed(View pressed) {
-        // Get the Client Metadata ID from the SDK
-        String metadataId = PayPalConfiguration.getClientMetadataId(this);
-
-        Log.i("FuturePaymentExample", "Client Metadata ID: " + metadataId);
-
-        // TODO: Send metadataId and transaction details to your server for processing with
-        // PayPal...
-        displayResultText("Client Metadata Id received from SDK");
-    }
-
     @Override
     public void onDestroy() {
         // Stop service when done
         stopService(new Intent(this, PayPalService.class));
         super.onDestroy();
     }
+
 }
