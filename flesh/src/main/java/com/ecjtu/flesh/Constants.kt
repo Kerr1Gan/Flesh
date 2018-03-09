@@ -45,4 +45,6 @@ object Constants {
 
     @JvmField
     val S3BUCKET_MAPPING = "https://Kerr1Gan.github.io/flesh/s3bucket"
+
+    const val PREF_VIP_INFO = "constants_pref_vip_info"
 }
