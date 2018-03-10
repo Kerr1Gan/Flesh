@@ -3,6 +3,7 @@ package com.ecjtu.flesh.ui.fragment
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import com.ecjtu.flesh.Constants
@@ -37,7 +38,12 @@ class OfO91Fragment : VideoListFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.i(TAG, "onViewCreated")
-        getToolbar().setTitle("OfO")
+        val title = arguments?.getString("title") ?: ""
+        if (!TextUtils.isEmpty(title)) {
+            getToolbar().setTitle(title)
+        } else {
+            getToolbar().setTitle("OfO")
+        }
     }
 
     override fun onUserVisibleHintChanged(isVisibleToUser: Boolean) {
@@ -95,9 +101,11 @@ class OfO91Fragment : VideoListFragment() {
 
     private fun doLoading() {
         attachTabLayout()
-        if (mV33Menu == null || mV33Menu?.size == 0) {
+        val arg = arguments
+        val url = arg?.getString("url") ?: ""
+        if ((mV33Menu == null || mV33Menu?.size == 0) && !TextUtils.isEmpty(url)) {
             val req = AsyncNetwork().apply {
-                request(com.ecjtu.flesh.Constants.OFO_URL, null)
+                request(url, null)
                 setRequestCallback(object : IRequestCallback {
                     override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                         val menuModel = arrayListOf<MenuModel>()

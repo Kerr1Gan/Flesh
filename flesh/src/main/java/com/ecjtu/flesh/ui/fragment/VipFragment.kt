@@ -16,11 +16,13 @@ import com.amazonaws.services.s3.model.Bucket
 import com.ecjtu.flesh.Constants
 import com.ecjtu.flesh.model.models.S3BucketModel
 import com.ecjtu.flesh.ui.adapter.VipTabPagerAdapter
+import com.ecjtu.flesh.ui.dialog.GetVipDialogHelper
 import com.ecjtu.flesh.util.encrypt.SecretKeyUtils
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.BaseNetwork
 import com.ecjtu.netcore.network.IRequestCallback
+import com.ecjtu.netcore.network.IRequestCallbackV2
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -48,121 +50,152 @@ class VipFragment : VideoListFragment() {
         if (isVisibleToUser) {
             val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
             val deviceId = telephonyManager.getDeviceId()
-            AsyncNetwork().apply {
-                request(Constants.QUESTION).setRequestCallback(object : IRequestCallback {
-                    override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
-                        val jArr = JSONArray(response)
-                        try {
-                            val jObj = jArr.get(Random(System.currentTimeMillis()).nextInt(jArr.length())) as JSONObject
-                            val question = jObj.optString("question")
-                            val answer1 = jObj.optString("answer1")
-                            val answer2 = jObj.optString("answer2")
-                            val answer3 = jObj.optString("answer3")
-                            val answer = Integer.valueOf(jObj.getString("answer"))
-                            if (!mAccessible) {
-                                val listener = { dialog: DialogInterface, which: Int ->
-                                    if (which == DialogInterface.BUTTON_POSITIVE) {
-                                    } else if (which == DialogInterface.BUTTON_NEGATIVE) {
-                                    } else if (which == DialogInterface.BUTTON_NEUTRAL) {
-                                    }
-                                    if (which == answer) {
-                                        mAccessible = true
-                                        doLoading()
-                                    } else {
-                                        if (activity != null) {
-                                            activity.finish()
-                                        }
+            AsyncNetwork().request(Constants.SERVER_URL + "/api/getUserById?userId=" + deviceId)
+                    .setRequestCallback(object : IRequestCallbackV2 {
+                        override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
+                            try {
+                                val jObj = JSONObject(response)
+                                val code = (jObj.opt("code") as String).toInt()
+                                if (code >= 0) {
+                                    requestQuestion()
+                                } else {
+                                    getHandler().post {
+                                        getVipInfo()
                                     }
                                 }
-                                if (activity != null) {
-                                    activity.runOnUiThread {
-                                        if (activity == null)
-                                            return@runOnUiThread
-                                        AlertDialog.Builder(context).setTitle("回答问题才能进入").
-                                                setMessage(question).
-                                                setPositiveButton(answer1, listener).
-                                                setNegativeButton(answer2, listener).
-                                                setNeutralButton(answer3, listener).
-                                                setOnCancelListener { if (!mAccessible && activity != null) activity.finish() }.
-                                                create().
-                                                show()
+                            } catch (ex: Exception) {
+                                ex.printStackTrace()
+                            }
+                        }
+
+                        override fun onError(httpURLConnection: HttpURLConnection?, exception: java.lang.Exception) {
+                        }
+                    })
+
+        }
+    }
+
+    private fun requestQuestion() {
+        AsyncNetwork().apply {
+            request(Constants.QUESTION).setRequestCallback(object : IRequestCallback {
+                override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
+                    val jArr = JSONArray(response)
+                    try {
+                        val jObj = jArr.get(Random(System.currentTimeMillis()).nextInt(jArr.length())) as JSONObject
+                        val question = jObj.optString("question")
+                        val answer1 = jObj.optString("answer1")
+                        val answer2 = jObj.optString("answer2")
+                        val answer3 = jObj.optString("answer3")
+                        val answer = Integer.valueOf(jObj.getString("answer"))
+                        if (!mAccessible) {
+                            val listener = { dialog: DialogInterface, which: Int ->
+                                if (which == DialogInterface.BUTTON_POSITIVE) {
+                                } else if (which == DialogInterface.BUTTON_NEGATIVE) {
+                                } else if (which == DialogInterface.BUTTON_NEUTRAL) {
+                                }
+                                if (which == answer) {
+                                    mAccessible = true
+                                    doLoading()
+                                } else {
+                                    if (activity != null) {
+                                        activity.finish()
                                     }
                                 }
                             }
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
+                            if (activity != null) {
+                                activity.runOnUiThread {
+                                    if (activity == null)
+                                        return@runOnUiThread
+                                    AlertDialog.Builder(context).setTitle("回答问题才能进入").
+                                            setMessage(question).
+                                            setPositiveButton(answer1, listener).
+                                            setNegativeButton(answer2, listener).
+                                            setNeutralButton(answer3, listener).
+                                            setOnCancelListener { if (!mAccessible && activity != null) activity.finish() }.
+                                            create().
+                                            show()
+                                }
+                            }
                         }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
                     }
-                })
-            }
+                }
+            })
         }
     }
 
     private fun doLoading() {
         if (mS3 == null) {
             mRequest = AsyncNetwork().request(Constants.S3BUCKET_MAPPING).apply {
-                        setRequestCallback(object : IRequestCallback {
-                            override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
-                                try {
-                                    val bucketList = S3BucketModel.fromJson(response)
-                                    val secretKey = SecretKeyUtils.getKeyFromServer()
-                                    val content = SecretKeyUtils.getS3InfoFromServer(secretKey!!.key)
-                                    val params = content.split(",")
-                                    val provider = BasicAWSCredentials(params[0], params[1])
-                                    val config = ClientConfiguration()
-                                    config.protocol = Protocol.HTTP
-                                    mS3 = AmazonS3Client(provider, config)
-                                    val region = Region.getRegion(Regions.CN_NORTH_1)
-                                    mS3?.setRegion(region)
-                                    mS3?.setEndpoint(Constants.S3_URL)
-                                    val buckets = mS3?.listBuckets()
-                                    mBuckets = buckets
-                                    val menuModel = mutableListOf<MenuModel>()
-                                    if (bucketList != null) {
-                                        val renameBucket = ArrayList<Bucket>()
-                                        for (bucket in bucketList) {
-                                            val menu = MenuModel(bucket.title, "")
-                                            menuModel.add(menu)
-                                            var i = 0
-                                            while (i < mBuckets?.size ?: 0) {
-                                                if (bucket.bucketName.equals(mBuckets?.get(i)?.name)) {
-                                                    if (mBuckets?.get(i) != null) {
-                                                        renameBucket.add(mBuckets?.get(i)!!)
-                                                    }
-                                                    break
-                                                } else if (i == mBuckets?.size ?: 0 - 1) {
-                                                }
-                                                i++
+                setRequestCallback(object : IRequestCallback {
+                    override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
+                        try {
+                            val bucketList = S3BucketModel.fromJson(response)
+                            val secretKey = SecretKeyUtils.getKeyFromServer()
+                            val content = SecretKeyUtils.getS3InfoFromServer(secretKey!!.key)
+                            val params = content.split(",")
+                            val provider = BasicAWSCredentials(params[0], params[1])
+                            val config = ClientConfiguration()
+                            config.protocol = Protocol.HTTP
+                            mS3 = AmazonS3Client(provider, config)
+                            val region = Region.getRegion(Regions.CN_NORTH_1)
+                            mS3?.setRegion(region)
+                            mS3?.setEndpoint(Constants.S3_URL)
+                            val buckets = mS3?.listBuckets()
+                            mBuckets = buckets
+                            val menuModel = mutableListOf<MenuModel>()
+                            if (bucketList != null) {
+                                val renameBucket = ArrayList<Bucket>()
+                                for (bucket in bucketList) {
+                                    val menu = MenuModel(bucket.title, "")
+                                    menuModel.add(menu)
+                                    var i = 0
+                                    while (i < mBuckets?.size ?: 0) {
+                                        if (bucket.bucketName.equals(mBuckets?.get(i)?.name)) {
+                                            if (mBuckets?.get(i) != null) {
+                                                renameBucket.add(mBuckets?.get(i)!!)
                                             }
+                                            break
+                                        } else if (i == mBuckets?.size ?: 0 - 1) {
                                         }
-                                        mBuckets = renameBucket
-                                        if (activity != null && Thread.currentThread().isInterrupted == false) {
-                                            activity.runOnUiThread {
-                                                if (mRequest == null) {
-                                                    return@runOnUiThread
-                                                }
-                                                if (getViewPager() != null && getViewPager()?.adapter == null) {
-                                                    getViewPager()?.adapter = VipTabPagerAdapter(menuModel, getViewPager()!!)
-                                                    (getViewPager()?.adapter as VipTabPagerAdapter?)?.setBucketsList(mBuckets!!, mS3!!)
-                                                    (getViewPager()?.adapter as VipTabPagerAdapter?)?.notifyDataSetChanged(true)
-                                                } else {
-                                                    (getViewPager()?.adapter as VipTabPagerAdapter).menu = menuModel
-                                                    (getViewPager()?.adapter as VipTabPagerAdapter?)?.setBucketsList(mBuckets!!, mS3!!)
-                                                    (getViewPager()?.adapter as VipTabPagerAdapter?)?.notifyDataSetChanged(false)
-                                                }
-                                                if (userVisibleHint) {
-                                                    attachTabLayout()
-                                                }
-                                            }
+                                        i++
+                                    }
+                                }
+                                mBuckets = renameBucket
+                                if (activity != null && Thread.currentThread().isInterrupted == false) {
+                                    activity.runOnUiThread {
+                                        if (mRequest == null) {
+                                            return@runOnUiThread
+                                        }
+                                        if (getViewPager() != null && getViewPager()?.adapter == null) {
+                                            getViewPager()?.adapter = VipTabPagerAdapter(menuModel, getViewPager()!!)
+                                            (getViewPager()?.adapter as VipTabPagerAdapter?)?.setBucketsList(mBuckets!!, mS3!!)
+                                            (getViewPager()?.adapter as VipTabPagerAdapter?)?.notifyDataSetChanged(true)
+                                        } else {
+                                            (getViewPager()?.adapter as VipTabPagerAdapter).menu = menuModel
+                                            (getViewPager()?.adapter as VipTabPagerAdapter?)?.setBucketsList(mBuckets!!, mS3!!)
+                                            (getViewPager()?.adapter as VipTabPagerAdapter?)?.notifyDataSetChanged(false)
+                                        }
+                                        if (userVisibleHint) {
+                                            attachTabLayout()
                                         }
                                     }
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
                                 }
                             }
-                        })
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
+                })
+            }
 
+        }
+    }
+
+    private fun getVipInfo() {
+        if (context != null) {
+            GetVipDialogHelper(context).getDialog()?.show()
         }
     }
 

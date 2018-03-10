@@ -46,7 +46,12 @@ object Constants {
     @JvmField
     val S3BUCKET_MAPPING = "https://Kerr1Gan.github.io/flesh/s3bucket"
 
+    @JvmField
+    val VIDEO_TAB_URL = "https://Kerr1Gan.github.io/flesh/videotab"
+
     const val PREF_VIP_INFO = "constants_pref_vip_info"
 
     const val SERVER_URL = "http://13.125.219.143:8080/flesh"
+
+    const val DEVICE_ID_EMULATOR = "000000000000000"
 }

@@ -8,7 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.ecjtu.componentes.activity.ImmersiveFragmentActivity
+import com.ecjtu.flesh.Constants
 import com.ecjtu.flesh.R
+import com.ecjtu.netcore.network.AsyncNetwork
+import com.ecjtu.netcore.network.IRequestCallbackV2
+import org.json.JSONArray
+import org.json.JSONObject
+import java.net.HttpURLConnection
 
 /**
  * Created by KerriGan on 2018/2/15.
@@ -16,11 +22,10 @@ import com.ecjtu.flesh.R
 class VideoTabFragment : BaseTabPagerFragment() {
 
     private var mRecyclerView: RecyclerView? = null
-    private val mItemInfo = arrayOf(ItemInfo("爱恋", arrayOf(), V33Fragment::class.java),
-//            ItemInfo("美拍", arrayOf(), MeiPaiFragment::class.java),
-//            ItemInfo("22CM", arrayOf(), String::class.java),
-            ItemInfo("OfO", arrayOf(), OfO91Fragment::class.java),
-            ItemInfo("Vip", arrayOf(), VipFragment::class.java))
+    private val mItemInfo = mutableListOf<ItemInfo>(
+            /*ItemInfo("爱恋", arrayOf(), V33Fragment::class.java, ""),
+            ItemInfo("OfO", arrayOf(), OfO91Fragment::class.java, ""),*/
+            ItemInfo("Vip", arrayOf(), VipFragment::class.java, ""))
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_video_tab, container, false)
@@ -30,6 +35,36 @@ class VideoTabFragment : BaseTabPagerFragment() {
         if (getDelegate()?.getTabLayout() != null) {
             setTabLayout(getDelegate()?.getTabLayout()!!)
         }
+        AsyncNetwork().request(Constants.VIDEO_TAB_URL)
+                .setRequestCallback(object : IRequestCallbackV2 {
+                    override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
+                        try {
+                            val jArray = JSONArray(response)
+                            for (i in 0 until jArray.length()) {
+                                val jObj = jArray.get(i) as JSONObject
+                                val title = jObj.optString("title")
+                                val fragment = jObj.optString("fragment")
+                                val url = jObj.optString("url")
+                                val info = ItemInfo(title, arrayOf(), Class.forName(fragment), url)
+                                mItemInfo.add(info)
+                            }
+                        } catch (ex: Exception) {
+                        }
+                        getHandler().post {
+                            notifyRecyclerView()
+                        }
+                    }
+
+                    override fun onError(httpURLConnection: HttpURLConnection?, exception: Exception) {
+                        getHandler().post {
+                            notifyRecyclerView()
+                        }
+                    }
+                })
+
+    }
+
+    private fun notifyRecyclerView() {
         mRecyclerView = view?.findViewById(R.id.recycler_view) as RecyclerView?
         mRecyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         mRecyclerView?.adapter = SimpleAdapter()
@@ -49,7 +84,11 @@ class VideoTabFragment : BaseTabPagerFragment() {
         override fun onBindViewHolder(holder: VH?, position: Int) {
             holder?.textView?.text = mItemInfo[position].title
             holder?.itemView?.setOnClickListener {
-                val intent = ImmersiveFragmentActivity.newInstance(context, mItemInfo[position].clazz)
+                val intent = ImmersiveFragmentActivity.newInstance(context, mItemInfo[position].clazz,
+                        Bundle().apply {
+                            putString("url", mItemInfo[position].url);
+                            putString("title", mItemInfo[position].title)
+                        })
                 startActivity(intent)
             }
         }
@@ -68,5 +107,5 @@ class VideoTabFragment : BaseTabPagerFragment() {
         }
     }
 
-    data class ItemInfo(val title: String, val images: Array<String>, val clazz: Class<*>)
+    data class ItemInfo(val title: String, val images: Array<String>, val clazz: Class<*>, val url: String)
 }
