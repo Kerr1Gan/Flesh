@@ -46,7 +46,9 @@
             android:name=".ui.activity.PayPalSampleActivity"
             android:exported="true" />
 
-        <activity android:name=".ui.activity.PayPalActivity" />
+        <activity
+            android:name=".ui.activity.PayPalActivity"
+            android:theme="@style/CCTranslucentTheme" />
 
         <service
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"

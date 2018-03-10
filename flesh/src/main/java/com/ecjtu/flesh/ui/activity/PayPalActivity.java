@@ -1,14 +1,19 @@
 package com.ecjtu.flesh.ui.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.ecjtu.componentes.TranslucentUtil;
+import com.ecjtu.netcore.network.AsyncNetwork;
+import com.ecjtu.netcore.network.IRequestCallbackV2;
 import com.paypal.android.sdk.payments.PayPalAuthorization;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalFuturePaymentActivity;
@@ -19,9 +24,16 @@ import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,7 +53,7 @@ public class PayPalActivity extends AppCompatActivity {
      * - Set to PayPalConfiguration.ENVIRONMENT_NO_NETWORK to kick the tires
      * without communicating to PayPal's servers.
      */
-    private static final String CONFIG_ENVIRONMENT = PayPalConfiguration.ENVIRONMENT_SANDBOX;
+    private static final String CONFIG_ENVIRONMENT = PayPalConfiguration.ENVIRONMENT_PRODUCTION;
 
     // note that these credentials will differ between live & sandbox environments.
     private static final String CONFIG_CLIENT_ID = "AS2hguXeqedhAMS9_WQqQezlz_VjhenTS1g7roUA6govlxZ0BghxeApZmQt3OyJSZeqgLDNv7mKUq5TD";
@@ -49,6 +61,8 @@ public class PayPalActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_PAYMENT = 1;
     private static final int REQUEST_CODE_FUTURE_PAYMENT = 2;
     private static final int REQUEST_CODE_PROFILE_SHARING = 3;
+
+    private static final String VIP_SERVER_URL = "http://13.125.219.143:8080/flesh/api/isVip?userId=%s&paymentId=%s";
 
     private static PayPalConfiguration config = new PayPalConfiguration()
             .environment(CONFIG_ENVIRONMENT)
@@ -61,7 +75,7 @@ public class PayPalActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        TranslucentUtil.INSTANCE.translucentWindow(this);
         Intent intent = new Intent(this, PayPalService.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
         startService(intent);
@@ -113,6 +127,7 @@ public class PayPalActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_PAYMENT) {
             if (resultCode == Activity.RESULT_OK) {
                 PaymentConfirmation confirm =
@@ -131,18 +146,54 @@ public class PayPalActivity extends AppCompatActivity {
                          * https://github.com/paypal/rest-api-sdk-python/tree/master/samples/mobile_backend
                          */
                         displayResultText("PaymentConfirmation info received from PayPal");
+                        JSONObject jRoot = confirm.toJSONObject();
+                        JSONObject payment = confirm.getPayment().toJSONObject();
+                        JSONObject proofPayment = confirm.getProofOfPayment().toJSONObject();
+                        JSONArray jsonArray = new JSONArray();
+                        jsonArray.put(jRoot);
+                        jsonArray.put(payment);
+                        jsonArray.put(proofPayment);
 
+                        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                        if (telephonyManager != null) {
+                            String deviceId = telephonyManager.getDeviceId();
+                            AsyncNetwork request = new AsyncNetwork();
+                            String encodeStr = "";
+                            try {
+                                encodeStr = URLEncoder.encode(jsonArray.toString(), "utf-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                                encodeStr = jsonArray.toString();
+                            }
+                            request.request(String.format(VIP_SERVER_URL, deviceId, encodeStr));
+                            request.setRequestCallback(new IRequestCallbackV2() {
+                                @Override
+                                public void onError(@Nullable HttpURLConnection httpURLConnection, @NotNull Exception exception) {
+                                    setResult(Activity.RESULT_CANCELED);
+                                    finish();
+                                }
 
+                                @Override
+                                public void onSuccess(@Nullable HttpURLConnection httpURLConnection, @NotNull String response) {
+                                    setResult(Activity.RESULT_OK);
+                                    finish();
+                                }
+                            });
+                        }
                     } catch (JSONException e) {
                         Log.e(TAG, "an extremely unlikely failure occurred: ", e);
                     }
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Log.i(TAG, "The user canceled.");
+                Toast.makeText(this, "失败了", Toast.LENGTH_SHORT).show();
+                setResult(Activity.RESULT_CANCELED);
+                finish();
             } else if (resultCode == PaymentActivity.RESULT_EXTRAS_INVALID) {
-                Log.i(
-                        TAG,
-                        "An invalid Payment or PayPalConfiguration was submitted. Please see the docs.");
+                Log.i(TAG, "An invalid Payment or PayPalConfiguration was submitted. Please see the docs.");
+                Toast.makeText(this, "失败了", Toast.LENGTH_SHORT).show();
+                setResult(Activity.RESULT_CANCELED);
+                finish();
             }
         } else if (requestCode == REQUEST_CODE_FUTURE_PAYMENT) {
             if (resultCode == Activity.RESULT_OK) {
@@ -194,6 +245,9 @@ public class PayPalActivity extends AppCompatActivity {
                         "ProfileSharingExample",
                         "Probably the attempt to previously start the PayPalService had an invalid PayPalConfiguration. Please see the docs.");
             }
+        } else {
+            setResult(Activity.RESULT_CANCELED);
+            finish();
         }
     }
 

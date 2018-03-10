@@ -169,6 +169,13 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
             mVideoView?.pause()
         }
         mOrientationListener?.disable()
+
+        if (activity.isFinishing) {
+            mVideoView?.pause()
+            mVideoView?.stopPlayback()
+            mVideoView?.release(true)
+            mAdMob?.onDestroy()
+        }
     }
 
     override fun onPause() {
