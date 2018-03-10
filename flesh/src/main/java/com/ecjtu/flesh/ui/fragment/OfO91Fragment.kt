@@ -42,7 +42,7 @@ class OfO91Fragment : VideoListFragment() {
         if (!TextUtils.isEmpty(title)) {
             getToolbar().setTitle(title)
         } else {
-            getToolbar().setTitle("OfO" )
+            getToolbar().setTitle("OfO")
         }
     }
 
