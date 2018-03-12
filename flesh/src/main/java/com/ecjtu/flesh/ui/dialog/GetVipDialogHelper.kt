@@ -27,12 +27,8 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
         const val API_URI = "/api/getUserByDeviceId?deviceId="
     }
 
-    private var mHandler: Handler? = null
-
     override fun init() {
         super.init()
-        mHandler = Handler()
-
         getBuilder()?.setTitle("获取Vip")
                 ?.setMessage("正在获取Vip信息...")
                 ?.setView(R.layout.layout_progress)
@@ -59,7 +55,7 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
             getDialog()?.getButton(DialogInterface.BUTTON_POSITIVE)?.visibility = View.GONE
         }
         getDialog()?.setOnCancelListener {
-            mHandler?.removeMessages(0, null)
+            getHandler().removeMessages(0, null)
         }
     }
 
@@ -75,7 +71,7 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                             val jObj = JSONObject(response)
                             val code = (jObj.opt("code") as String).toInt()
                             if (code < 0) {
-                                mHandler?.post {
+                                getHandler().post {
                                     val messageView = getDialog()?.findViewById(android.R.id.message) as TextView?
                                     messageView?.setText("通过PayPal支付5刀即可获得1月Vip。")
                                     messageView?.visibility = View.VISIBLE
@@ -86,7 +82,7 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                                 }
                             } else {
                                 val key = Settings.System.getString(getContext().contentResolver, "paymentId")
-                                mHandler?.post {
+                                getHandler().post {
                                     val messageView = getDialog()?.findViewById(android.R.id.message) as TextView?
                                     messageView?.setText("您的Vip信息：\n" + "key:" + key)
                                     messageView?.visibility = View.VISIBLE
@@ -114,7 +110,7 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                     }
 
                     override fun onError(httpURLConnection: HttpURLConnection?, exception: Exception) {
-                        mHandler?.post {
+                        getHandler().post {
                             getDialog()?.cancel()
                             Toast.makeText(getContext(), "获取失败", Toast.LENGTH_SHORT).show()
                         }

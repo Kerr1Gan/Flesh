@@ -1,6 +1,7 @@
 package com.ecjtu.flesh.ui.dialog
 
 import android.content.Context
+import android.os.Handler
 import android.support.v7.app.AlertDialog
 
 /**
@@ -13,6 +14,8 @@ abstract class BaseDialogHelper {
 
     private var mDialog: AlertDialog? = null
 
+    private val mHandler: Handler = Handler()
+
     constructor(context: Context) {
         mContext = context
         init()
@@ -20,6 +23,9 @@ abstract class BaseDialogHelper {
 
     open protected fun init() {
         mAlertDialogBuilder = AlertDialog.Builder(mContext)
+    }
+
+    open protected fun initLater() {
     }
 
     fun getDialog(): AlertDialog? = mDialog
@@ -30,5 +36,9 @@ abstract class BaseDialogHelper {
 
     fun setDialog(dialog: AlertDialog?) {
         mDialog = dialog
+    }
+
+    fun getHandler(): Handler {
+        return mHandler
     }
 }

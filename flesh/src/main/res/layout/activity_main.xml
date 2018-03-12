@@ -165,6 +165,19 @@
                     android:textSize="16dp" />
 
                 <TextView
+                    android:id="@+id/sync_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:drawableLeft="@drawable/ic_cache"
+                    android:drawablePadding="12dp"
+                    android:gravity="center_vertical"
+                    android:padding="20dp"
+                    android:text="@string/cache"
+                    android:textColor="@android:color/black"
+                    android:textSize="16dp" />
+
+                <TextView
                     android:id="@+id/cache"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
