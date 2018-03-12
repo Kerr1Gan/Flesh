@@ -2,6 +2,7 @@ package com.ecjtu.flesh.ui.dialog
 
 import android.content.*
 import android.os.Handler
+import android.preference.PreferenceManager
 import android.provider.Settings
 import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
@@ -62,7 +63,7 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
     private fun doRequest(deviceId: String?) {
         var local = deviceId
         if (TextUtils.isEmpty(local)) {
-            local = Settings.System.getString(getContext().contentResolver, "paymentId")
+            local = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("paymentId","")
         }
         AsyncNetwork().request(Constants.SERVER_URL + API_URI + local)
                 .setRequestCallback(object : IRequestCallbackV2 {
@@ -81,7 +82,9 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                                     getDialog()?.getButton(DialogInterface.BUTTON_POSITIVE)?.visibility = View.VISIBLE
                                 }
                             } else {
-                                val key = Settings.System.getString(getContext().contentResolver, "paymentId")
+                                var json = JSONObject(response)
+                                json = json.optJSONObject("data")
+                                val key = json.optString("paymentId")
                                 getHandler().post {
                                     val messageView = getDialog()?.findViewById(android.R.id.message) as TextView?
                                     messageView?.setText("您的Vip信息：\n" + "key:" + key)
