@@ -23,9 +23,12 @@ abstract class BaseDialogHelper {
 
     open protected fun init() {
         mAlertDialogBuilder = AlertDialog.Builder(mContext)
+        getHandler().post {
+            initAsync()
+        }
     }
 
-    open protected fun initLater() {
+    open protected fun initAsync() {
     }
 
     fun getDialog(): AlertDialog? = mDialog

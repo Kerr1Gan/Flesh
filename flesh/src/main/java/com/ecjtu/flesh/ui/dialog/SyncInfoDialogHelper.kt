@@ -7,8 +7,8 @@ import android.content.Context
  */
 class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
 
-    override fun initLater() {
-        super.initLater()
+    override fun initAsync() {
+        super.initAsync()
 
     }
 }
