@@ -51,15 +51,17 @@ abstract class BaseNetwork {
 
     private var mUrl = ""
 
+    private var mTimeOut: Int? = null
+
     var charset = Charset.forName("utf-8")
 
-    fun setRequestCallback(callback: IRequestCallback):BaseNetwork {
+    fun setRequestCallback(callback: IRequestCallback): BaseNetwork {
         mCallback = callback
         return this
     }
 
     @JvmOverloads
-    open fun request(urlStr: String, mutableMap: MutableMap<String, String>? = null):BaseNetwork {
+    open fun request(urlStr: String, mutableMap: MutableMap<String, String>? = null): BaseNetwork {
         var ex: Exception? = null
 
         var ret = ""
@@ -89,13 +91,13 @@ abstract class BaseNetwork {
         return this
     }
 
-    protected open fun setupRequest(httpURLConnection: HttpURLConnection):BaseNetwork {
+    protected open fun setupRequest(httpURLConnection: HttpURLConnection): BaseNetwork {
         httpURLConnection.apply {
             doInput = mDoInput
             doOutput = mDoOutput
             requestMethod = Method.GET
-            connectTimeout = TIME_OUT
-            readTimeout = TIME_OUT
+            connectTimeout = mTimeOut ?: TIME_OUT
+            readTimeout = mTimeOut ?: TIME_OUT
             setRequestProperty("Content-Type", "*/*")
             setRequestProperty(HEADER_CONTENT_ENCODING, CHARSET)
             mHeaders?.apply {
@@ -209,5 +211,9 @@ abstract class BaseNetwork {
         input?.let { mDoInput = input }
         output?.let { mDoOutput = output }
         return this
+    }
+
+    fun setTimeOut(timeOut: Int) {
+        mTimeOut = timeOut
     }
 }
