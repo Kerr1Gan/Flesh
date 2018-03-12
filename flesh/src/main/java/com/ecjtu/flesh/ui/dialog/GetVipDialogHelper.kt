@@ -22,7 +22,7 @@ import java.net.HttpURLConnection
 class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
 
     companion object {
-        const val API_URI = "/api/getUserById?&userId="
+        const val API_URI = "/api/getUserByDeviceId?deviceId="
     }
 
     private var mHandler: Handler? = null

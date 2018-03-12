@@ -51,7 +51,8 @@ object Constants {
 
     const val PREF_VIP_INFO = "constants_pref_vip_info"
 
-    const val SERVER_URL = "http://13.125.219.143:8080/flesh"
+    //    "http://13.125.219.143:8080/flesh"
+    const val SERVER_URL = "http://192.168.123.102:8080/flesh"
 
     const val DEVICE_ID_EMULATOR = "000000000000000"
 }

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -26,7 +27,6 @@ import com.paypal.android.sdk.payments.PaymentConfirmation;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -53,7 +53,7 @@ public class PayPalActivity extends AppCompatActivity {
      * - Set to PayPalConfiguration.ENVIRONMENT_NO_NETWORK to kick the tires
      * without communicating to PayPal's servers.
      */
-    private static final String CONFIG_ENVIRONMENT = PayPalConfiguration.ENVIRONMENT_PRODUCTION;
+    private static final String CONFIG_ENVIRONMENT = PayPalConfiguration.ENVIRONMENT_SANDBOX;
 
     // note that these credentials will differ between live & sandbox environments.
     private static final String CONFIG_CLIENT_ID = "AS2hguXeqedhAMS9_WQqQezlz_VjhenTS1g7roUA6govlxZ0BghxeApZmQt3OyJSZeqgLDNv7mKUq5TD";
@@ -61,8 +61,8 @@ public class PayPalActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_PAYMENT = 1;
     private static final int REQUEST_CODE_FUTURE_PAYMENT = 2;
     private static final int REQUEST_CODE_PROFILE_SHARING = 3;
-
-    private static final String VIP_SERVER_URL = "http://13.125.219.143:8080/flesh/api/isVip?userId=%s&paymentId=%s";
+    //    http://13.125.219.143:8080/flesh/api/isVip?userId=%s&paymentId=%s
+    private static final String VIP_SERVER_URL = "http://192.168.123.102:8080/flesh/api/verifyVip?deviceId=%s&paymentJson=%s";
 
     private static PayPalConfiguration config = new PayPalConfiguration()
             .environment(CONFIG_ENVIRONMENT)
@@ -149,14 +149,17 @@ public class PayPalActivity extends AppCompatActivity {
                         JSONObject jRoot = confirm.toJSONObject();
                         JSONObject payment = confirm.getPayment().toJSONObject();
                         JSONObject proofPayment = confirm.getProofOfPayment().toJSONObject();
-                        JSONArray jsonArray = new JSONArray();
-                        jsonArray.put(jRoot);
-                        jsonArray.put(payment);
-                        jsonArray.put(proofPayment);
+                        JSONObject jsonArray = new JSONObject();
+                        jsonArray.put("confirm", jRoot);
+                        jsonArray.put("payment", payment);
+                        jsonArray.put("proofPayment", proofPayment);
 
                         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                         if (telephonyManager != null) {
                             String deviceId = telephonyManager.getDeviceId();
+                            if (TextUtils.isEmpty(deviceId)) {
+                                deviceId = confirm.getProofOfPayment().getPaymentId();
+                            }
                             AsyncNetwork request = new AsyncNetwork();
                             String encodeStr = "";
                             try {
