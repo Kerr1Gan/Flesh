@@ -200,7 +200,7 @@ public class ExampleInstrumentedTest {
 
         List<PageModel.ItemModel> itemModels = new ArrayList<PageModel.ItemModel>();
         for (int i = 0; i < 50000; i++) {
-            itemModels.add(new PageModel.ItemModel("", "", "",0));
+            itemModels.add(new PageModel.ItemModel("", "", "", 0));
         }
 
         //db begin
@@ -471,4 +471,22 @@ public class ExampleInstrumentedTest {
         x++;
     }
 
+    @Test
+    public void testTryCatch() throws Exception {
+        boolean ret = catchRet();
+        int x=0;
+        x++;
+    }
+
+    public boolean catchRet() {
+        try {
+            int x = 5 / 0;
+        } catch (Exception e) {
+            return false;
+        } finally {
+            int x = 0;
+            x++;
+        }
+        return true;
+    }
 }

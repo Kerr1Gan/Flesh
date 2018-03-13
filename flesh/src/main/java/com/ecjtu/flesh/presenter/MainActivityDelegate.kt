@@ -34,6 +34,7 @@ import com.ecjtu.flesh.R
 import com.ecjtu.flesh.ui.activity.MainActivity
 import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
 import com.ecjtu.flesh.ui.dialog.GetVipDialogHelper
+import com.ecjtu.flesh.ui.dialog.SyncInfoDialogHelper
 import com.ecjtu.flesh.ui.fragment.*
 import com.ecjtu.flesh.util.file.FileUtil
 import java.io.File
@@ -138,6 +139,10 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
 
         findViewById(R.id.vip_info)?.setOnClickListener {
             GetVipDialogHelper(owner).getDialog()?.show()
+        }
+
+        findViewById(R.id.sync_info)?.setOnClickListener {
+            SyncInfoDialogHelper(owner).getDialog()?.show()
         }
 
         mAppbarExpand = PreferenceManager.getDefaultSharedPreferences(owner).getBoolean(TabPagerAdapter.KEY_APPBAR_LAYOUT_COLLAPSED, false)

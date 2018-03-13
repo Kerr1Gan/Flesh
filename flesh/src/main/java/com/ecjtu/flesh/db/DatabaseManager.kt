@@ -35,7 +35,7 @@ class DatabaseManager(context: Context? = null) {
 
     fun getDatabase(version: Int): SQLiteDatabase? {
         if (mContext != null) {
-            return getHelper(mContext!!, "heaven", version)?.writableDatabase
+            return getHelper(mContext!!, DB_NAME, version)?.writableDatabase
         }
         return null
     }
@@ -53,6 +53,7 @@ class DatabaseManager(context: Context? = null) {
     companion object {
         private val sTableList = ArrayList<BaseTableImpl>()
         const val DATABASE_VERSION = 11
+        const val DB_NAME = "heaven"
 
         @JvmStatic
         fun getInstance(context: Context? = null): DatabaseManager? {

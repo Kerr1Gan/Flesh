@@ -1,9 +1,7 @@
 package com.ecjtu.flesh.ui.dialog
 
 import android.content.*
-import android.os.Handler
 import android.preference.PreferenceManager
-import android.provider.Settings
 import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
 import android.text.TextUtils
@@ -28,8 +26,7 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
         const val API_URI = "/api/getUserByDeviceId?deviceId="
     }
 
-    override fun init() {
-        super.init()
+    override fun onCreateDialog(): AlertDialog? {
         getBuilder()?.setTitle("获取Vip")
                 ?.setMessage("正在获取Vip信息...")
                 ?.setView(R.layout.layout_progress)
@@ -41,29 +38,32 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                     }
                 })
 
-        setDialog(getBuilder()?.create())
         val deviceId = (getContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?)?.deviceId
-        getDialog()?.setOnShowListener {
-            doRequest(deviceId)
-            if (TextUtils.isEmpty(deviceId)) {
-                val builder = AlertDialog.Builder(getContext())
-                builder.setTitle("警告")
-                builder.setMessage("由于您使用的是虚拟机，所以购买后请牢记Vip信息.")
-                builder.setPositiveButton("确定", null)
-                        .create().show()
-            }
-            getDialog()?.getButton(DialogInterface.BUTTON_NEGATIVE)?.visibility = View.GONE
-            getDialog()?.getButton(DialogInterface.BUTTON_POSITIVE)?.visibility = View.GONE
+        if (TextUtils.isEmpty(deviceId)) {
+            val builder = AlertDialog.Builder(getContext())
+            builder.setTitle("警告")
+            builder.setMessage("由于您使用的是虚拟机，所以购买后请牢记Vip信息.")
+            builder.setPositiveButton("确定", null)
         }
-        getDialog()?.setOnCancelListener {
-            getHandler().removeMessages(0, null)
-        }
+        return getBuilder()?.create()
+    }
+
+    override fun onDialogShow(dialog: AlertDialog) {
+        val deviceId = (getContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?)?.deviceId
+        doRequest(deviceId)
+        getDialog()?.getButton(DialogInterface.BUTTON_NEGATIVE)?.visibility = View.GONE
+        getDialog()?.getButton(DialogInterface.BUTTON_POSITIVE)?.visibility = View.GONE
+    }
+
+    override fun onDialogCancel(dialog: AlertDialog) {
+        super.onDialogCancel(dialog)
+        getHandler().removeMessages(0, null)
     }
 
     private fun doRequest(deviceId: String?) {
         var local = deviceId
         if (TextUtils.isEmpty(local)) {
-            local = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("paymentId","")
+            local = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("paymentId", "")
         }
         AsyncNetwork().request(Constants.SERVER_URL + API_URI + local)
                 .setRequestCallback(object : IRequestCallbackV2 {

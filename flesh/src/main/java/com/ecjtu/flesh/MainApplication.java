@@ -69,7 +69,7 @@ public class MainApplication extends MultiDexApplication {
         manager.registerTable(new HistoryTableImpl());
         manager.registerTable(new LikeTableImpl());
         manager.registerTable(new NotificationTableImpl());
-        manager.getHelper(this, "heaven", DatabaseManager.DATABASE_VERSION).getWritableDatabase();
+        manager.getHelper(this, DatabaseManager.DB_NAME, DatabaseManager.DATABASE_VERSION).getWritableDatabase();
     }
 
     private void initSDK() {

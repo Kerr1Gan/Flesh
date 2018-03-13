@@ -48,12 +48,23 @@ object FileUtil {
     }
 
     @Throws(IOException::class)
-    fun copyFile(inputStream: InputStream, outputStream: BufferedOutputStream) {
+    fun copyFile(inputStream: InputStream, outputStream: OutputStream) {
         val arr = ByteArray(1024 * 5)
         var len = inputStream.read(arr)
         while (len > 0) {
             outputStream.write(arr)
             len = inputStream.read(arr)
+        }
+    }
+
+    fun moveFile2Path(src: File, dest: File): Boolean {
+        return if (copyFile2Path(src, dest)) {
+            if (src.exists()) {
+                src.delete()
+            }
+            true
+        } else {
+            false
         }
     }
 

@@ -55,4 +55,6 @@ object Constants {
     const val SERVER_URL = "http://192.168.123.102:8080/flesh"
 
     const val DEVICE_ID_EMULATOR = "000000000000000"
+
+    const val PREF_SYNC_DATA_TIME = "pref_sync_data_time"
 }
