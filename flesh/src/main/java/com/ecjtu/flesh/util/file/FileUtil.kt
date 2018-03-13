@@ -52,7 +52,7 @@ object FileUtil {
         val arr = ByteArray(1024 * 5)
         var len = inputStream.read(arr)
         while (len > 0) {
-            outputStream.write(arr)
+            outputStream.write(arr, 0, len)
             len = inputStream.read(arr)
         }
     }
