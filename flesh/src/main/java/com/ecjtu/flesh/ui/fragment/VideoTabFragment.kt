@@ -1,6 +1,7 @@
 package com.ecjtu.flesh.ui.fragment
 
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -21,11 +22,15 @@ import java.net.HttpURLConnection
  */
 class VideoTabFragment : BaseTabPagerFragment() {
 
+    companion object {
+        private const val PREF_VIDEO_TAB_JSON = "pref_video_tab_json"
+    }
+
     private var mRecyclerView: RecyclerView? = null
     private val mItemInfo = mutableListOf<ItemInfo>(
             /*ItemInfo("爱恋", arrayOf(), V33Fragment::class.java, ""),
-            ItemInfo("OfO", arrayOf(), OfO91Fragment::class.java, ""),*/
-            ItemInfo("Vip", arrayOf(), VipFragment::class.java, ""))
+            ItemInfo("OfO", arrayOf(), OfO91Fragment::class.java, ""),
+            ItemInfo("Vip", arrayOf(), VipFragment::class.java, "")*/)
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_video_tab, container, false)
@@ -34,6 +39,20 @@ class VideoTabFragment : BaseTabPagerFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         if (getDelegate()?.getTabLayout() != null) {
             setTabLayout(getDelegate()?.getTabLayout()!!)
+        }
+        val tabJson = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_VIDEO_TAB_JSON, "")
+        try {
+            val jArray = JSONArray(tabJson)
+            for (i in 0 until jArray.length()) {
+                val jObj = jArray.get(i) as JSONObject
+                val title = jObj.optString("title")
+                val fragment = jObj.optString("fragment")
+                val url = jObj.optString("url")
+                val info = ItemInfo(title, arrayOf(), Class.forName(fragment), url)
+                mItemInfo.add(info)
+            }
+            notifyRecyclerView()
+        } catch (ex: Exception) {
         }
         AsyncNetwork().request(Constants.VIDEO_TAB_URL)
                 .setRequestCallback(object : IRequestCallbackV2 {
@@ -47,6 +66,10 @@ class VideoTabFragment : BaseTabPagerFragment() {
                                 val url = jObj.optString("url")
                                 val info = ItemInfo(title, arrayOf(), Class.forName(fragment), url)
                                 mItemInfo.add(info)
+                            }
+                            if (context != null) {
+                                PreferenceManager.getDefaultSharedPreferences(context).edit()
+                                        .putString(PREF_VIDEO_TAB_JSON, response).apply()
                             }
                         } catch (ex: Exception) {
                         }

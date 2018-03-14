@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.amazonaws.Protocol
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.Bucket
 import com.amazonaws.services.s3.model.ObjectListing
@@ -24,7 +25,7 @@ import kotlin.concurrent.thread
  */
 class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTabPagerAdapter(menu, viewPager) {
     companion object {
-        const val S3_URL_FORMAT = "http://${Constants.S3_URL}/%s/%s"
+        const val S3_URL_FORMAT = "%s://${Constants.S3_URL}/%s/%s"
         const val S3_IMAGE_FORMAT = "%s_image_%s.png"
         const val S3_IMAGE_BUCKET = "fleshbucketimage"
     }
@@ -36,6 +37,7 @@ class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
 
     private var mBuckets: List<Bucket>? = null
     private var mS3: AmazonS3Client? = null
+    private var mProtocol: Protocol? = null
 
     override fun instantiateItem(container: ViewGroup?, position: Int): Any {
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
@@ -85,7 +87,6 @@ class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
                         }
                         v33List.add(v33)
                     }
-
                     val impl = ClassPageTableImpl()
                     val db = DatabaseManager.getInstance(context)?.getDatabase()
                     val itemListModel = arrayListOf<PageModel.ItemModel>()
@@ -126,9 +127,10 @@ class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
         }
     }
 
-    fun setBucketsList(buckets: List<Bucket>, s3: AmazonS3Client) {
+    fun setBucketsList(buckets: List<Bucket>, s3: AmazonS3Client, protocal: Protocol) {
         mBuckets = buckets
         mS3 = s3
+        mProtocol = protocal
     }
 
     override fun getLastPositionKey(): String {
@@ -152,6 +154,6 @@ class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
     }
 
     private fun getImageUrlByS3(title: String, bucketName: String): String {
-        return String.format(S3_URL_FORMAT, S3_IMAGE_BUCKET, String.format(S3_IMAGE_FORMAT, bucketName, title))
+        return String.format(S3_URL_FORMAT, mProtocol.toString(), S3_IMAGE_BUCKET, String.format(S3_IMAGE_FORMAT, bucketName, title))
     }
 }

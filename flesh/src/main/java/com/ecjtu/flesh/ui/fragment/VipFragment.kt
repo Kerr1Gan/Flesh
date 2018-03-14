@@ -50,7 +50,7 @@ class VipFragment : VideoListFragment() {
         if (isVisibleToUser) {
             val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
             val deviceId = telephonyManager.getDeviceId()
-            AsyncNetwork().request(Constants.SERVER_URL + "/api/getUserById?userId=" + deviceId)
+            AsyncNetwork().request(Constants.SERVER_URL + "/api/getUserByDeviceId?deviceId=" + deviceId)
                     .setRequestCallback(object : IRequestCallbackV2 {
                         override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                             try {
@@ -130,62 +130,75 @@ class VipFragment : VideoListFragment() {
             mRequest = AsyncNetwork().request(Constants.S3BUCKET_MAPPING).apply {
                 setRequestCallback(object : IRequestCallback {
                     override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
-                        try {
-                            val bucketList = S3BucketModel.fromJson(response)
-                            val secretKey = SecretKeyUtils.getKeyFromServer()
-                            val content = SecretKeyUtils.getS3InfoFromServer(secretKey!!.key)
-                            val params = content.split(",")
-                            val provider = BasicAWSCredentials(params[0], params[1])
-                            val config = ClientConfiguration()
-                            config.protocol = Protocol.HTTP
-                            mS3 = AmazonS3Client(provider, config)
-                            val region = Region.getRegion(Regions.CN_NORTH_1)
-                            mS3?.setRegion(region)
-                            mS3?.setEndpoint(Constants.S3_URL)
-                            val buckets = mS3?.listBuckets()
-                            mBuckets = buckets
-                            val menuModel = mutableListOf<MenuModel>()
-                            if (bucketList != null) {
-                                val renameBucket = ArrayList<Bucket>()
-                                for (bucket in bucketList) {
-                                    val menu = MenuModel(bucket.title, "")
-                                    menuModel.add(menu)
-                                    var i = 0
-                                    while (i < mBuckets?.size ?: 0) {
-                                        if (bucket.bucketName.equals(mBuckets?.get(i)?.name)) {
-                                            if (mBuckets?.get(i) != null) {
-                                                renameBucket.add(mBuckets?.get(i)!!)
+                        var index = 0
+                        do {
+                            try {
+                                val bucketList = S3BucketModel.fromJson(response)
+                                val secretKey = SecretKeyUtils.getKeyFromServer()
+                                val content = SecretKeyUtils.getS3InfoFromServer(secretKey!!.key)
+                                val params = content.split(",")
+                                val provider = BasicAWSCredentials(params[0], params[1])
+                                val config = ClientConfiguration()
+                                if (index == 0) {
+                                    config.protocol = Protocol.HTTP
+                                } else {
+                                    config.protocol = Protocol.HTTPS
+                                }
+                                mS3 = AmazonS3Client(provider, config)
+                                val region = Region.getRegion(Regions.CN_NORTH_1)
+                                mS3?.setRegion(region)
+                                mS3?.setEndpoint(Constants.S3_URL)
+                                val buckets = mS3?.listBuckets()
+                                mBuckets = buckets
+                                val menuModel = mutableListOf<MenuModel>()
+                                if (bucketList != null) {
+                                    val renameBucket = ArrayList<Bucket>()
+                                    for (bucket in bucketList) {
+                                        val menu = MenuModel(bucket.title, "")
+                                        menuModel.add(menu)
+                                        var i = 0
+                                        while (i < mBuckets?.size ?: 0) {
+                                            if (bucket.bucketName.equals(mBuckets?.get(i)?.name)) {
+                                                if (mBuckets?.get(i) != null) {
+                                                    renameBucket.add(mBuckets?.get(i)!!)
+                                                }
+                                                break
+                                            } else if (i == mBuckets?.size ?: 0 - 1) {
                                             }
-                                            break
-                                        } else if (i == mBuckets?.size ?: 0 - 1) {
-                                        }
-                                        i++
-                                    }
-                                }
-                                mBuckets = renameBucket
-                                if (activity != null && Thread.currentThread().isInterrupted == false) {
-                                    activity.runOnUiThread {
-                                        if (mRequest == null) {
-                                            return@runOnUiThread
-                                        }
-                                        if (getViewPager() != null && getViewPager()?.adapter == null) {
-                                            getViewPager()?.adapter = VipTabPagerAdapter(menuModel, getViewPager()!!)
-                                            (getViewPager()?.adapter as VipTabPagerAdapter?)?.setBucketsList(mBuckets!!, mS3!!)
-                                            (getViewPager()?.adapter as VipTabPagerAdapter?)?.notifyDataSetChanged(true)
-                                        } else {
-                                            (getViewPager()?.adapter as VipTabPagerAdapter).menu = menuModel
-                                            (getViewPager()?.adapter as VipTabPagerAdapter?)?.setBucketsList(mBuckets!!, mS3!!)
-                                            (getViewPager()?.adapter as VipTabPagerAdapter?)?.notifyDataSetChanged(false)
-                                        }
-                                        if (userVisibleHint) {
-                                            attachTabLayout()
+                                            i++
                                         }
                                     }
+                                    mBuckets = renameBucket
+
+                                    if (activity != null && Thread.currentThread().isInterrupted == false) {
+                                        activity.runOnUiThread {
+                                            if (mRequest == null) {
+                                                return@runOnUiThread
+                                            }
+                                            if (getViewPager() != null && getViewPager()?.adapter == null) {
+                                                getViewPager()?.adapter = VipTabPagerAdapter(menuModel, getViewPager()!!)
+                                                (getViewPager()?.adapter as VipTabPagerAdapter?)?.setBucketsList(mBuckets!!, mS3!!, config.protocol)
+                                                (getViewPager()?.adapter as VipTabPagerAdapter?)?.notifyDataSetChanged(true)
+                                            } else {
+                                                (getViewPager()?.adapter as VipTabPagerAdapter).menu = menuModel
+                                                (getViewPager()?.adapter as VipTabPagerAdapter?)?.setBucketsList(mBuckets!!, mS3!!, config.protocol)
+                                                (getViewPager()?.adapter as VipTabPagerAdapter?)?.notifyDataSetChanged(false)
+                                            }
+                                            if (userVisibleHint) {
+                                                attachTabLayout()
+                                            }
+                                        }
+                                    }
                                 }
+                                break
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                if (index >= 1) {
+                                    break
+                                }
+                                index++
                             }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
+                        } while (!Thread.interrupted())
                     }
                 })
             }

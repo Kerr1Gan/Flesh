@@ -134,39 +134,51 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
         dialog.getButton(DialogInterface.BUTTON_NEGATIVE).visibility = View.GONE
         dialog.getButton(DialogInterface.BUTTON_NEUTRAL).visibility = View.GONE
         thread {
-            try {
-                val telephonyManager = getContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
-                var deviceId = telephonyManager?.getDeviceId()
-                if (TextUtils.isEmpty(deviceId)) {
-                    deviceId = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constants.PREF_VIP_INFO, "")
-                }
-                val secretKey = SecretKeyUtils.getKeyFromServer()
-                val content = SecretKeyUtils.getS3InfoFromServer(secretKey!!.key)
-                val params = content.split(",")
-                val provider = BasicAWSCredentials(params[0], params[1])
-                val config = ClientConfiguration()
-                config.protocol = Protocol.HTTP
-                mS3 = AmazonS3Client(provider, config)
-                val region = Region.getRegion(Regions.CN_NORTH_1)
-                mS3?.setRegion(region)
-                mS3?.setEndpoint(Constants.S3_URL)
-                val s3ObjectMetaData = mS3?.getObjectMetadata("firststorage0001", "databases/$deviceId")
-                if (s3ObjectMetaData != null) {
-                    val time = s3ObjectMetaData.getUserMetaDataOf("update_time")
-                    val timeLong = time?.toLong() ?: -1L
-                    val timeString = if (timeLong == -1L) "" else mDateFormat.format(timeLong)
-                    getHandler().post {
-                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).visibility = View.VISIBLE
-                        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).visibility = View.VISIBLE
-                        dialog.getButton(DialogInterface.BUTTON_NEUTRAL).visibility = View.VISIBLE
-                        dialog.findViewById(R.id.progress_bar)?.visibility = View.GONE
-                        getDialog()?.setMessage("同步数据到服务器，上次同步时间$timeString.")
+            var index = 0
+            do {
+                try {
+                    val telephonyManager = getContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
+                    var deviceId = telephonyManager?.getDeviceId()
+                    if (TextUtils.isEmpty(deviceId)) {
+                        deviceId = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constants.PREF_VIP_INFO, "")
                     }
+                    val secretKey = SecretKeyUtils.getKeyFromServer()
+                    val content = SecretKeyUtils.getS3InfoFromServer(secretKey!!.key)
+                    val params = content.split(",")
+                    val provider = BasicAWSCredentials(params[0], params[1])
+                    val config = ClientConfiguration()
+                    if (index == 0) {
+                        config.protocol = Protocol.HTTP
+                    } else {
+                        config.protocol = Protocol.HTTPS
+                    }
+                    mS3 = AmazonS3Client(provider, config)
+                    val region = Region.getRegion(Regions.AP_NORTHEAST_2)
+                    mS3?.setRegion(region)
+                    mS3?.setEndpoint(Constants.S3_URL)
+                    val s3ObjectMetaData = mS3?.getObjectMetadata("firststorage0001", "databases/$deviceId")
+                    if (s3ObjectMetaData != null) {
+                        val time = s3ObjectMetaData.getUserMetaDataOf("update_time")
+                        val timeLong = time?.toLong() ?: -1L
+                        val timeString = if (timeLong == -1L) "" else mDateFormat.format(timeLong)
+                        getHandler().post {
+                            dialog.getButton(DialogInterface.BUTTON_POSITIVE).visibility = View.VISIBLE
+                            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).visibility = View.VISIBLE
+                            dialog.getButton(DialogInterface.BUTTON_NEUTRAL).visibility = View.VISIBLE
+                            dialog.findViewById(R.id.progress_bar)?.visibility = View.GONE
+                            getDialog()?.setMessage("同步数据到服务器，上次同步时间$timeString.")
+                        }
+                        break
+                    }
+                    if (index == 1) break
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    if (index == 1) {
+                        getDialog()?.cancel()
+                    }
+                    index++
                 }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                getDialog()?.cancel()
-            }
+            } while (!Thread.interrupted())
         }
     }
 

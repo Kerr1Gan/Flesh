@@ -1,6 +1,7 @@
 package com.ecjtu.flesh.ui.dialog
 
 import android.content.*
+import android.os.Environment
 import android.preference.PreferenceManager
 import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
@@ -11,9 +12,11 @@ import android.widget.Toast
 import com.ecjtu.flesh.Constants
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.ui.activity.PayPalActivity
+import com.ecjtu.flesh.util.CloseableUtil
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallbackV2
 import org.json.JSONObject
+import java.io.*
 import java.net.HttpURLConnection
 
 
@@ -62,8 +65,46 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
 
     private fun doRequest(deviceId: String?) {
         var local = deviceId
-        if (TextUtils.isEmpty(local)) {
+        var longLocal = 0L
+        try {
+            longLocal = deviceId?.toLong() ?: 0
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        if (TextUtils.isEmpty(local) || longLocal == 0L) {
             local = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("paymentId", "")
+            if (TextUtils.isEmpty(local)) {
+                if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+                    val sdUrl = Environment.getExternalStorageDirectory().absolutePath
+                    val vipFile = File(sdUrl, Constants.LOCAL_VIP_PATH)
+                    vipFile.mkdirs()
+                    var reader: BufferedReader? = null
+                    try {
+                        reader = BufferedReader(FileReader(vipFile))
+                        local = reader.readLine()
+                        PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("paymentId", local).apply()
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    } finally {
+                        CloseableUtil.closeQuitely(reader)
+                    }
+                }
+            } else {
+                if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+                    val sdUrl = Environment.getExternalStorageDirectory().absolutePath
+                    val vipFile = File(sdUrl, Constants.LOCAL_VIP_PATH)
+                    vipFile.mkdirs()
+                    var writer: BufferedWriter? = null
+                    try {
+                        writer = BufferedWriter(FileWriter(vipFile))
+                        writer.write(local)
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    } finally {
+                        CloseableUtil.closeQuitely(writer)
+                    }
+                }
+            }
         }
         AsyncNetwork().request(Constants.SERVER_URL + API_URI + local)
                 .setRequestCallback(object : IRequestCallbackV2 {

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.ecjtu.componentes.TranslucentUtil;
+import com.ecjtu.flesh.Constants;
+import com.ecjtu.flesh.util.CloseableUtil;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallbackV2;
 import com.paypal.android.sdk.payments.PayPalAuthorization;
@@ -30,6 +33,9 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
@@ -153,7 +159,7 @@ public class PayPalActivity extends AppCompatActivity {
                         jsonArray.put("confirm", jRoot);
                         jsonArray.put("payment", payment);
                         jsonArray.put("proofPayment", proofPayment);
-
+                        saveVipInfo(confirm.getProofOfPayment().getPaymentId());
                         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                         if (telephonyManager != null) {
                             String deviceId = telephonyManager.getDeviceId();
@@ -268,6 +274,27 @@ public class PayPalActivity extends AppCompatActivity {
          * https://github.com/paypal/rest-api-sdk-python/tree/master/samples/mobile_backend
          */
 
+    }
+
+    public void saveVipInfo(String content) {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            File file = new File(Environment.getExternalStorageDirectory(), Constants.LOCAL_VIP_PATH);
+            file.mkdirs();
+            BufferedWriter is = null;
+            try {
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+                is = new BufferedWriter(new FileWriter(file));
+                is.write(content);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (is != null) {
+                    CloseableUtil.INSTANCE.closeQuitely(is);
+                }
+            }
+        }
     }
 
     @Override
