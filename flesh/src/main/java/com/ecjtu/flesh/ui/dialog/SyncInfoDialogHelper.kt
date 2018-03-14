@@ -142,6 +142,24 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                     if (TextUtils.isEmpty(deviceId)) {
                         deviceId = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constants.PREF_VIP_INFO, "")
                     }
+                    var longDeviceId = 0L
+                    try {
+                        longDeviceId = deviceId?.toLong() ?: 0
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                        longDeviceId = 0L
+                    }
+                    if (TextUtils.isEmpty(deviceId) || longDeviceId == 0L) {
+                        getHandler().post {
+                            getDialog()?.cancel()
+                            val builder = AlertDialog.Builder(getContext())
+                            builder.setTitle("警告")
+                                    .setMessage("由于您使用的是模拟器，所以无法同步数据。充值Vip后再来试试吧！")
+                                    .setPositiveButton("好的", null)
+                                    .create().show()
+                        }
+                        return@thread
+                    }
                     val secretKey = SecretKeyUtils.getKeyFromServer()
                     val content = SecretKeyUtils.getS3InfoFromServer(secretKey!!.key)
                     val params = content.split(",")
@@ -170,10 +188,10 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                         }
                         break
                     }
-                    if (index == 1) break
+                    if (index >= 1) break
                 } catch (ex: Exception) {
                     ex.printStackTrace()
-                    if (index == 1) {
+                    if (index >= 1) {
                         getDialog()?.cancel()
                     }
                     index++

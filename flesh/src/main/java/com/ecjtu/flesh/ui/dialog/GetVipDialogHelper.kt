@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
 import android.text.TextUtils
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.ecjtu.flesh.Constants
@@ -29,6 +30,8 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
         const val API_URI = "/api/getUserByDeviceId?deviceId="
     }
 
+    private var mDeviceId: String? = null
+
     override fun onCreateDialog(): AlertDialog? {
         getBuilder()?.setTitle("获取Vip")
                 ?.setMessage("正在获取Vip信息...")
@@ -40,15 +43,28 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                         getContext().startActivity(intent)
                     }
                 })
-
+                ?.setNeutralButton("输入Vip key", { _, _ ->
+                    doVipKey()
+                })
         val deviceId = (getContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?)?.deviceId
-        if (TextUtils.isEmpty(deviceId)) {
-            val builder = AlertDialog.Builder(getContext())
-            builder.setTitle("警告")
-            builder.setMessage("由于您使用的是虚拟机，所以购买后请牢记Vip信息.")
-            builder.setPositiveButton("确定", null)
+        var longLocal = 0L
+        longLocal = try {
+            deviceId?.toLong() ?: 0
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            0L
         }
-        return getBuilder()?.create()
+        if (TextUtils.isEmpty(deviceId) || longLocal == 0L) {
+            getHandler().post {
+                val builder = AlertDialog.Builder(getContext())
+                builder.setTitle("警告")
+                builder.setMessage("由于您使用的是虚拟机，所以购买后请牢记Vip信息.")
+                builder.setPositiveButton("确定", null)
+                        .create()
+                        .show()
+            }
+        }
+        return getBuilder()?.create().apply { this?.setCancelable(false) }
     }
 
     override fun onDialogShow(dialog: AlertDialog) {
@@ -56,6 +72,7 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
         doRequest(deviceId)
         getDialog()?.getButton(DialogInterface.BUTTON_NEGATIVE)?.visibility = View.GONE
         getDialog()?.getButton(DialogInterface.BUTTON_POSITIVE)?.visibility = View.GONE
+        getDialog()?.getButton(DialogInterface.BUTTON_NEUTRAL)?.visibility = View.GONE
     }
 
     override fun onDialogCancel(dialog: AlertDialog) {
@@ -77,7 +94,6 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                 if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
                     val sdUrl = Environment.getExternalStorageDirectory().absolutePath
                     val vipFile = File(sdUrl, Constants.LOCAL_VIP_PATH)
-                    vipFile.mkdirs()
                     var reader: BufferedReader? = null
                     try {
                         reader = BufferedReader(FileReader(vipFile))
@@ -93,7 +109,10 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                 if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
                     val sdUrl = Environment.getExternalStorageDirectory().absolutePath
                     val vipFile = File(sdUrl, Constants.LOCAL_VIP_PATH)
-                    vipFile.mkdirs()
+                    vipFile.parentFile.mkdirs()
+                    if (vipFile.exists() || vipFile.isDirectory) {
+                        vipFile.delete()
+                    }
                     var writer: BufferedWriter? = null
                     try {
                         writer = BufferedWriter(FileWriter(vipFile))
@@ -106,7 +125,8 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                 }
             }
         }
-        AsyncNetwork().request(Constants.SERVER_URL + API_URI + local)
+        mDeviceId = local
+        AsyncNetwork().request(Constants.SERVER_URL + API_URI + if (!TextUtils.isEmpty(local)) local else "-1")
                 .setRequestCallback(object : IRequestCallbackV2 {
                     override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                         try {
@@ -121,6 +141,7 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                                     getDialog()?.findViewById(R.id.progress_bar)?.visibility = View.GONE
                                     getDialog()?.getButton(DialogInterface.BUTTON_NEGATIVE)?.visibility = View.VISIBLE
                                     getDialog()?.getButton(DialogInterface.BUTTON_POSITIVE)?.visibility = View.VISIBLE
+                                    getDialog()?.getButton(DialogInterface.BUTTON_NEUTRAL)?.visibility = View.VISIBLE
                                 }
                             } else {
                                 var json = JSONObject(response)
@@ -161,5 +182,53 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                     }
                 })
     }
+
+    private fun verifyVip(vipKey: String?, deviceId: String?) {
+        AsyncNetwork()
+                .request(Constants.SERVER_URL + "/api/verifyVip?deviceId=$deviceId&paymentId=$vipKey")
+                .setRequestCallback(object : IRequestCallbackV2 {
+                    override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
+                        try {
+                            val jsonObj = JSONObject(response)
+                            val code = jsonObj.optInt("code")
+                            if (code == 0) {
+                                getHandler().post {
+                                    getDialog()?.cancel()
+                                    Toast.makeText(getContext(), "验证成功", Toast.LENGTH_SHORT).show()
+                                }
+                            } else {
+                                getHandler().post {
+                                    getDialog()?.cancel()
+                                    Toast.makeText(getContext(), "验证失败", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                    }
+
+                    override fun onError(httpURLConnection: HttpURLConnection?, exception: java.lang.Exception) {
+                        getHandler().post {
+                            getDialog()?.cancel()
+                            Toast.makeText(getContext(), "验证失败", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                })
+    }
+
+    private fun doVipKey() {
+        val builder = AlertDialog.Builder(getContext())
+        builder.setTitle("Vip key")
+        builder.setMessage("输入之前的Vip key即可以找回丢失的Vip哦！")
+        builder.setView(R.layout.layout_edit_text)
+        builder.setNegativeButton("不了", null)
+        builder.setPositiveButton("确定", { dialog: DialogInterface, _ ->
+            if (dialog is AlertDialog) {
+                val vipKey = (dialog.findViewById(R.id.edit_text) as EditText?)?.text?.toString()
+                verifyVip(vipKey, mDeviceId)
+            }
+        }).create().show()
+    }
+
 
 }
