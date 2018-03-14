@@ -1,6 +1,8 @@
 package com.ecjtu.flesh.ui.adapter
 
+import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
@@ -59,12 +61,6 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
                 endDate.add(Calendar.HOUR, 1)
                 val url = s3Client?.generatePresignedUrl(bucket.name, pageModel.get(position!!).title, endDate.time)
                 v?.post {
-                    //                val intent = Intent("android.intent.action.VIEW")
-//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//                intent.putExtra("oneshot", 0)
-//                intent.putExtra("configchange", 0)
-//                val uri = Uri.parse(url.toString())
-//                intent.setDataAndType(uri, "video/*")
                     val itemListModel = arrayListOf<PageModel.ItemModel>()
                     val vModel = pageModel.get(position!!)
                     val model = PageModel.ItemModel(vModel.videoUrl, vModel.title, vModel.imageUrl, 1)
@@ -82,9 +78,20 @@ class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView
                     val impl2 = HistoryTableImpl()
                     impl2.addHistory(db, this@VipCardListAdapter.pageModel.get(position).videoUrl)
                     db.close()
-                    val intent = RotateNoCreateActivity.newInstance(v.context, IjkVideoFragment::class.java
-                            , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, url.toString()) })
-                    v.context.startActivity(intent)
+
+                    if (url.toString().startsWith("https")) {
+                        val intent = Intent("android.intent.action.VIEW")
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        intent.putExtra("oneshot", 0)
+                        intent.putExtra("configchange", 0)
+                        val uri = Uri.parse(url.toString())
+                        intent.setDataAndType(uri, "video/*")
+                        v.context.startActivity(intent)
+                    } else {
+                        val intent = RotateNoCreateActivity.newInstance(v.context, IjkVideoFragment::class.java
+                                , Bundle().apply { putString(IjkVideoFragment.EXTRA_URI_PATH, url.toString()) })
+                        v.context.startActivity(intent)
+                    }
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
