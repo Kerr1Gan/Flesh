@@ -43,6 +43,7 @@ class VideoTabFragment : BaseTabPagerFragment() {
         val tabJson = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_VIDEO_TAB_JSON, "")
         try {
             val jArray = JSONArray(tabJson)
+            mItemInfo.clear()
             for (i in 0 until jArray.length()) {
                 val jObj = jArray.get(i) as JSONObject
                 val title = jObj.optString("title")
@@ -59,6 +60,7 @@ class VideoTabFragment : BaseTabPagerFragment() {
                     override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                         try {
                             val jArray = JSONArray(response)
+                            mItemInfo.clear()
                             for (i in 0 until jArray.length()) {
                                 val jObj = jArray.get(i) as JSONObject
                                 val title = jObj.optString("title")
