@@ -39,21 +39,28 @@ abstract class BaseActionActivity : AppCompatActivity(), WeakHandler.IHandleMess
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mLocalBroadcastManger = LocalBroadcastManager.getInstance(this)
-        mIntentFilter = IntentFilter()
-        mBroadcastReceiver = SimpleReceiver()
-        registerActions(mIntentFilter)
-
+        if (isRegisterActions()) {
+            mIntentFilter = IntentFilter()
+            mBroadcastReceiver = SimpleReceiver()
+            registerActions(mIntentFilter)
+            mLocalBroadcastManger?.registerReceiver(mBroadcastReceiver, mIntentFilter)
+        }
         mSimpleHandler = SimpleHandler(this)
     }
 
     override fun onResume() {
         super.onResume()
-        mLocalBroadcastManger?.registerReceiver(mBroadcastReceiver, mIntentFilter)
     }
 
     override fun onStop() {
         super.onStop()
-        mLocalBroadcastManger?.unregisterReceiver(mBroadcastReceiver)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isRegisterActions()) {
+            mLocalBroadcastManger?.unregisterReceiver(mBroadcastReceiver)
+        }
     }
 
     inner class SimpleReceiver : BroadcastReceiver() {
@@ -83,6 +90,7 @@ abstract class BaseActionActivity : AppCompatActivity(), WeakHandler.IHandleMess
         for (action in array) {
             intentFilter.addAction(action)
         }
+        mLocalBroadcastManger?.unregisterReceiver(mBroadcastReceiver)
         mLocalBroadcastManger?.registerReceiver(mBroadcastReceiver, intentFilter)
         mIntentFilter = intentFilter
     }
@@ -104,7 +112,7 @@ abstract class BaseActionActivity : AppCompatActivity(), WeakHandler.IHandleMess
 
     fun isNavigationBarShow(activity: Activity): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            val display = windowManager.defaultDisplay
+            val display = activity.windowManager.defaultDisplay
             val size = Point()
             val realSize = Point()
             display.getSize(size)
@@ -136,5 +144,9 @@ abstract class BaseActionActivity : AppCompatActivity(), WeakHandler.IHandleMess
         val resources = getResources()
         val resourceId = resources.getIdentifier(STATUS_BAR_HEIGHT, "dimen", "android")
         return resources.getDimensionPixelSize(resourceId)
+    }
+
+    open protected fun isRegisterActions(): Boolean {
+        return false
     }
 }

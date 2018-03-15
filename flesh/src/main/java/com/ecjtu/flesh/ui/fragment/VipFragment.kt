@@ -48,8 +48,8 @@ class VipFragment : VideoListFragment() {
     override fun onUserVisibleHintChanged(isVisibleToUser: Boolean) {
         super.onUserVisibleHintChanged(isVisibleToUser)
         if (isVisibleToUser) {
-            val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-            val deviceId = telephonyManager.getDeviceId()
+            val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
+            val deviceId = telephonyManager?.getDeviceId()
             AsyncNetwork().request(Constants.SERVER_URL + "/api/getUserByDeviceId?deviceId=" + deviceId)
                     .setRequestCallback(object : IRequestCallbackV2 {
                         override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
