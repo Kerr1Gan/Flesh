@@ -14,6 +14,7 @@ import com.ecjtu.flesh.Constants
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.ui.activity.PayPalActivity
 import com.ecjtu.flesh.util.CloseableUtil
+import com.ecjtu.flesh.util.encrypt.MD5Utils
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallbackV2
 import org.json.JSONObject
@@ -85,6 +86,9 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
         var longLocal = 0L
         try {
             longLocal = deviceId?.toLong() ?: 0
+            if (longLocal == 0L) {
+                mDeviceId = ""
+            }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -185,7 +189,7 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
 
     private fun verifyVip(vipKey: String?, deviceId: String?) {
         AsyncNetwork()
-                .request(Constants.SERVER_URL + "/api/verifyVip?deviceId=$deviceId&paymentId=$vipKey")
+                .request(Constants.SERVER_URL + "/api/isPaySuccess?deviceId=$deviceId&paymentId=$vipKey")
                 .setRequestCallback(object : IRequestCallbackV2 {
                     override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                         try {
@@ -193,6 +197,11 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                             val code = jsonObj.optInt("code")
                             if (code == 0) {
                                 getHandler().post {
+                                    PreferenceManager.getDefaultSharedPreferences(getContext())
+                                            .edit()
+                                            .putString("deviceId", if (TextUtils.isEmpty(mDeviceId)) MD5Utils.MD5(vipKey!!) else mDeviceId)
+                                            .putString("paymentId", vipKey)
+                                            .apply()
                                     getDialog()?.cancel()
                                     Toast.makeText(getContext(), "验证成功", Toast.LENGTH_SHORT).show()
                                 }
