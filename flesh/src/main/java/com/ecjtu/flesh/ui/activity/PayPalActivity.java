@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.ecjtu.componentes.TranslucentUtil;
 import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.util.CloseableUtil;
+import com.ecjtu.flesh.util.encrypt.MD5Utils;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallbackV2;
 import com.paypal.android.sdk.payments.PayPalAuthorization;
@@ -68,7 +70,7 @@ public class PayPalActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_FUTURE_PAYMENT = 2;
     private static final int REQUEST_CODE_PROFILE_SHARING = 3;
     //    http://13.125.219.143:8080/flesh/api/isVip?userId=%s&paymentId=%s
-    private static final String VIP_SERVER_URL = "http://192.168.123.102:8080/flesh/api/verifyVip?deviceId=%s&paymentJson=%s";
+    private static final String VIP_SERVER_URL = Constants.SERVER_URL + "/api/verifyVip?deviceId=%s&paymentJson=%s";
 
     private static PayPalConfiguration config = new PayPalConfiguration()
             .environment(CONFIG_ENVIRONMENT)
@@ -160,13 +162,19 @@ public class PayPalActivity extends AppCompatActivity {
                         jsonArray.put("payment", payment);
                         jsonArray.put("proofPayment", proofPayment);
                         saveVipInfo(confirm.getProofOfPayment().getPaymentId());
+                        PreferenceManager.getDefaultSharedPreferences(this).edit().putString("paymentId", confirm.getProofOfPayment().getPaymentId())
+                                .apply();
                         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                         if (telephonyManager != null) {
                             String deviceId = telephonyManager.getDeviceId();
                             if (TextUtils.isEmpty(deviceId)) {
                                 deviceId = confirm.getProofOfPayment().getPaymentId();
+                                deviceId = MD5Utils.INSTANCE.MD5(deviceId);
                             }
+                            PreferenceManager.getDefaultSharedPreferences(this).edit().
+                                    putString("deviceId", deviceId).apply();
                             AsyncNetwork request = new AsyncNetwork();
+                            request.setTimeOut(20 * 1000);
                             String encodeStr = "";
                             try {
                                 encodeStr = URLEncoder.encode(jsonArray.toString(), "utf-8");
@@ -184,7 +192,17 @@ public class PayPalActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onSuccess(@Nullable HttpURLConnection httpURLConnection, @NotNull String response) {
-                                    setResult(Activity.RESULT_OK);
+                                    try {
+                                        String code = new JSONObject(response).optString("code");
+                                        if (code.equals("0")) {
+                                            setResult(Activity.RESULT_OK);
+                                        } else {
+                                            setResult(Activity.RESULT_CANCELED);
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                        setResult(Activity.RESULT_CANCELED);
+                                    }
                                     finish();
                                 }
                             });

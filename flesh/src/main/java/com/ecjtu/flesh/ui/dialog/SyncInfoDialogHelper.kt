@@ -140,6 +140,9 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                     val telephonyManager = getContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
                     var deviceId = telephonyManager?.getDeviceId()
                     if (TextUtils.isEmpty(deviceId)) {
+                        deviceId = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("deviceId", "")
+                    }
+                    if (TextUtils.isEmpty(deviceId)) {
                         deviceId = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constants.PREF_VIP_INFO, "")
                     }
                     var longDeviceId = 0L
@@ -147,7 +150,7 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                         longDeviceId = deviceId?.toLong() ?: 0
                     } catch (ex: Exception) {
                         ex.printStackTrace()
-                        longDeviceId = 0L
+                        longDeviceId = 1
                     }
                     if (TextUtils.isEmpty(deviceId) || longDeviceId == 0L) {
                         getHandler().post {
@@ -171,7 +174,7 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                         config.protocol = Protocol.HTTPS
                     }
                     mS3 = AmazonS3Client(provider, config)
-                    val region = Region.getRegion(Regions.AP_NORTHEAST_2)
+                    val region = Region.getRegion(Regions.CN_NORTH_1)
                     mS3?.setRegion(region)
                     mS3?.setEndpoint(Constants.S3_URL)
                     val s3ObjectMetaData = mS3?.getObjectMetadata("firststorage0001", "databases/$deviceId")
@@ -193,6 +196,7 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                     ex.printStackTrace()
                     if (index >= 1) {
                         getDialog()?.cancel()
+                        break
                     }
                     index++
                 }
