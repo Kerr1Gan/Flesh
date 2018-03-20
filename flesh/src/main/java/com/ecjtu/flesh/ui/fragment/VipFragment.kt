@@ -69,6 +69,10 @@ class VipFragment : VideoListFragment() {
                         }
 
                         override fun onError(httpURLConnection: HttpURLConnection?, exception: java.lang.Exception) {
+                            exception.printStackTrace()
+                            if (activity != null) {
+                                activity.finish()
+                            }
                         }
                     })
 
@@ -106,14 +110,7 @@ class VipFragment : VideoListFragment() {
                                 activity.runOnUiThread {
                                     if (activity == null)
                                         return@runOnUiThread
-                                    AlertDialog.Builder(context).setTitle("回答问题才能进入").
-                                            setMessage(question).
-                                            setPositiveButton(answer1, listener).
-                                            setNegativeButton(answer2, listener).
-                                            setNeutralButton(answer3, listener).
-                                            setOnCancelListener { if (!mAccessible && activity != null) activity.finish() }.
-                                            create().
-                                            show()
+                                    AlertDialog.Builder(context).setTitle("回答问题才能进入").setMessage(question).setPositiveButton(answer1, listener).setNegativeButton(answer2, listener).setNeutralButton(answer3, listener).setOnCancelListener { if (!mAccessible && activity != null) activity.finish() }.create().show()
                                 }
                             }
                         }
