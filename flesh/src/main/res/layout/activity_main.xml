@@ -162,7 +162,8 @@
                     android:padding="20dp"
                     android:text="@string/vip_info"
                     android:textColor="@android:color/black"
-                    android:textSize="16dp" />
+                    android:textSize="16dp"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/sync_info"

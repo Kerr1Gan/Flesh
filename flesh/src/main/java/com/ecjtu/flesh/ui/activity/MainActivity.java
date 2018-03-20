@@ -1,14 +1,18 @@
 package com.ecjtu.flesh.ui.activity;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -16,12 +20,17 @@ import com.bumptech.glide.Glide;
 import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.R;
 import com.ecjtu.flesh.presenter.MainActivityDelegate;
+import com.ecjtu.flesh.service.MainService;
+import com.ecjtu.flesh.util.CloseableUtil;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 
@@ -83,9 +92,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -109,6 +115,42 @@ public class MainActivity extends AppCompatActivity {
             mDelegate.onDestroy();
         }
         Glide.get(this).clearMemory();
+        String deviceId = null;
+        TelephonyManager telephonyManager = ((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE));
+        if (telephonyManager != null) {
+            deviceId = telephonyManager.getDeviceId();
+        }
+        if (TextUtils.isEmpty(deviceId)) {
+            long longLocal = 0L;
+            try {
+                longLocal = Long.valueOf(deviceId);
+                if (longLocal == 0L) {
+                    deviceId = "";
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (TextUtils.isEmpty(deviceId) || longLocal == 0L) {
+                deviceId = PreferenceManager.getDefaultSharedPreferences(this).getString("paymentId", "");
+                if (TextUtils.isEmpty(deviceId)) {
+                    if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                        String sdUrl = Environment.getExternalStorageDirectory().getAbsolutePath();
+                        File vipFile = new File(sdUrl, Constants.LOCAL_VIP_PATH);
+                        BufferedReader reader = null;
+                        try {
+                            reader = new BufferedReader(new FileReader(vipFile));
+                            deviceId = reader.readLine();
+                            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("paymentId", deviceId).apply();
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        } finally {
+                            CloseableUtil.INSTANCE.closeQuitely(reader);
+                        }
+                    }
+                }
+            }
+            startService(MainService.createUploadDbIntent(deviceId));
+        }
     }
 
     protected int getStatusBarHeight() {

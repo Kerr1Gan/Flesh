@@ -2,6 +2,7 @@ package com.ecjtu.flesh.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -13,14 +14,25 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.ecjtu.componentes.activity.ActionBarFragmentActivity;
 import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.db.DatabaseManager;
 import com.ecjtu.flesh.db.table.impl.NotificationTableImpl;
-import com.ecjtu.flesh.model.ModelManager;
 import com.ecjtu.flesh.model.models.NotificationModel;
 import com.ecjtu.flesh.notification.SimpleNotificationBuilder;
 import com.ecjtu.flesh.ui.fragment.WebViewFragment;
+import com.ecjtu.flesh.util.encrypt.SecretKey;
+import com.ecjtu.flesh.util.encrypt.SecretKeyUtils;
+import com.ecjtu.flesh.util.file.FileUtil;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallback;
 
@@ -28,9 +40,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import kotlin.jvm.internal.Intrinsics;
 
 
 /**
@@ -40,6 +59,8 @@ import java.util.List;
 public class MainService extends Service {
 
     private static final String TAG = "MainService";
+    private static final String ACTION_UPLOAD_DATABASE = "action_upload_database";
+    private static final String EXTRA_DEVICE_ID = "extra_device_id";
 
     private HandlerThread mHandlerThread = null;
 
@@ -57,6 +78,8 @@ public class MainService extends Service {
 
     private static final int MSG_CHECK_NOTIFICATION = 0x11;
 
+    private Handler mMainHandler = null;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -67,7 +90,7 @@ public class MainService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.e(TAG, "onCreate");
-
+        mMainHandler = new Handler();
         mHandlerThread = new HandlerThread(TAG);
         mHandlerThread.start();
 
@@ -129,7 +152,14 @@ public class MainService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "onStartCommand");
-        mHandler.sendEmptyMessage(MSG_REQUEST);
+        if (intent.getAction() != null && intent.getAction().equals(ACTION_UPLOAD_DATABASE)) {
+            String deviceId = intent.getStringExtra(EXTRA_DEVICE_ID);
+            if (TextUtils.isEmpty(deviceId)) {
+                uploadDatabase(deviceId);
+            }
+        } else {
+            mHandler.sendEmptyMessage(MSG_REQUEST);
+        }
         return START_STICKY;
     }
 
@@ -213,6 +243,115 @@ public class MainService extends Service {
             }
         }
         return ret;
+    }
+
+    private AmazonS3Client mS3;
+
+    public void uploadDatabase(final String deviceId) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                OutputStream outputStream = null;
+                S3Object s3Object = null;
+                try {
+                    final String time;
+                    AmazonS3Client var22;
+                    if (mS3 == null) {
+                        SecretKey secretKey = SecretKeyUtils.INSTANCE.getKeyFromServer();
+                        SecretKeyUtils var10000 = SecretKeyUtils.INSTANCE;
+                        if (secretKey == null) {
+                            Intrinsics.throwNpe();
+                        }
+
+                        Key var10001 = secretKey.getKey();
+                        Intrinsics.checkExpressionValueIsNotNull(var10001, "secretKey!!.key");
+                        String content = var10000.getS3InfoFromServer(var10001);
+                        String[] params = content.split(",");
+                        BasicAWSCredentials provider = new BasicAWSCredentials(params[0], params[1]);
+                        ClientConfiguration config = new ClientConfiguration();
+                        config.setProtocol(Protocol.HTTP);
+                        mS3 = new AmazonS3Client(provider, config);
+                        Region region = Region.getRegion(Regions.CN_NORTH_1);
+                        if (mS3 != null) {
+                            mS3.setRegion(region);
+                            mS3.setEndpoint("s3.ap-northeast-2.amazonaws.com");
+                        }
+                    }
+
+                    File dbPath = getDatabasePath("heaven");
+                    var22 = mS3;
+                    s3Object = var22 != null ? var22.getObject("firststorage0001", "databases/" + deviceId) : null;
+                    if (s3Object != null) {
+                        String var26;
+                        label173:
+                        {
+                            ObjectMetadata var23 = s3Object.getObjectMetadata();
+                            if (var23 != null) {
+                                Map var25 = var23.getUserMetadata();
+                                if (var25 != null) {
+                                    var26 = (String) var25.get("update_time");
+                                    if (var26 != null) {
+                                        break label173;
+                                    }
+                                }
+                            }
+
+                            var26 = "-1";
+                        }
+
+                        time = var26;
+                        outputStream = new FileOutputStream(dbPath);
+                        FileUtil var27 = FileUtil.INSTANCE;
+                        S3ObjectInputStream var24 = s3Object.getObjectContent();
+                        Intrinsics.checkExpressionValueIsNotNull(var24, "s3Object.objectContent");
+                        var27.copyFile(var24, outputStream);
+                        mMainHandler.post((new Runnable() {
+                            public final void run() {
+                                if (Intrinsics.areEqual(time, "-1") ^ true) {
+                                    SharedPreferences.Editor var10000 = PreferenceManager.getDefaultSharedPreferences(MainService.this).edit();
+                                    String var1 = time;
+                                    String var3 = "pref_sync_data_time";
+                                    SharedPreferences.Editor var2 = var10000;
+                                    long var4 = Long.parseLong(var1);
+                                    var2.putLong(var3, var4).apply();
+                                }
+                                Log.i(TAG, "同步成功");
+                            }
+                        }));
+                    }
+                } catch (Exception var19) {
+                    var19.printStackTrace();
+                    mMainHandler.post((new Runnable() {
+                        public final void run() {
+                            Log.i(TAG, "同步失败");
+                        }
+                    }));
+                } finally {
+                    try {
+                        if (outputStream != null) {
+                            outputStream.close();
+                        }
+                    } catch (Exception var18) {
+                        ;
+                    }
+
+                    try {
+                        if (s3Object != null) {
+                            s3Object.close();
+                        }
+                    } catch (Exception var17) {
+                        ;
+                    }
+
+                }
+            }
+        });
+    }
+
+    public static Intent createUploadDbIntent(String deviceId) {
+        Intent i = new Intent(ACTION_UPLOAD_DATABASE);
+        i.putExtra(EXTRA_DEVICE_ID, deviceId);
+        return i;
     }
 
     public static class SimpleServiceStub extends IServiceInterface.Stub {

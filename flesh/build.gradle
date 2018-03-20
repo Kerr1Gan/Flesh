@@ -60,4 +60,6 @@ dependencies {
     //paypal
     compile 'com.paypal.sdk:paypal-android-sdk:2.16.0'
     compile 'com.google.android.gms:play-services-wallet:11.8.0'
+
+    compile 'com.google.firebase:firebase-core:11.8.0'
 }
