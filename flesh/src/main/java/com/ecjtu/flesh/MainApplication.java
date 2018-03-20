@@ -72,7 +72,7 @@ public class MainApplication extends MultiDexApplication {
     }
 
     private void initSDK() {
-//        CrashReport.initCrashReport(getApplicationContext(), "bea4125c41", true);
+        CrashReport.initCrashReport(getApplicationContext(), "bea4125c41", true);
 //        Bugly.init(getApplicationContext(), getString(R.string.bugly), Boolean.parseBoolean(getString(R.string.bugly_isDebug)));
         MobileAds.initialize(this,  getString(R.string.admob_app_id));
     }
