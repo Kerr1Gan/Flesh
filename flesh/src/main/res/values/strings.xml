@@ -1,36 +1,43 @@
 <resources>
-    <string name="app_name">果肉</string>
+    <string name="app_name">Flesh</string>
 
-    <string name="cached">已缓存</string>
-    <string name="collection">收藏</string>
-    <string name="history">历史</string>
-    <string name="vip_info">Vip信息</string>
-    <string name="sync_info">同步数据</string>
-    <string name="cache">缓存</string>
-    <string name="statement">声明</string>
+    <string name="cached">Cached</string>
+    <string name="collection">Favorite</string>
+    <string name="history">History</string>
+    <string name="vip_info">Vip info</string>
+    <string name="cache">Cache</string>
+    <string name="statement">Statement</string>
     <string name="statement_content">所有资源均来自网络，如有侵权请联系mnsync@outlook.com，将会尽快删除。</string>
-    <string name="delete_collection">取消收藏</string>
-    <string name="collect_success">收藏成功</string>
-    <string name="set_wallpaper">设为壁纸</string>
-    <string name="cached_data_cleaned_or_not">已缓存%s数据,是否清理？</string>
-    <string name="open_times">查看%d次</string>
+    <string name="delete_collection">Delete Favorite</string>
+    <string name="collect_success">Success</string>
+    <string name="set_wallpaper">Set wallpaper</string>
+    <string name="cached_data_cleaned_or_not">cached %s data,clear it now？</string>
+    <string name="open_times">watch %d times</string>
 
-    <string name="cache_size">缓存大小</string>
-    <string name="ok">确定</string>
-    <string name="cancel">取消</string>
+    <string name="cache_size">cached size</string>
+    <string name="ok">ok</string>
+    <string name="cancel">cancel</string>
 
-    <string name="sync_data">同步数据</string>
-    <string name="upload">上传</string>
-    <string name="upload_success">上传成功</string>
-    <string name="sync_success">同步成功</string>
-    <string name="sync_failure">同步失败</string>
-    <string name="no">不了</string>
-    <string name="yes">好的</string>
-    <string name="warn">警告</string>
-    <string name="sync_info_dialog_warning">由于您使用的是模拟器，所以无法同步数据。充值Vip后再来试试吧！</string>
-    <string name="sync_info_explain">同步数据到服务器，上次同步时间</string>
+    <string name="sync_data">Sync data</string>
+    <string name="upload">upload</string>
+    <string name="upload_success">upload success</string>
+    <string name="sync">sync</string>
+    <string name="sync_success">sync success</string>
+    <string name="sync_failure">sync failure</string>
+    <string name="no">no</string>
+    <string name="yes">yes</string>
+    <string name="warn">Warning</string>
+    <string name="sync_info_dialog_warning">"Because you are using an emulator, you can't synchronize the data."</string>
+    <string name="sync_info_explain">Sync data to server, last synchronization time</string>
     <string name="get_vip">获取Vip</string>
     <string name="get_vip_info">正在获取Vip信息...</string>
     <string name="to_pay">去支付</string>
     <string name="enter_vip_key"></string>
+    <string name="jump_to_top">Jump to top</string>
+    <string name="jump_to_bottom">Jump to bottom</string>
+    <string name="v33_title">Loving</string>
+
+    <string name="loading">Loading</string>
+    <string name="may_take_a_few_minutes">It takes a small meeting time</string>
+    <string name="simple_date_format_ymd">yyyy-M-d</string>
 </resources>

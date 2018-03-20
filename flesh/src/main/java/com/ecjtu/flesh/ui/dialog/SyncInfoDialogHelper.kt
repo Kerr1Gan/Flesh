@@ -43,9 +43,9 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
         if (TextUtils.isEmpty(deviceId)) {
             deviceId = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constants.PREF_VIP_INFO, "")
         }
-        val dialog = getBuilder()?.setTitle("同步数据")
+        val dialog = getBuilder()?.setTitle(R.string.sync_data)
                 ?.setMessage("")
-                ?.setPositiveButton("上传", { dialog: DialogInterface, which: Int ->
+                ?.setPositiveButton(R.string.upload, { dialog: DialogInterface, which: Int ->
                     thread {
                         try {
                             if (mS3 == null) {
@@ -67,14 +67,14 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                             request.metadata.getUserMetadata().put("update_time", time.toString())
                             mS3?.putObject(request)
                             getHandler().post {
-                                Toast.makeText(getContext(), "上传成功", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(getContext(), R.string.upload_success, Toast.LENGTH_SHORT).show()
                             }
                         } catch (ex: Exception) {
                             ex.printStackTrace()
                         }
                     }
                 })
-                ?.setNeutralButton("同步", { _, _ ->
+                ?.setNeutralButton(R.string.sync, { _, _ ->
                     thread {
                         var outputStream: OutputStream? = null
                         var s3Object: S3Object? = null
@@ -102,13 +102,13 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                                         PreferenceManager.getDefaultSharedPreferences(getContext()).edit()
                                                 .putLong(Constants.PREF_SYNC_DATA_TIME, time.toLong()).apply()
                                     }
-                                    Toast.makeText(getContext(), "同步成功", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(getContext(), R.string.sync_success, Toast.LENGTH_SHORT).show()
                                 }
                             }
                         } catch (ex: Exception) {
                             ex.printStackTrace()
                             getHandler().post {
-                                Toast.makeText(getContext(), "同步失败", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(getContext(), R.string.sync_failure, Toast.LENGTH_SHORT).show()
                             }
                         } finally {
                             try {
@@ -122,7 +122,7 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                         }
                     }
                 })
-                ?.setNegativeButton("不了", null)
+                ?.setNegativeButton(R.string.no, null)
                 ?.setView(R.layout.layout_progress)
                 ?.create()
         return dialog
@@ -156,9 +156,9 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                         getHandler().post {
                             getDialog()?.cancel()
                             val builder = AlertDialog.Builder(getContext())
-                            builder.setTitle("警告")
-                                    .setMessage("由于您使用的是模拟器，所以无法同步数据。充值Vip后再来试试吧！")
-                                    .setPositiveButton("好的", null)
+                            builder.setTitle(R.string.warn)
+                                    .setMessage(R.string.sync_info_dialog_warning)
+                                    .setPositiveButton(R.string.ok, null)
                                     .create().show()
                         }
                         return@thread
@@ -187,7 +187,7 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                             dialog.getButton(DialogInterface.BUTTON_NEGATIVE).visibility = View.VISIBLE
                             dialog.getButton(DialogInterface.BUTTON_NEUTRAL).visibility = View.VISIBLE
                             dialog.findViewById(R.id.progress_bar)?.visibility = View.GONE
-                            getDialog()?.setMessage("同步数据到服务器，上次同步时间$timeString.")
+                            getDialog()?.setMessage(getContext().getString(R.string.sync_info_explain) + "$timeString.")
                         }
                         break
                     }

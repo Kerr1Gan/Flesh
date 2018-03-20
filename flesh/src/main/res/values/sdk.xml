@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="bugly">cf90f27bcb</string>
-    <string name="bugly_isDebug">false</string>
-    <string name="admob">ca-app-pub-1160759304210068~9559763629</string>
+    <string name="bugly" translatable="false">cf90f27bcb</string>
+    <string name="bugly_isDebug" translatable="false">false</string>
+    <string name="admob" translatable="false">ca-app-pub-1160759304210068~9559763629</string>
 </resources>

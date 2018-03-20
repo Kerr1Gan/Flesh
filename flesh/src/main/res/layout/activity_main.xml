@@ -174,7 +174,7 @@
                     android:drawablePadding="12dp"
                     android:gravity="center_vertical"
                     android:padding="20dp"
-                    android:text="@string/sync_info"
+                    android:text="@string/sync_data"
                     android:textColor="@android:color/black"
                     android:textSize="16dp" />
 
@@ -191,7 +191,7 @@
                     android:textColor="@android:color/black"
                     android:textSize="16dp" />
 
-<!--                <TextView
+                <TextView
                     android:id="@+id/disclaimer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -201,7 +201,8 @@
                     android:padding="20dp"
                     android:text="@string/statement"
                     android:textColor="@android:color/black"
-                    android:textSize="16dp" />-->
+                    android:textSize="16dp"
+                    android:visibility="gone" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

@@ -16,7 +16,7 @@
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:padding="8dp"
-            android:text="跳转到顶部"
+            android:text="@string/jump_to_top"
             android:textAppearance="@style/TextAppearance.Design.Snackbar.Message"
             android:textColor="@android:color/white" />
 
@@ -78,7 +78,7 @@
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:padding="8dp"
-            android:text="跳转到底部"
+            android:text="@string/jump_to_bottom"
             android:textAppearance="@style/TextAppearance.Design.Snackbar.Message"
             android:textColor="@android:color/white" />
 

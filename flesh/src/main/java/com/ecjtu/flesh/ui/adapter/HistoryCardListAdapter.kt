@@ -30,12 +30,17 @@ import kotlin.concurrent.thread
 class HistoryCardListAdapter(pageModel: PageModel) : CardListAdapter(pageModel) {
 
     private val mDateFormat1 = SimpleDateFormat("yyyy-MM-dd")
-    private val mDateFormat2 = SimpleDateFormat("yyyy年M月d日")
+    private var mDateFormat2: SimpleDateFormat? = null
 
     private var mS3: AmazonS3Client? = null
 
     override fun onBindViewHolder(holder: VH?, position: Int) {
         super.onBindViewHolder(holder, position)
+        if (mDateFormat2 == null) {
+            mDateFormat2 = SimpleDateFormat(holder?.itemView?.context?.getString(R.string.simple_date_format_ymd) ?:
+                    "yyyy-MM-dd",
+                    Locale.getDefault())
+        }
         val db = DatabaseManager.getInstance(holder?.itemView?.context)?.getDatabase()
         val impl = HistoryTableImpl()
         var time = ""
@@ -46,7 +51,7 @@ class HistoryCardListAdapter(pageModel: PageModel) : CardListAdapter(pageModel) 
 
         if (!TextUtils.isEmpty(time)) {
             val date = mDateFormat1.parse(time)
-            holder?.description?.text = mDateFormat2.format(date)
+            holder?.description?.text = mDateFormat2?.format(date)
         }
     }
 

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
+import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.cache.impl.VideoCacheHelper
 import com.ecjtu.flesh.db.DatabaseManager
@@ -34,7 +35,7 @@ class V33Fragment : VideoListFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.i(TAG, "onViewCreated")
-        getToolbar().setTitle("爱恋")
+        getToolbar().setTitle(R.string.v33_title)
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
@@ -123,8 +124,8 @@ class V33Fragment : VideoListFragment() {
                 }
 
                 if (mLoadingDialog == null && context != null) {
-                    mLoadingDialog = AlertDialog.Builder(context).setTitle("加载中").setMessage("需要一小会时间")
-                            .setNegativeButton("取消", { dialog, which ->
+                    mLoadingDialog = AlertDialog.Builder(context).setTitle(R.string.loading).setMessage(R.string.may_take_a_few_minutes)
+                            .setNegativeButton(R.string.cancel, { dialog, which ->
                                 thread {
                                     req.cancel()
                                 }

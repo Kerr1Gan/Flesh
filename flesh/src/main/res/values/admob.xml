@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="admob_test_device">20EDA9412005F81D6EBABCBCF65F02E2</string>
-    <string name="admob_app_id">ca-app-pub-1160759304210068~9559763629</string>
-    <string name="admob_ad_01">ca-app-pub-3940256099942544/5224354917</string>
-    <string name="admob_ad_02">ca-app-pub-1160759304210068/4409904919</string>
-    <string name="admob_hengfu">ca-app-pub-1160759304210068/3533180784</string>
+    <string name="admob_test_device" translatable="false">20EDA9412005F81D6EBABCBCF65F02E2</string>
+    <string name="admob_app_id" translatable="false">ca-app-pub-1160759304210068~9559763629</string>
+    <string name="admob_ad_01" translatable="false">ca-app-pub-3940256099942544/5224354917</string>
+    <string name="admob_ad_02" translatable="false">ca-app-pub-1160759304210068/4409904919</string>
+    <string name="admob_hengfu" translatable="false">ca-app-pub-1160759304210068/3533180784</string>
 </resources>
