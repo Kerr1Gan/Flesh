@@ -23,6 +23,7 @@ import com.ecjtu.flesh.db.table.impl.LikeTableImpl;
 import com.ecjtu.flesh.db.table.impl.NotificationTableImpl;
 import com.ecjtu.flesh.service.MainService;
 import com.google.android.gms.ads.MobileAds;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.List;
 
