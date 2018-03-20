@@ -43,7 +43,7 @@ dependencies {
     compile 'com.android.support:design:24.2.0'
     testCompile 'junit:junit:4.12'
     //    compile 'com.tencent.bugly:crashreport:latest.release'
-    compile 'com.tencent.bugly:crashreport_upgrade:latest.release'
+//    compile 'com.tencent.bugly:crashreport_upgrade:latest.release'
     //    compile project(path: ':fastscroll')
     compile project(':common-componentes')
     compile project(':parcel')
@@ -58,8 +58,8 @@ dependencies {
     compile 'com.android.support:multidex:1.0.0'
 
     //paypal
-    compile 'com.paypal.sdk:paypal-android-sdk:2.16.0'
-    compile 'com.google.android.gms:play-services-wallet:11.8.0'
+//    compile 'com.paypal.sdk:paypal-android-sdk:2.16.0'
+//    compile 'com.google.android.gms:play-services-wallet:11.8.0'
 
     compile 'com.google.firebase:firebase-core:11.8.0'
 }
