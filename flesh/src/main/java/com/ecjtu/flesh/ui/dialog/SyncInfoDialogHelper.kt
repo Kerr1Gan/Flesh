@@ -71,6 +71,9 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                             }
                         } catch (ex: Exception) {
                             ex.printStackTrace()
+                            getHandler().post {
+                                Toast.makeText(getContext(), R.string.upload_failure, Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                 })
@@ -94,7 +97,8 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                             val dbPath = getContext().getDatabasePath(DB_NAME)
                             s3Object = mS3?.getObject("firststorage0001", "databases/$deviceId")
                             if (s3Object != null) {
-                                val time = s3Object.objectMetadata?.userMetadata?.get("update_time") ?: "-1"
+                                val time = s3Object.objectMetadata?.userMetadata?.get("update_time")
+                                        ?: "-1"
                                 outputStream = FileOutputStream(dbPath)
                                 FileUtil.copyFile(s3Object.objectContent, outputStream)
                                 getHandler().post {
@@ -154,6 +158,7 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                     }
                     if (TextUtils.isEmpty(deviceId) || longDeviceId == 0L) {
                         getHandler().post {
+                            System.out.println("SyncInfoDialogHelper deviceId null cancel")
                             getDialog()?.cancel()
                             val builder = AlertDialog.Builder(getContext())
                             builder.setTitle(R.string.warn)
@@ -196,6 +201,7 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                     ex.printStackTrace()
                     if (index >= 1) {
                         getDialog()?.cancel()
+                        System.out.println("SyncInfoDialogHelper amazon can not connect " + ex.toString())
                         break
                     }
                     index++

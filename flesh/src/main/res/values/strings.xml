@@ -22,6 +22,7 @@
     <string name="sync_data">Sync data</string>
     <string name="upload">upload</string>
     <string name="upload_success">upload success</string>
+    <string name="upload_failure">upload fail</string>
     <string name="sync">sync</string>
     <string name="sync_success">sync success</string>
     <string name="sync_failure">sync failure</string>
