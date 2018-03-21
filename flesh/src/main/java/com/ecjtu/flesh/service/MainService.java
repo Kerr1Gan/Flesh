@@ -248,104 +248,104 @@ public class MainService extends Service {
     private AmazonS3Client mS3;
 
     public void uploadDatabase(final String deviceId) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                OutputStream outputStream = null;
-                S3Object s3Object = null;
-                try {
-                    final String time;
-                    AmazonS3Client var22;
-                    if (mS3 == null) {
-                        SecretKey secretKey = SecretKeyUtils.INSTANCE.getKeyFromServer();
-                        SecretKeyUtils var10000 = SecretKeyUtils.INSTANCE;
-                        if (secretKey == null) {
-                            Intrinsics.throwNpe();
-                        }
-
-                        Key var10001 = secretKey.getKey();
-                        Intrinsics.checkExpressionValueIsNotNull(var10001, "secretKey!!.key");
-                        String content = var10000.getS3InfoFromServer(var10001);
-                        String[] params = content.split(",");
-                        BasicAWSCredentials provider = new BasicAWSCredentials(params[0], params[1]);
-                        ClientConfiguration config = new ClientConfiguration();
-                        config.setProtocol(Protocol.HTTP);
-                        mS3 = new AmazonS3Client(provider, config);
-                        Region region = Region.getRegion(Regions.CN_NORTH_1);
-                        if (mS3 != null) {
-                            mS3.setRegion(region);
-                            mS3.setEndpoint("s3.ap-northeast-2.amazonaws.com");
-                        }
-                    }
-
-                    File dbPath = getDatabasePath("heaven");
-                    var22 = mS3;
-                    s3Object = var22 != null ? var22.getObject("firststorage0001", "databases/" + deviceId) : null;
-                    if (s3Object != null) {
-                        String var26;
-                        label173:
-                        {
-                            ObjectMetadata var23 = s3Object.getObjectMetadata();
-                            if (var23 != null) {
-                                Map var25 = var23.getUserMetadata();
-                                if (var25 != null) {
-                                    var26 = (String) var25.get("update_time");
-                                    if (var26 != null) {
-                                        break label173;
-                                    }
-                                }
-                            }
-
-                            var26 = "-1";
-                        }
-
-                        time = var26;
-                        outputStream = new FileOutputStream(dbPath);
-                        FileUtil var27 = FileUtil.INSTANCE;
-                        S3ObjectInputStream var24 = s3Object.getObjectContent();
-                        Intrinsics.checkExpressionValueIsNotNull(var24, "s3Object.objectContent");
-                        var27.copyFile(var24, outputStream);
-                        mMainHandler.post((new Runnable() {
-                            public final void run() {
-                                if (Intrinsics.areEqual(time, "-1") ^ true) {
-                                    SharedPreferences.Editor var10000 = PreferenceManager.getDefaultSharedPreferences(MainService.this).edit();
-                                    String var1 = time;
-                                    String var3 = "pref_sync_data_time";
-                                    SharedPreferences.Editor var2 = var10000;
-                                    long var4 = Long.parseLong(var1);
-                                    var2.putLong(var3, var4).apply();
-                                }
-                                Log.i(TAG, "同步成功");
-                            }
-                        }));
-                    }
-                } catch (Exception var19) {
-                    var19.printStackTrace();
-                    mMainHandler.post((new Runnable() {
-                        public final void run() {
-                            Log.i(TAG, "同步失败");
-                        }
-                    }));
-                } finally {
-                    try {
-                        if (outputStream != null) {
-                            outputStream.close();
-                        }
-                    } catch (Exception var18) {
-                        ;
-                    }
-
-                    try {
-                        if (s3Object != null) {
-                            s3Object.close();
-                        }
-                    } catch (Exception var17) {
-                        ;
-                    }
-
-                }
-            }
-        });
+//        mHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                OutputStream outputStream = null;
+//                S3Object s3Object = null;
+//                try {
+//                    final String time;
+//                    AmazonS3Client var22;
+//                    if (mS3 == null) {
+//                        SecretKey secretKey = SecretKeyUtils.INSTANCE.getKeyFromServer();
+//                        SecretKeyUtils var10000 = SecretKeyUtils.INSTANCE;
+//                        if (secretKey == null) {
+//                            Intrinsics.throwNpe();
+//                        }
+//
+//                        Key var10001 = secretKey.getKey();
+//                        Intrinsics.checkExpressionValueIsNotNull(var10001, "secretKey!!.key");
+//                        String content = var10000.getS3InfoFromServer(var10001);
+//                        String[] params = content.split(",");
+//                        BasicAWSCredentials provider = new BasicAWSCredentials(params[0], params[1]);
+//                        ClientConfiguration config = new ClientConfiguration();
+//                        config.setProtocol(Protocol.HTTP);
+//                        mS3 = new AmazonS3Client(provider, config);
+//                        Region region = Region.getRegion(Regions.CN_NORTH_1);
+//                        if (mS3 != null) {
+//                            mS3.setRegion(region);
+//                            mS3.setEndpoint("s3.ap-northeast-2.amazonaws.com");
+//                        }
+//                    }
+//
+//                    File dbPath = getDatabasePath("heaven");
+//                    var22 = mS3;
+//                    s3Object = var22 != null ? var22.getObject("firststorage0001", "databases/" + deviceId) : null;
+//                    if (s3Object != null) {
+//                        String var26;
+//                        label173:
+//                        {
+//                            ObjectMetadata var23 = s3Object.getObjectMetadata();
+//                            if (var23 != null) {
+//                                Map var25 = var23.getUserMetadata();
+//                                if (var25 != null) {
+//                                    var26 = (String) var25.get("update_time");
+//                                    if (var26 != null) {
+//                                        break label173;
+//                                    }
+//                                }
+//                            }
+//
+//                            var26 = "-1";
+//                        }
+//
+//                        time = var26;
+//                        outputStream = new FileOutputStream(dbPath);
+//                        FileUtil var27 = FileUtil.INSTANCE;
+//                        S3ObjectInputStream var24 = s3Object.getObjectContent();
+//                        Intrinsics.checkExpressionValueIsNotNull(var24, "s3Object.objectContent");
+//                        var27.copyFile(var24, outputStream);
+//                        mMainHandler.post((new Runnable() {
+//                            public final void run() {
+//                                if (Intrinsics.areEqual(time, "-1") ^ true) {
+//                                    SharedPreferences.Editor var10000 = PreferenceManager.getDefaultSharedPreferences(MainService.this).edit();
+//                                    String var1 = time;
+//                                    String var3 = "pref_sync_data_time";
+//                                    SharedPreferences.Editor var2 = var10000;
+//                                    long var4 = Long.parseLong(var1);
+//                                    var2.putLong(var3, var4).apply();
+//                                }
+//                                Log.i(TAG, "同步成功");
+//                            }
+//                        }));
+//                    }
+//                } catch (Exception var19) {
+//                    var19.printStackTrace();
+//                    mMainHandler.post((new Runnable() {
+//                        public final void run() {
+//                            Log.i(TAG, "同步失败");
+//                        }
+//                    }));
+//                } finally {
+//                    try {
+//                        if (outputStream != null) {
+//                            outputStream.close();
+//                        }
+//                    } catch (Exception var18) {
+//                        ;
+//                    }
+//
+//                    try {
+//                        if (s3Object != null) {
+//                            s3Object.close();
+//                        }
+//                    } catch (Exception var17) {
+//                        ;
+//                    }
+//
+//                }
+//            }
+//        });
     }
 
     public static Intent createUploadDbIntent(String deviceId) {

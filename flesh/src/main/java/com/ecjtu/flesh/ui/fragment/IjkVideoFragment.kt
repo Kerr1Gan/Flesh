@@ -13,9 +13,8 @@ import android.util.Log
 import android.view.*
 import com.ecjtu.componentes.activity.BaseActionActivity
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.util.admob.AdmobCallbackV2
+import com.ecjtu.flesh.util.admob.AdmobCallback
 import com.ecjtu.flesh.util.admob.AdmobManager
-import com.google.android.gms.ads.reward.RewardItem
 import tv.danmaku.ijk.media.exo.video.AndroidMediaController
 import tv.danmaku.ijk.media.exo.video.IjkVideoView
 import tv.danmaku.ijk.media.exo.video.SimpleMediaController
@@ -54,36 +53,20 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mAdMob = AdmobManager(context)
-        mAdMob?.loadRewardAd(getString(R.string.admob_jili_02), object : AdmobCallbackV2 {
-
-            var isReward = false
+        mAdMob?.loadInterstitialAd(getString(R.string.admob_chaye), object : AdmobCallback {
             override fun onLoaded() {
-                if (mAdMob?.getLatestRewardAd()?.isLoaded == true) {
-                    mAdMob?.getLatestRewardAd()?.show()
+                if (activity != null && !activity.isFinishing) {
+                    mAdMob?.getLatestInterstitialAd()?.show()
                 }
             }
 
-            override fun onError(code:Int) {
-                Log.i("IjkVideoFragment", "AdMob onError")
-                init(view)
+            override fun onError(errorCode: Int) {
             }
 
             override fun onOpened() {
             }
 
             override fun onClosed() {
-                Log.i("IjkVideoFragment", "AdMob onClosed")
-                if (isReward) {
-                    init(view)
-                    isReward = false
-                } else {
-                    this@IjkVideoFragment.activity?.finish()
-                }
-            }
-
-            override fun onReward(item: RewardItem?) {
-                Log.i("IjkVideoFragment", "AdMob onReward")
-                isReward = true
             }
         })
     }

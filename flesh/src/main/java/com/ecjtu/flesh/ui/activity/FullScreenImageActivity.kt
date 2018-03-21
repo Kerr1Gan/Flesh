@@ -23,6 +23,8 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.ecjtu.componentes.activity.RotateByOrientationActivity
 import com.ecjtu.flesh.R
+import com.ecjtu.flesh.util.admob.AdmobCallback
+import com.ecjtu.flesh.util.admob.AdmobManager
 import kotlin.concurrent.thread
 
 /**
@@ -62,6 +64,24 @@ class FullScreenImageActivity : RotateByOrientationActivity(), RequestListener<B
 
                 val glideUrl = GlideUrl(uri, builder.build())
                 Glide.with(this).asBitmap().load(glideUrl).listener(this).into(findViewById(R.id.image) as ImageView)
+                val ad = AdmobManager(this)
+                ad.loadInterstitialAd(getString(R.string.admob_chaye), object : AdmobCallback {
+                    override fun onLoaded() {
+                        if (!isFinishing) {
+                            ad.getLatestInterstitialAd()?.show()
+                        }
+                    }
+
+                    override fun onError(errorCode: Int) {
+                    }
+
+                    override fun onOpened() {
+                    }
+
+                    override fun onClosed() {
+                    }
+
+                })
                 return
             }
         }

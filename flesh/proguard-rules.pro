@@ -95,8 +95,8 @@
 -keep public class * extends android.support.design.widget.CoordinatorLayout$Behavior{*;}
 -keep public class * extends android.support.design.widget.CoordinatorLayout$Behavior{*;}
 -keep public class * extends com.ecjtu.flesh.ui.fragment.VideoListFragment{*;}
--keep public class com.ecjtu.flesh.ui.dialog.BaseDialogHelper{*;}
--keep public class * extends com.ecjtu.flesh.ui.dialog.BaseDialogHelper{*;}
+-keep public class com.ecjtu.flesh.util.encrypt.**{*;}
+
 # 不混淆 Bugly
 #-dontwarn com.tencent.bugly.**
 #-keep public class com.tencent.bugly.**{*;}
@@ -106,8 +106,9 @@
 -keepnames class com.amazonaws.**
 -keepnames class com.amazon.**
 # Request handlers defined in request.handlers
--keep class com.amazonaws.**{*;}
--keep class com.amazon.**{*;}
+-keep public class com.amazon.**{*;}
+-keep public class com.amazonaws.** { *; }
+-keep public class com.fasterxml.** { *; }
 # The following are referenced but aren't required to run
 -dontwarn com.fasterxml.jackson.**
 -dontwarn org.apache.commons.logging.**

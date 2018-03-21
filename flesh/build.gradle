@@ -7,8 +7,8 @@ android {
         applicationId "com.ecjtu.flesh"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 3
-        versionName "1.1.1"
+        versionCode 4
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 //        jackOptions{
 //            enabled true
@@ -51,6 +51,8 @@ dependencies {
     compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
     compile 'com.amazonaws:aws-android-sdk-s3:2.2.+'
     compile 'com.amazonaws:aws-android-sdk-ddb:2.2.+'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.9.4'
+
     compile project(':ijkplayer-exo')
 
     compile 'com.ashokvarma.android:bottom-navigation-bar:2.0.4'
