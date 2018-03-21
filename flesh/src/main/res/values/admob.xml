@@ -5,4 +5,6 @@
     <string name="admob_ad_01" translatable="false">ca-app-pub-3940256099942544/5224354917</string>
     <string name="admob_ad_02" translatable="false">ca-app-pub-1160759304210068/4409904919</string>
     <string name="admob_hengfu" translatable="false">ca-app-pub-1160759304210068/3533180784</string>
+    <string name="admob_jili_02" translatable="false">ca-app-pub-1160759304210068/3582628118</string>
+    <string name="admob_chaye" translatable="false">ca-app-pub-1160759304210068/8234343086</string>
 </resources>

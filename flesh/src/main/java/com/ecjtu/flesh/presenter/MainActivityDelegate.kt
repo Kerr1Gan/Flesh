@@ -36,6 +36,8 @@ import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
 import com.ecjtu.flesh.ui.dialog.GetVipDialogHelper
 import com.ecjtu.flesh.ui.dialog.SyncInfoDialogHelper
 import com.ecjtu.flesh.ui.fragment.*
+import com.ecjtu.flesh.util.admob.AdmobCallback
+import com.ecjtu.flesh.util.admob.AdmobManager
 import com.ecjtu.flesh.util.file.FileUtil
 import java.io.File
 import kotlin.concurrent.thread
@@ -55,7 +57,10 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
     private var mCurrentPagerIndex = 0
     private var mBottomNav: BottomNavigationBar? = null
 
+    var mAdMob: AdmobManager? = null
+
     init {
+        loadAd()
         mViewPager.adapter = FragmentAdapter(owner.supportFragmentManager)
         mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
@@ -195,31 +200,15 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
     }
 
     fun onStop() {
-//        for ((index, viewPager) in mViewPagerArray.withIndex()) {
-//            viewPager?.let {
-//                if (index == mCurrentPagerIndex) {
-//                    Log.i("tttttttttt", "onStop curPage" + mTabLayout.selectedTabPosition)
-//                    (viewPager.adapter as TabPagerAdapter?)?.onStop(owner, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
-//                } else {
-//                    Log.i("tttttttttt", "onStop " + mTabLayout.selectedTabPosition)
-//                    (viewPager.adapter as TabPagerAdapter?)?.onStop(owner, -1, isAppbarLayoutExpand())
-//                }
-//            }
-//        }
+        mAdMob?.onPause()
     }
 
     fun onResume() {
-//        mViewPager.adapter?.let {
-//            (mViewPager.adapter as TabPagerAdapter).onResume()
-//        }
+        mAdMob?.onResume()
     }
 
     fun onDestroy() {
-//        for ((index, viewPager) in mViewPagerArray.withIndex()) {
-//            viewPager?.let {
-//                (viewPager.adapter as TabPagerAdapter?)?.onDestroy()
-//            }
-//        }
+        mAdMob?.onDestroy()
     }
 
     override fun isAppbarLayoutExpand(): Boolean = mAppbarExpand
@@ -310,8 +299,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
         mAppbarLayout.setExpanded(isExpand)
     }
 
-    fun getLastTabItem(clazz: KClass<out TabPagerAdapter>): Int = PreferenceManager.getDefaultSharedPreferences(owner).
-            getInt(TabPagerAdapter.KEY_LAST_TAB_ITEM + "_" + clazz.java.simpleName, 0)
+    fun getLastTabItem(clazz: KClass<out TabPagerAdapter>): Int = PreferenceManager.getDefaultSharedPreferences(owner).getInt(TabPagerAdapter.KEY_LAST_TAB_ITEM + "_" + clazz.java.simpleName, 0)
 
     fun changeViewPager(index: Int) {
 //        mTabLayout.removeAllTabs()
@@ -320,6 +308,53 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
 
     override fun getTabLayout(): TabLayout {
         return mTabLayout
+    }
+
+    private fun loadAd() {
+        mAdMob = AdmobManager(owner)
+        mAdMob?.loadInterstitialAd(owner.getString(R.string.admob_chaye), object : AdmobCallback {
+            override fun onLoaded() {
+                Log.i("MainActivityDelegate", "AdMob onLoaded")
+            }
+
+            override fun onError(code: Int) {
+                Log.i("MainActivityDelegate", "AdMob onError")
+            }
+
+            override fun onOpened() {
+                Log.i("MainActivityDelegate", "AdMob onOpened")
+            }
+
+            override fun onClosed() {
+                Log.i("MainActivityDelegate", "AdMob onClosed")
+            }
+
+        })
+//        mAdMob?.loadRewardAd(owner.getString(R.string.admob_ad_02), object : AdmobCallbackV2 {
+//
+//            var isReward = false
+//            override fun onLoaded() {
+//                if (mAdMob?.getLatestRewardAd()?.isLoaded == true) {
+//                    mAdMob?.getLatestRewardAd()?.show()
+//                }
+//            }
+//
+//            override fun onError() {
+//                Log.i("MainActivityDelegate", "AdMob onError")
+//            }
+//
+//            override fun onOpened() {
+//            }
+//
+//            override fun onClosed() {
+//                Log.i("MainActivityDelegate", "AdMob onClosed")
+//            }
+//
+//            override fun onReward(item: RewardItem?) {
+//                Log.i("MainActivityDelegate", "AdMob onReward")
+//                isReward = true
+//            }
+//        })
     }
 
     inner class FragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {

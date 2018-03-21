@@ -121,7 +121,7 @@ open class AdmobManager(context: Context) : RewardedVideoAdListener, AdListener(
 
     override fun onRewardedVideoAdFailedToLoad(p0: Int) {
         Log.d("AdMob", "onRewardedVideoAdFailedToLoad code " + p0)
-        mRewardAdCallback?.onError()
+        mRewardAdCallback?.onError(p0)
     }
 
     override fun onAdImpression() {
@@ -134,7 +134,7 @@ open class AdmobManager(context: Context) : RewardedVideoAdListener, AdListener(
     }
 
     override fun onAdFailedToLoad(p0: Int) {
-        mInterstitialAdCallback?.onError()
+        mInterstitialAdCallback?.onError(p0)
     }
 
     override fun onAdClosed() {

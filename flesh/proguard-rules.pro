@@ -95,6 +95,7 @@
 -keep public class * extends android.support.design.widget.CoordinatorLayout$Behavior{*;}
 -keep public class * extends android.support.design.widget.CoordinatorLayout$Behavior{*;}
 -keep public class * extends com.ecjtu.flesh.ui.fragment.VideoListFragment{*;}
+-keep public class com.ecjtu.flesh.ui.dialog.SyncInfoDialogHelper{*;}
 # 不混淆 Bugly
 #-dontwarn com.tencent.bugly.**
 #-keep public class com.tencent.bugly.**{*;}

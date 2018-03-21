@@ -54,7 +54,7 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mAdMob = AdmobManager(context)
-        mAdMob?.loadRewardAd(getString(R.string.admob_ad_02), object : AdmobCallbackV2 {
+        mAdMob?.loadRewardAd(getString(R.string.admob_jili_02), object : AdmobCallbackV2 {
 
             var isReward = false
             override fun onLoaded() {
@@ -63,7 +63,7 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
                 }
             }
 
-            override fun onError() {
+            override fun onError(code:Int) {
                 Log.i("IjkVideoFragment", "AdMob onError")
                 init(view)
             }

@@ -7,7 +7,7 @@ import com.google.android.gms.ads.reward.RewardItem
  */
 interface AdmobCallback {
     fun onLoaded()
-    fun onError()
+    fun onError(errorCode: Int)
     fun onOpened()
     fun onClosed()
 }
