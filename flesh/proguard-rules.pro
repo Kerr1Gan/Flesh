@@ -108,9 +108,6 @@
 # Request handlers defined in request.handlers
 -keep class com.amazonaws.**{*;}
 -keep class com.amazon.**{*;}
--keep class com.fasterxml.jackson.**{*;}
--keep class org.apache.commons.logging.**{*;}
--keep class org.apache.http.**{*;}
 # The following are referenced but aren't required to run
 -dontwarn com.fasterxml.jackson.**
 -dontwarn org.apache.commons.logging.**
