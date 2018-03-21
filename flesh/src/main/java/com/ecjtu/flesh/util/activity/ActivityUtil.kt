@@ -1,18 +1,17 @@
 package com.ecjtu.flesh.util.activity
 
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import android.app.ActivityManager
-
 
 
 /**
  * Created by Ethan_Xiang on 2017/8/10.
  */
-object ActivityUtil{
+object ActivityUtil {
     //Settings.ACTION_APPLICATION_DETAIL_SETTING
     fun getAppDetailSettingIntent(context: Context): Intent {
         var localIntent = Intent()
@@ -48,5 +47,43 @@ object ActivityUtil{
             }
         }
         return false
+    }
+
+    /**
+     * 跳转到应用市场
+     *
+     * @param appPkg
+     * ：上传到应用市场上app的包名,不是本项目的包名
+     * @param marketPkg
+     * ：应用市场的包名
+     */
+    @Throws(Exception::class)
+    fun jumpToMarket(context: Context, appPkg: String, marketPkg: String? = null) {
+        val uri = Uri.parse("market://details?id=$appPkg")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        if (marketPkg != null) {// 如果没给市场的包名，则系统会弹出市场的列表让你进行选择。
+            intent.`package` = marketPkg
+        }
+        context.startActivity(intent)
+    }
+
+    @Throws(Exception::class)
+    fun openUrlByBrowser(context: Context, url: String) {
+        val intent = Intent()
+        intent.action = "android.intent.action.VIEW"
+        val uri = Uri.parse(url)
+        intent.data = uri
+        context.startActivity(intent)
+    }
+
+    @Throws(Exception::class)
+    fun openUrlByTargetBrowser(context: Context, url: String, packageName: String) {
+        val intent = Intent()
+        intent.action = "android.intent.action.VIEW"
+        val uri = Uri.parse(url)
+        intent.data = uri
+        intent.setPackage(packageName)
+        context.startActivity(intent)
     }
 }

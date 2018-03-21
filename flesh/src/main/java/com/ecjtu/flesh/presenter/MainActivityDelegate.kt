@@ -36,6 +36,7 @@ import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
 import com.ecjtu.flesh.ui.dialog.GetVipDialogHelper
 import com.ecjtu.flesh.ui.dialog.SyncInfoDialogHelper
 import com.ecjtu.flesh.ui.fragment.*
+import com.ecjtu.flesh.util.activity.ActivityUtil
 import com.ecjtu.flesh.util.admob.AdmobCallback
 import com.ecjtu.flesh.util.admob.AdmobManager
 import com.ecjtu.flesh.util.file.FileUtil
@@ -148,6 +149,18 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
 
         findViewById(R.id.sync_info)?.setOnClickListener {
             SyncInfoDialogHelper(owner).getDialog()?.show()
+        }
+
+        findViewById(R.id.feedback)?.setOnClickListener {
+            try {
+                ActivityUtil.jumpToMarket(owner, owner.packageName)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                try {
+                    ActivityUtil.openUrlByBrowser(owner, "https://play.google.com/store/apps/details?id=com.ecjtu.flesh")
+                } catch (ex: Exception) {
+                }
+            }
         }
 
         mAppbarExpand = PreferenceManager.getDefaultSharedPreferences(owner).getBoolean(TabPagerAdapter.KEY_APPBAR_LAYOUT_COLLAPSED, false)
@@ -315,10 +328,11 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
         mAdMob?.loadInterstitialAd(owner.getString(R.string.admob_chaye), object : AdmobCallback {
             override fun onLoaded() {
                 Log.i("MainActivityDelegate", "AdMob onLoaded")
+                mAdMob?.getLatestInterstitialAd()?.show()
             }
 
             override fun onError(code: Int) {
-                Log.i("MainActivityDelegate", "AdMob onError")
+                Log.i("MainActivityDelegate", "AdMob onError $code")
             }
 
             override fun onOpened() {
@@ -330,31 +344,6 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
             }
 
         })
-//        mAdMob?.loadRewardAd(owner.getString(R.string.admob_ad_02), object : AdmobCallbackV2 {
-//
-//            var isReward = false
-//            override fun onLoaded() {
-//                if (mAdMob?.getLatestRewardAd()?.isLoaded == true) {
-//                    mAdMob?.getLatestRewardAd()?.show()
-//                }
-//            }
-//
-//            override fun onError() {
-//                Log.i("MainActivityDelegate", "AdMob onError")
-//            }
-//
-//            override fun onOpened() {
-//            }
-//
-//            override fun onClosed() {
-//                Log.i("MainActivityDelegate", "AdMob onClosed")
-//            }
-//
-//            override fun onReward(item: RewardItem?) {
-//                Log.i("MainActivityDelegate", "AdMob onReward")
-//                isReward = true
-//            }
-//        })
     }
 
     inner class FragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {

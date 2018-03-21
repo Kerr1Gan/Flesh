@@ -6,6 +6,7 @@
     <string name="history">历史</string>
     <string name="vip_info">Vip信息</string>
     <string name="cache">缓存</string>
+    <string name="feedback">反馈</string>
     <string name="statement">声明</string>
     <string name="statement_content">所有资源均来自网络，如有侵权请联系mnsync@outlook.com，将会尽快删除。</string>
     <string name="delete_collection">取消收藏</string>
