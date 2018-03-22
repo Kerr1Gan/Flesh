@@ -23,6 +23,7 @@ import com.ecjtu.flesh.db.table.impl.LikeTableImpl;
 import com.ecjtu.flesh.db.table.impl.NotificationTableImpl;
 import com.ecjtu.flesh.service.MainService;
 import com.google.android.gms.ads.MobileAds;
+import com.tencent.bugly.Bugly;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.List;
@@ -73,8 +74,8 @@ public class MainApplication extends MultiDexApplication {
     }
 
     private void initSDK() {
-        CrashReport.initCrashReport(getApplicationContext(), "bea4125c41", Boolean.parseBoolean(getString(R.string.bugly_isDebug)));
-//        Bugly.init(getApplicationContext(), getString(R.string.bugly), Boolean.parseBoolean(getString(R.string.bugly_isDebug)));
+//        CrashReport.initCrashReport(getApplicationContext(), "bea4125c41", Boolean.parseBoolean(getString(R.string.bugly_isDebug)));
+        Bugly.init(getApplicationContext(), getString(R.string.bugly), Boolean.parseBoolean(getString(R.string.bugly_isDebug)));
         MobileAds.initialize(this,  getString(R.string.admob_app_id));
     }
 

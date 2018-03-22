@@ -98,8 +98,8 @@
 -keep public class com.ecjtu.flesh.util.encrypt.**{*;}
 
 # 不混淆 Bugly
-#-dontwarn com.tencent.bugly.**
-#-keep public class com.tencent.bugly.**{*;}
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}
 
 # 不混淆 AWS ++
 # Class names are needed in reflection
