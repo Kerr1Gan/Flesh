@@ -42,4 +42,6 @@
     <string name="loading">Loading</string>
     <string name="may_take_a_few_minutes">It may take some time</string>
     <string name="simple_date_format_ymd">yyyy-M-d</string>
+
+    <string name="please_wait_for_sync">"Please wait for sync data..."</string>
 </resources>

@@ -16,14 +16,10 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.services.s3.model.PutObjectRequest
-import com.amazonaws.services.s3.model.S3Object
 import com.ecjtu.flesh.Constants
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager.Companion.DB_NAME
 import com.ecjtu.flesh.util.encrypt.SecretKeyUtils
-import com.ecjtu.flesh.util.file.FileUtil
-import java.io.FileOutputStream
-import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
@@ -78,52 +74,8 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                     }
                 })
                 ?.setNeutralButton(R.string.sync, { _, _ ->
-                    thread {
-                        var outputStream: OutputStream? = null
-                        var s3Object: S3Object? = null
-                        try {
-                            if (mS3 == null) {
-                                val secretKey = SecretKeyUtils.getKeyFromServer()
-                                val content = SecretKeyUtils.getS3InfoFromServer(secretKey!!.key)
-                                val params = content.split(",")
-                                val provider = BasicAWSCredentials(params[0], params[1])
-                                val config = ClientConfiguration()
-                                config.protocol = Protocol.HTTP
-                                mS3 = AmazonS3Client(provider, config)
-                                val region = Region.getRegion(Regions.CN_NORTH_1)
-                                mS3?.setRegion(region)
-                                mS3?.setEndpoint(Constants.S3_URL)
-                            }
-                            val dbPath = getContext().getDatabasePath(DB_NAME)
-                            s3Object = mS3?.getObject("firststorage0001", "databases/$deviceId")
-                            if (s3Object != null) {
-                                val time = s3Object.objectMetadata?.userMetadata?.get("update_time")
-                                        ?: "-1"
-                                outputStream = FileOutputStream(dbPath)
-                                FileUtil.copyFile(s3Object.objectContent, outputStream)
-                                getHandler().post {
-                                    if (time != "-1") {
-                                        PreferenceManager.getDefaultSharedPreferences(getContext()).edit()
-                                                .putLong(Constants.PREF_SYNC_DATA_TIME, time.toLong()).apply()
-                                    }
-                                    Toast.makeText(getContext(), R.string.sync_success, Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
-                            getHandler().post {
-                                Toast.makeText(getContext(), R.string.sync_failure, Toast.LENGTH_SHORT).show()
-                            }
-                        } finally {
-                            try {
-                                outputStream?.close()
-                            } catch (ex: Exception) {
-                            }
-                            try {
-                                s3Object?.close()
-                            } catch (ex: Exception) {
-                            }
-                        }
+                    if (!TextUtils.isEmpty(deviceId)) {
+                        SyncInfoProgressDialog(getContext(), deviceId!!).getDialog()?.show()
                     }
                 })
                 ?.setNegativeButton(R.string.no, null)

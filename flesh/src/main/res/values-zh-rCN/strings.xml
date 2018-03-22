@@ -42,4 +42,6 @@
     <string name="loading">加载中</string>
     <string name="may_take_a_few_minutes">需要一小会时间</string>
     <string name="simple_date_format_ymd">yyyy年M月d日</string>
+
+    <string name="please_wait_for_sync">正在同步中请稍等。。。</string>
 </resources>
