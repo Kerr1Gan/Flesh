@@ -53,6 +53,9 @@ class MzituFragment : BaseTabPagerFragment {
                     val values = SoupFactory.parseHtml(MenuSoup::class.java, response)
                     if (values != null) {
                         activity.runOnUiThread {
+                            if (getViewPager()?.currentItem != 0) {
+                                return@runOnUiThread
+                            }
                             var localList: List<MenuModel>? = null
                             if (values[MenuSoup::class.java.simpleName] != null) {
                                 localList = values[MenuSoup::class.java.simpleName] as List<MenuModel>

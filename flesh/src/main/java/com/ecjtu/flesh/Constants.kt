@@ -20,34 +20,36 @@ object Constants {
     @JvmField
     val PREF_NOTIFICATION_URL = "constants_pref_notification_url"
 
-    @JvmField
-    val CONFIG_URL = "https://kerr1gan.github.io/flesh/googleplay/config"
+    const val VERSION = "/"
 
     @JvmField
-    val V33_URL = "https://Kerr1Gan.github.io/flesh/googleplay/v33a.json"
+    val CONFIG_URL = "https://kerr1gan.github.io/flesh/${VERSION}config"
 
     @JvmField
-    val WEIPAI_URL = "https://Kerr1Gan.github.io/flesh/googleplay/WeiPai.json"
+    val V33_URL = "https://Kerr1Gan.github.io/flesh/${VERSION}v33a.json"
 
     @JvmField
-    val OFO_URL = "https://Kerr1Gan.github.io/flesh/googleplay/ofo91.json"
+    val WEIPAI_URL = "https://Kerr1Gan.github.io/flesh/${VERSION}WeiPai.json"
 
     @JvmField
-    val SECRETE_KEY = "https://Kerr1Gan.github.io/flesh/googleplay/key"
+    val OFO_URL = "https://Kerr1Gan.github.io/flesh/${VERSION}ofo91.json"
 
     @JvmField
-    val S3_KEY = "https://Kerr1Gan.github.io/flesh/googleplay/apps_s3"
+    val SECRETE_KEY = "https://Kerr1Gan.github.io/flesh/${VERSION}key"
 
     @JvmField
-    val QUESTION = "https://Kerr1Gan.github.io/flesh/googleplay/question"
+    val S3_KEY = "https://Kerr1Gan.github.io/flesh/${VERSION}apps_s3"
+
+    @JvmField
+    val QUESTION = "https://Kerr1Gan.github.io/flesh/${VERSION}question"
 
     const val S3_URL = "s3.ap-northeast-2.amazonaws.com"
 
     @JvmField
-    val S3BUCKET_MAPPING = "https://Kerr1Gan.github.io/flesh/googleplay/s3bucket"
+    val S3BUCKET_MAPPING = "https://Kerr1Gan.github.io/flesh/${VERSION}s3bucket"
 
     @JvmField
-    val VIDEO_TAB_URL = "https://Kerr1Gan.github.io/flesh/googleplay/videotab"
+    val VIDEO_TAB_URL = "https://Kerr1Gan.github.io/flesh/${VERSION}videotab"
 
     const val PREF_VIP_INFO = "constants_pref_vip_info"
 
