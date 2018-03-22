@@ -69,6 +69,7 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
             override fun onClosed() {
             }
         })
+        init(view)
     }
 
     private fun init(view: View?) {
