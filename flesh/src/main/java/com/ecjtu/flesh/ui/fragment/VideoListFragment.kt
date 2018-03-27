@@ -104,6 +104,9 @@ open class VideoListFragment : BaseTabPagerFragment(), BaseTabPagerFragment.IDel
 
     protected fun doFloatButton(tabLayout: TabLayout, content: View, viewPager: ViewPager) {
         val position = tabLayout.selectedTabPosition
+        if (position < 0) {
+            return
+        }
         var recyclerView: RecyclerView? = null
         var size = 0
         viewPager.adapter?.let {

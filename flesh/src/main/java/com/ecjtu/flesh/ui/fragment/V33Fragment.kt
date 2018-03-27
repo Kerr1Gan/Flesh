@@ -158,6 +158,7 @@ class V33Fragment : VideoListFragment() {
                             Log.i(TAG, "load from cache")
                         }
                         activity?.runOnUiThread {
+                            if (context == null) return@runOnUiThread
                             val serverUrl = PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.SERVER_URL, Constants.SERVER_URL)
                             if (localMenu != null && localCache != null) {
                                 if (getViewPager() != null && getViewPager()?.adapter == null) {
