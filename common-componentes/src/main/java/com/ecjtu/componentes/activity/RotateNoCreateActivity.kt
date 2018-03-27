@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import com.ecjtu.componentes.TranslucentUtil
 
 /**
  * Created by KerriGan on 2017/8/20.
@@ -20,5 +21,10 @@ class RotateNoCreateActivity: BaseFragmentActivity(){
         protected open fun getActivityClazz(): Class<out Activity> {
             return RotateNoCreateActivity::class.java
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        TranslucentUtil.translucentWindow(this)
     }
 }
