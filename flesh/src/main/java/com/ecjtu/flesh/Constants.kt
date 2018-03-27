@@ -20,7 +20,7 @@ object Constants {
     @JvmField
     val PREF_NOTIFICATION_URL = "constants_pref_notification_url"
 
-    const val VERSION = "/"
+    const val VERSION = "googleplay/"
 
     @JvmField
     val CONFIG_URL = "https://kerr1gan.github.io/flesh/${VERSION}config"
