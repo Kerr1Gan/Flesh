@@ -24,7 +24,10 @@ import com.ecjtu.flesh.service.MainService;
 import com.ecjtu.flesh.util.CloseableUtil;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallback;
+import com.ecjtu.netcore.network.IRequestCallbackV2;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.PREF_ZERO, false)) {
             mDelegate = new MainActivityDelegate(this);
         }
+        loadServerUrl();
     }
 
     private void checkZero() {
@@ -179,5 +183,26 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
             }
         }
+    }
+
+    private void loadServerUrl() {
+        AsyncNetwork request = new AsyncNetwork();
+        request.request(Constants.SERVER_URL_CONFIG).
+                setRequestCallback(new IRequestCallbackV2() {
+                    @Override
+                    public void onError(@Nullable HttpURLConnection httpURLConnection, @NotNull Exception exception) {
+                        PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit()
+                                .putString(Constants.PREF_SERVER_URL, Constants.SERVER_URL).apply();
+                    }
+
+                    @Override
+                    public void onSuccess(@Nullable HttpURLConnection httpURLConnection, @NotNull String response) {
+                        String url = response;
+                        if (!TextUtils.isEmpty(url)) {
+                            PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit()
+                                    .putString(Constants.PREF_SERVER_URL, url).apply();
+                        }
+                    }
+                });
     }
 }

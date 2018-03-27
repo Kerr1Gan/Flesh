@@ -190,6 +190,8 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
         }
 
         open fun getSize(): Int = 0
+
+        open fun getMenu():MenuModel = menu
     }
 
     override fun getViewStub(position: Int): View? {

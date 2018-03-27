@@ -1,6 +1,8 @@
 package com.ecjtu.flesh.ui.adapter
 
 import android.support.v4.view.ViewPager
+import android.support.v7.widget.RecyclerView
+import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.netcore.model.MenuModel
 
 /**
@@ -19,4 +21,7 @@ class OfOTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : V33TabPa
         return KEY_LAST_POSITION_OFFSET
     }
 
+    override fun getVideoCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView, url: String?): VideoCardListAdapter {
+        return OfOVideoCardListAdapter(pageModel,recyclerView,url)
+    }
 }
