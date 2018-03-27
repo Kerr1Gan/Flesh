@@ -1,9 +1,11 @@
 package com.ecjtu.flesh.ui.fragment
 
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
+import com.ecjtu.flesh.Constants
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.cache.impl.VideoCacheHelper
@@ -49,13 +51,15 @@ class V33Fragment : VideoListFragment() {
             attachTabLayout()
             if (mV33Menu == null || mV33Menu?.size == 0) {
                 val req = AsyncNetwork().apply {
-                    request(com.ecjtu.flesh.Constants.V33_URL, null)
+                    val serverUrl = PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.SERVER_URL, Constants.SERVER_URL)
+                    request("$serverUrl/api/getVideoList?web=v33&page=-1&length=20", null)
                     setRequestCallback(object : IRequestCallback {
                         override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                             val menuModel = arrayListOf<MenuModel>()
                             val map = linkedMapOf<String, List<VideoModel>>()
                             try {
-                                val jObj = JSONArray(response)
+                                val serverData = JSONObject(response)
+                                val jObj = JSONArray(serverData.optString("data"))
                                 for (i in 0 until jObj.length()) {
                                     val jTitle = jObj[i] as JSONObject
                                     val title = jTitle.optString("title")
@@ -106,10 +110,12 @@ class V33Fragment : VideoListFragment() {
                                 if (getViewPager() != null && getViewPager()?.adapter == null) {
                                     getViewPager()?.adapter = V33TabPagerAdapter(menuModel, getViewPager()!!)
                                     (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(map)
+                                    (getViewPager()?.adapter as V33TabPagerAdapter).setRequestUrl("$serverUrl/api/getVideoList?web=v33")
                                     (getViewPager()?.adapter as V33TabPagerAdapter?)?.notifyDataSetChanged(true)
                                 } else {
                                     (getViewPager()?.adapter as V33TabPagerAdapter).menu = menuModel
                                     (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(map)
+                                    (getViewPager()?.adapter as V33TabPagerAdapter).setRequestUrl("$serverUrl/api/getVideoList?web=v33")
                                     (getViewPager()?.adapter as V33TabPagerAdapter?)?.notifyDataSetChanged(false)
                                 }
                                 mV33Menu = menuModel
@@ -152,14 +158,17 @@ class V33Fragment : VideoListFragment() {
                             Log.i(TAG, "load from cache")
                         }
                         activity?.runOnUiThread {
+                            val serverUrl = PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.SERVER_URL, Constants.SERVER_URL)
                             if (localMenu != null && localCache != null) {
                                 if (getViewPager() != null && getViewPager()?.adapter == null) {
                                     getViewPager()?.adapter = V33TabPagerAdapter(localMenu, getViewPager()!!)
                                     (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<VideoModel>>)
+                                    (getViewPager()?.adapter as V33TabPagerAdapter).setRequestUrl("$serverUrl/api/getVideoList?web=v33")
                                     (getViewPager()?.adapter as V33TabPagerAdapter?)?.notifyDataSetChanged(true)
                                 } else {
                                     (getViewPager()?.adapter as V33TabPagerAdapter).menu = localMenu
                                     (getViewPager()?.adapter as V33TabPagerAdapter).setMenuChildList(localCache as MutableMap<String, List<VideoModel>>)
+                                    (getViewPager()?.adapter as V33TabPagerAdapter).setRequestUrl("$serverUrl/api/getVideoList?web=v33")
                                     (getViewPager()?.adapter as V33TabPagerAdapter?)?.notifyDataSetChanged(false)
                                 }
                                 if (userVisibleHint) {

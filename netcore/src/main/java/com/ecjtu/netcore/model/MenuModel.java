@@ -41,14 +41,14 @@ public class MenuModel {
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof MenuModel)){
+        if (!(o instanceof MenuModel)) {
             return false;
         }
 
         MenuModel local = (MenuModel) o;
-        if(url.equals(local.url)){
+        if (url.equals(local.url) && title.equals(local.title) && id == local.id) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

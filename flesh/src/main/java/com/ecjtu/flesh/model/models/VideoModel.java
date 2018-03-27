@@ -89,4 +89,16 @@ public class VideoModel implements Serializable, Parcelable {
             return new VideoModel[size];
         }
     };
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof VideoModel)) {
+            return false;
+        }
+        VideoModel local = (VideoModel) o;
+        if (getBaseUrl().equals(local.getBaseUrl())) {
+            return true;
+        }
+        return super.equals(o);
+    }
 }

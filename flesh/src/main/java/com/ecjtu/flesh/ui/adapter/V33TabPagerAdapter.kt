@@ -4,6 +4,7 @@ import android.content.Context
 import android.preference.PreferenceManager
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,8 @@ open class V33TabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : Vid
     private val mViewStub = HashMap<String, VH>()
 
     private var mMenuChildList: Map<String, List<VideoModel>>? = null
+
+    private var mRequestUrl: String? = null
 
     override fun instantiateItem(container: ViewGroup?, position: Int): Any {
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
@@ -48,11 +51,11 @@ open class V33TabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : Vid
 
         private fun loadCache(context: Context, key: String) {
             if (mPageModel != null) {
-                recyclerView?.adapter = VideoCardListAdapter(mPageModel!!, recyclerView!!)
+                recyclerView?.adapter = getVideoCardListAdapter(mPageModel!!, recyclerView!!, "$mRequestUrl&page=${this@V33TabPagerAdapter.menu.indexOf(getMenu())}")
                 val lastPosition = PreferenceManager.getDefaultSharedPreferences(context).getInt(getLastPositionKey() + key, -1)
                 if (lastPosition >= 0) {
                     val yOffset = PreferenceManager.getDefaultSharedPreferences(context).getInt(getLastPositionOffsetKey() + key, 0)
-                    (recyclerView?.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(lastPosition, yOffset)
+                    (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(lastPosition, yOffset)
                 }
             }
         }
@@ -74,6 +77,10 @@ open class V33TabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : Vid
         mMenuChildList = mutableMap
     }
 
+    fun setRequestUrl(url: String?) {
+        mRequestUrl = url
+    }
+
     override fun getLastPositionKey(): String {
         return KEY_LAST_POSITION
     }
@@ -84,5 +91,9 @@ open class V33TabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : Vid
 
     override fun getViewStub(): HashMap<String, out VideoTabPagerAdapter.VH>? {
         return mViewStub
+    }
+
+    protected open fun getVideoCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView, url: String? = null): VideoCardListAdapter {
+        return VideoCardListAdapter(pageModel, recyclerView, url)
     }
 }

@@ -61,4 +61,8 @@ object Constants {
     const val PREF_SYNC_DATA_TIME = "pref_sync_data_time"
 
     const val LOCAL_VIP_PATH = "flesh/vip"
+
+    const val SERVER_URL_CONFIG = "https://Kerr1Gan.github.io/flesh/${VERSION}server"
+
+    const val PREF_SERVER_URL = "pref_server_url"
 }

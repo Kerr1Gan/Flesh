@@ -130,7 +130,8 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
             }
         }
         mDeviceId = local
-        AsyncNetwork().request(Constants.SERVER_URL + API_URI + if (!TextUtils.isEmpty(local)) local else "-1")
+        val serverUrl = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constants.PREF_SERVER_URL, Constants.SERVER_URL)
+        AsyncNetwork().request(serverUrl + API_URI + if (!TextUtils.isEmpty(local)) local else "-1")
                 .setRequestCallback(object : IRequestCallbackV2 {
                     override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                         try {
@@ -188,8 +189,9 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
     }
 
     private fun verifyVip(vipKey: String?, deviceId: String?) {
+        val serverUrl = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constants.PREF_SERVER_URL, Constants.SERVER_URL)
         AsyncNetwork()
-                .request(Constants.SERVER_URL + "/api/isPaySuccess?deviceId=$deviceId&paymentId=$vipKey")
+                .request(serverUrl + "/api/isPaySuccess?deviceId=$deviceId&paymentId=$vipKey")
                 .setRequestCallback(object : IRequestCallbackV2 {
                     override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                         try {

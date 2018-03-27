@@ -1,5 +1,6 @@
 package com.ecjtu.flesh.ui.adapter
 
+import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -25,16 +26,23 @@ import com.bumptech.glide.request.target.Target
 import com.ecjtu.componentes.activity.RotateNoCreateActivity
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
+import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
 import com.ecjtu.flesh.db.table.impl.HistoryTableImpl
 import com.ecjtu.flesh.db.table.impl.LikeTableImpl
 import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.flesh.ui.fragment.IjkVideoFragment
+import com.ecjtu.netcore.model.PageModel
+import com.ecjtu.netcore.network.AsyncNetwork
+import com.ecjtu.netcore.network.IRequestCallback
+import org.json.JSONArray
+import org.json.JSONObject
 import tv.danmaku.ijk.media.exo.video.IjkVideoView
+import java.net.HttpURLConnection
 
 /**
  * Created by Ethan_Xiang on 2018/1/16.
  */
-open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val recyclerView: RecyclerView) : RecyclerViewWrapAdapter<VideoCardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener, IChangeTab {
+open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val recyclerView: RecyclerView, private val url: String? = null) : RecyclerViewWrapAdapter<VideoCardListAdapter.VH>(), RequestListener<Bitmap>, View.OnClickListener, IChangeTab {
 
     private var mDatabase: SQLiteDatabase? = null
 
@@ -132,6 +140,10 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
         holder?.textView?.setText(pageModel.get(position).title)
         val bottom = holder?.itemView?.findViewById(R.id.bottom)
         bottom?.visibility = View.VISIBLE
+
+        if (position == itemCount - 1) {
+            requestMore(context, itemCount, 50)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VH {
@@ -279,6 +291,67 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
 
     open fun getDatabase(): SQLiteDatabase? {
         return mDatabase
+    }
+
+    open fun requestMore(context: Context?, index: Int, length: Int) {
+        if (TextUtils.isEmpty(url)) {
+            return
+        }
+        AsyncNetwork().request(url + "&index=$index&length=$length")
+                .setRequestCallback(object : IRequestCallback {
+                    override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
+                        try {
+                            val pageList = pageModel as ArrayList
+                            val serverData = JSONObject(response)
+                            val jObj = JSONArray(serverData.optString("data"))
+                            for (i in 0 until jObj.length()) {
+                                val jTitle = jObj[i] as JSONObject
+                                val title = jTitle.optString("title")
+                                val list = jTitle.optJSONArray("list")
+                                val modelList = arrayListOf<VideoModel>()
+                                for (j in 0 until list.length()) {
+                                    val v33Model = VideoModel()
+                                    val jItem = list[j] as JSONObject
+                                    v33Model.baseUrl = jItem.optString("baseUrl")
+                                    v33Model.imageUrl = jItem.optString("imageUrl")
+                                    v33Model.title = jItem.optString("title")
+                                    v33Model.videoUrl = jItem.optString("videoUrl")
+                                    modelList.add(v33Model)
+                                }
+
+                                for (model in modelList) {
+                                    if (pageList.indexOf(model) < 0) {
+                                        pageList.add(model)
+                                    }
+                                }
+
+                                if (context != null) {
+                                    val impl = ClassPageTableImpl()
+                                    val db = DatabaseManager.getInstance(context)?.getDatabase()
+                                    val itemListModel = arrayListOf<PageModel.ItemModel>()
+                                    for (videoModel in modelList) {
+                                        val model = PageModel.ItemModel(videoModel.videoUrl, videoModel.title, videoModel.imageUrl, 1)
+                                        itemListModel.add(model)
+                                    }
+                                    val pageModel = PageModel(itemListModel)
+                                    pageModel.nextPage = ""
+                                    db?.let {
+                                        db.beginTransaction()
+                                        impl.addPage(db, pageModel)
+                                        db.setTransactionSuccessful()
+                                        db.endTransaction()
+                                    }
+                                    db?.close()
+                                }
+                                recyclerView.post {
+                                    notifyItemChanged(index)
+                                }
+                            }
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                    }
+                })
     }
 
     inner class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {

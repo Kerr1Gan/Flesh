@@ -3,6 +3,7 @@ package com.ecjtu.flesh.ui.fragment
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
 import android.view.View
@@ -50,7 +51,8 @@ class VipFragment : VideoListFragment() {
         if (isVisibleToUser) {
             val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
             val deviceId = telephonyManager?.getDeviceId()
-            AsyncNetwork().request(Constants.SERVER_URL + "/api/getUserByDeviceId?deviceId=" + deviceId)
+            val serverUrl = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constants.PREF_SERVER_URL, Constants.SERVER_URL)
+            AsyncNetwork().request(serverUrl + "/api/getUserByDeviceId?deviceId=" + deviceId)
                     .setRequestCallback(object : IRequestCallbackV2 {
                         override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
                             try {
