@@ -83,8 +83,8 @@ class V33Fragment : VideoListFragment() {
                                         val db = DatabaseManager.getInstance(context)?.getDatabase()
                                         val itemListModel = arrayListOf<PageModel.ItemModel>()
                                         for (videoModel in modelList) {
-                                            val model = PageModel.ItemModel(videoModel.videoUrl, videoModel.title, videoModel.imageUrl, 1)
-                                            itemListModel.add(model)
+                                            val innerModel = PageModel.ItemModel(videoModel.videoUrl, videoModel.title, videoModel.imageUrl, 1)
+                                            itemListModel.add(innerModel)
                                         }
                                         val pageModel = PageModel(itemListModel)
                                         pageModel.nextPage = ""
