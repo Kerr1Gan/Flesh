@@ -18,6 +18,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.ecjtu.componentes.TranslucentUtil;
 import com.ecjtu.flesh.R;
@@ -38,6 +39,7 @@ public class AppWebViewActivity extends AppCompatActivity {
     private AdmobManager mAdmobManager;
     private View mTop;
     private int mOriginStatusBarColor = Color.WHITE;
+    private long mLastBackTime = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,7 +101,12 @@ public class AppWebViewActivity extends AppCompatActivity {
         if (mWebView.canGoBack()) {
             mWebView.goBack();
         } else {
-            super.onBackPressed();
+            if (mLastBackTime < 0 || System.currentTimeMillis() - mLastBackTime > 3 * 1000) {
+                mLastBackTime = System.currentTimeMillis();
+                Toast.makeText(this, "再次点击将退出", Toast.LENGTH_SHORT).show();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
