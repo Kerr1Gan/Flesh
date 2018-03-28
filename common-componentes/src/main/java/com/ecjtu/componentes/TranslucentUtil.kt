@@ -1,6 +1,7 @@
 package com.ecjtu.componentes
 
 import android.app.Activity
+import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.view.View
@@ -32,6 +33,12 @@ object TranslucentUtil {
             }
 
         }
+    }
+
+    fun getStatusBarHeight(context: Context): Int {
+        val resources = context.getResources()
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        return resources.getDimensionPixelSize(resourceId)
     }
 
 }

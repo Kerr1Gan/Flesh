@@ -2,6 +2,10 @@ package com.ecjtu.flesh.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +35,8 @@ public class AppWebViewActivity extends AppCompatActivity {
     private JavaScriptInterface mJsInterface;
     private ProgressBar mProgressBar;
     private AdmobManager mAdmobManager;
+    private View mTop;
+    private int mOriginStatusBarColor = Color.WHITE;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +77,7 @@ public class AppWebViewActivity extends AppCompatActivity {
 
     @SuppressLint("JavascriptInterface")
     private void initView() {
+        findViewById(R.id.top).setPadding(0, TranslucentUtil.INSTANCE.getStatusBarHeight(this), 0, 0);
         mWebView = (WebView) findViewById(R.id.web_view);
         mWebView.setWebViewClient(new SimpleWebViewClient());
         mWebView.setWebChromeClient(new SimpleWebChromeClient());
@@ -82,6 +89,8 @@ public class AppWebViewActivity extends AppCompatActivity {
         mWebView.addJavascriptInterface(mJsInterface, INTERFACE_NAME);
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+
+        mTop = findViewById(R.id.top);
     }
 
     @Override
@@ -111,6 +120,40 @@ public class AppWebViewActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    /**
+     * 获取view的bitmap
+     *
+     * @param v
+     * @return
+     */
+    public static Bitmap getBitmapFromView(View v) {
+        Bitmap b = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.RGB_565);
+        Canvas c = new Canvas(b);
+        v.layout(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+        // Draw background
+        Drawable bgDrawable = v.getBackground();
+        if (bgDrawable != null) {
+            bgDrawable.draw(c);
+        } else {
+            c.drawColor(Color.WHITE);
+        }
+        // Draw view to canvas
+        v.draw(c);
+        return b;
+    }
+
+    public void setStatusBarColor(Bitmap bitmap) {
+        if (null != bitmap) {
+            int pixel = bitmap.getPixel(bitmap.getWidth() / 2, 5);
+            //获取颜色
+            int redValue = Color.red(pixel);
+            int greenValue = Color.green(pixel);
+            int blueValue = Color.blue(pixel);
+            mTop.setBackgroundColor(pixel);
+            bitmap.recycle();
+        }
+    }
+
     public static class JavaScriptInterface {
         private Context context;
 
@@ -128,8 +171,14 @@ public class AppWebViewActivity extends AppCompatActivity {
     public class SimpleWebViewClient extends WebViewClient {
 
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            mOriginStatusBarColor = Color.WHITE;
             view.loadUrl(url);
             return true;
+        }
+
+        @Override
+        public void onPageCommitVisible(WebView view, String url) {
+            super.onPageCommitVisible(view, url);
         }
     }
 
@@ -143,6 +192,18 @@ public class AppWebViewActivity extends AppCompatActivity {
             } else {
                 mProgressBar.setVisibility(View.VISIBLE);// 开始加载网页时显示进度条
                 mProgressBar.setProgress(newProgress);// 设置进度值
+                if (mWebView.getContentHeight() >= TranslucentUtil.INSTANCE.getStatusBarHeight(AppWebViewActivity.this)) {
+                    if (mOriginStatusBarColor == Color.WHITE) {
+                        Bitmap bitmap = getBitmapFromView(mWebView);
+                        int pixel = bitmap.getPixel(bitmap.getWidth() / 2, 5);
+                        if (pixel != mOriginStatusBarColor) {
+                            mOriginStatusBarColor = pixel;
+                            setStatusBarColor(bitmap);
+                        } else {
+                            bitmap.recycle();
+                        }
+                    }
+                }
             }
         }
     }
