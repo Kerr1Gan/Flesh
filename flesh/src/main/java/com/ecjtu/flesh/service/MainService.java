@@ -1,8 +1,8 @@
 package com.ecjtu.flesh.service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -14,15 +14,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.Protocol;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.ecjtu.componentes.activity.ActionBarFragmentActivity;
 import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.db.DatabaseManager;
@@ -30,9 +22,6 @@ import com.ecjtu.flesh.db.table.impl.NotificationTableImpl;
 import com.ecjtu.flesh.model.models.NotificationModel;
 import com.ecjtu.flesh.notification.SimpleNotificationBuilder;
 import com.ecjtu.flesh.ui.fragment.WebViewFragment;
-import com.ecjtu.flesh.util.encrypt.SecretKey;
-import com.ecjtu.flesh.util.encrypt.SecretKeyUtils;
-import com.ecjtu.flesh.util.file.FileUtil;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallback;
 
@@ -40,16 +29,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import kotlin.jvm.internal.Intrinsics;
 
 
 /**
@@ -348,8 +330,9 @@ public class MainService extends Service {
 //        });
     }
 
-    public static Intent createUploadDbIntent(String deviceId) {
-        Intent i = new Intent(ACTION_UPLOAD_DATABASE);
+    public static Intent createUploadDbIntent(Context context, String deviceId) {
+        Intent i = new Intent(context, MainService.class);
+        i.setAction(ACTION_UPLOAD_DATABASE);
         i.putExtra(EXTRA_DEVICE_ID, deviceId);
         return i;
     }

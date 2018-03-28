@@ -10,11 +10,12 @@ android {
         versionCode 4
         versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-//        jackOptions{
-//            enabled true
-//        }
         multiDexEnabled true
         buildConfigField 'String', 'applicationId', "\"com.ecjtu.flesh\""
+
+        ndk {
+            abiFilters 'armeabi-v7a'
+        }
     }
     buildTypes {
         release {
@@ -22,12 +23,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-//    compileOptions{
-//        sourceCompatibility JavaVersion.VERSION_1_8
-//        targetCompatibility JavaVersion.VERSION_1_8
-//    }
-
 }
 
 dependencies {

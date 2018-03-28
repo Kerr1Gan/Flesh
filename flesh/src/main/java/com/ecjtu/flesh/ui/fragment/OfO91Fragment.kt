@@ -79,7 +79,7 @@ class OfO91Fragment : VideoListFragment() {
                                     activity.runOnUiThread {
                                         if (activity == null)
                                             return@runOnUiThread
-                                        AlertDialog.Builder(context).setTitle("成年问答,未成年请赶紧离开！").
+                                        AlertDialog.Builder(activity).setTitle("成年问答,未成年请赶紧离开！").
                                                 setMessage(question).
                                                 setPositiveButton(answer1, listener).
                                                 setNegativeButton(answer2, listener).
@@ -193,9 +193,10 @@ class OfO91Fragment : VideoListFragment() {
                 mLoadingDialog?.show()
             }
             thread {
-                if (context != null) {
-                    val helper = VideoCacheHelper(context.filesDir.absolutePath)
-                    val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
+                val local = context
+                if (local != null) {
+                    val helper = VideoCacheHelper(local.filesDir.absolutePath)
+                    val helper2 = MenuListCacheHelper(local.filesDir.absolutePath)
                     mV33Menu = helper2.get("ofoMenu")
                     mV33Cache = helper.get("ofoCache")
                     val localMenu = mV33Menu
@@ -232,9 +233,10 @@ class OfO91Fragment : VideoListFragment() {
     override fun onStop() {
         super.onStop()
         thread {
-            if (context != null) {
-                val helper = VideoCacheHelper(context.filesDir.absolutePath)
-                val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
+            val local = context
+            if (local != null) {
+                val helper = VideoCacheHelper(local.filesDir.absolutePath)
+                val helper2 = MenuListCacheHelper(local.filesDir.absolutePath)
                 if (mV33Menu != null && mV33Cache != null) {
                     helper2.put("ofoMenu", mV33Menu)
                     helper.put("ofoCache", mV33Cache)

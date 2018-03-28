@@ -20,7 +20,6 @@ import com.bumptech.glide.Glide;
 import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.R;
 import com.ecjtu.flesh.presenter.MainActivityDelegate;
-import com.ecjtu.flesh.service.MainService;
 import com.ecjtu.flesh.util.CloseableUtil;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallback;
@@ -153,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-            startService(MainService.createUploadDbIntent(deviceId));
+//            startService(MainService.createUploadDbIntent(this, deviceId));
         }
     }
 

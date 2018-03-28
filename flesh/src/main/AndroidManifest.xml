@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!--PayPal-->
     <application
         android:name=".MainApplication"
@@ -48,6 +48,10 @@
 
         <activity
             android:name=".ui.activity.PayPalActivity"
+            android:theme="@style/CCTranslucentTheme" />
+
+        <activity
+            android:name=".ui.activity.AppWebViewActivity"
             android:theme="@style/CCTranslucentTheme" />
 
         <service

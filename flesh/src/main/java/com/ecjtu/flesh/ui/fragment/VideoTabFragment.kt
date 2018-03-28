@@ -1,5 +1,7 @@
 package com.ecjtu.flesh.ui.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
@@ -47,7 +49,7 @@ class VideoTabFragment : BaseTabPagerFragment() {
             for (i in 0 until jArray.length()) {
                 val jObj = jArray.get(i) as JSONObject
                 val title = jObj.optString("title")
-                val fragment = jObj.optString("fragment")
+                val fragment = jObj.optString("clazz")
                 val url = jObj.optString("url")
                 val info = ItemInfo(title, arrayOf(), Class.forName(fragment), url)
                 mItemInfo.add(info)
@@ -64,7 +66,7 @@ class VideoTabFragment : BaseTabPagerFragment() {
                             for (i in 0 until jArray.length()) {
                                 val jObj = jArray.get(i) as JSONObject
                                 val title = jObj.optString("title")
-                                val fragment = jObj.optString("fragment")
+                                val fragment = jObj.optString("clazz")
                                 val url = jObj.optString("url")
                                 val info = ItemInfo(title, arrayOf(), Class.forName(fragment), url)
                                 mItemInfo.add(info)
@@ -109,12 +111,19 @@ class VideoTabFragment : BaseTabPagerFragment() {
         override fun onBindViewHolder(holder: VH?, position: Int) {
             holder?.textView?.text = mItemInfo[position].title
             holder?.itemView?.setOnClickListener {
-                val intent = ImmersiveFragmentActivity.newInstance(context, mItemInfo[position].clazz,
-                        Bundle().apply {
-                            putString("url", mItemInfo[position].url);
-                            putString("title", mItemInfo[position].title)
-                        })
-                startActivity(intent)
+                if (mItemInfo[position].clazz.newInstance() is Activity) {
+                    val intent = Intent(context, mItemInfo[position].clazz)
+                    intent.putExtra("url", mItemInfo[position].url)
+                    intent.putExtra("title", mItemInfo[position].title)
+                    startActivity(intent)
+                } else {
+                    val intent = ImmersiveFragmentActivity.newInstance(context, mItemInfo[position].clazz,
+                            Bundle().apply {
+                                putString("url", mItemInfo[position].url);
+                                putString("title", mItemInfo[position].title)
+                            })
+                    startActivity(intent)
+                }
             }
         }
 
