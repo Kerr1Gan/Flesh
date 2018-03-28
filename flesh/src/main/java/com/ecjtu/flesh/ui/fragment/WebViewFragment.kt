@@ -86,7 +86,8 @@ class WebViewFragment : Fragment() {
                 Log.e(TAG, "load by static")
             } else if (type == TYPE_MIME) {
                 val extension = MimeTypeMap.getFileExtensionFromUrl(url)
-                val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: "text/html"
+                val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+                        ?: "text/html"
                 toDoWithMIME(mime, url)
             }
         }
@@ -118,7 +119,16 @@ class WebViewFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mWebView?.removeJavascriptInterface(INTERFACE_NAME)
+        if (mWebView != null) {
+            mWebView?.removeJavascriptInterface(INTERFACE_NAME)
+            mWebView?.setWebViewClient(null)
+            mWebView?.setWebChromeClient(null)
+            mWebView?.loadDataWithBaseURL(null, "", "text/html", "utf-8", null)
+            mWebView?.clearHistory()
+            (mWebView?.getParent() as ViewGroup).removeView(mWebView)
+            mWebView?.destroy()
+            mWebView = null
+        }
     }
 
     class JavaScriptInterface(val context: Context) {
