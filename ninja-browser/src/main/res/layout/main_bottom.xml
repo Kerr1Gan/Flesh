@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<io.github.mthli.Ninja.View.SwitcherPanel
+<com.ecjtu.ninjabrowser.view.SwitcherPanel
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/switcher_panel"
         android:layout_width="match_parent"
@@ -262,5 +262,5 @@
 
     </LinearLayout>
 
-</io.github.mthli.Ninja.View.SwitcherPanel>
+</com.ecjtu.ninjabrowser.view.SwitcherPanel>
 

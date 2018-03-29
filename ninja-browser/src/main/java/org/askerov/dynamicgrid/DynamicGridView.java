@@ -21,9 +21,10 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListAdapter;
 
+import com.ecjtu.ninjabrowser.R;
+
 import java.util.*;
 
-import io.github.mthli.Ninja.R;
 
 /**
  * Author: alex askerov

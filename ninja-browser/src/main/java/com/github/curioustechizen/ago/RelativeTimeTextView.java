@@ -1,5 +1,6 @@
 package com.github.curioustechizen.ago;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Handler;
@@ -9,7 +10,8 @@ import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
-import io.github.mthli.Ninja.R;
+
+import com.ecjtu.ninjabrowser.R;
 
 
 /**
@@ -18,6 +20,7 @@ import io.github.mthli.Ninja.R;
  * @see #setReferenceTime(long)
  *
  */
+@SuppressLint("AppCompatCustomView")
 public class RelativeTimeTextView extends TextView {
 
     private long mReferenceTime;

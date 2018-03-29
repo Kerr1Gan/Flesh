@@ -4,14 +4,14 @@
 
     <PreferenceCategory android:title="@string/setting_title_browser">
 
-        <io.github.mthli.Ninja.View.SearchEngineListPreference
+        <com.ecjtu.ninjabrowser.view.SearchEngineListPreference
                 android:key="@string/sp_search_engine"
                 android:defaultValue="0"
                 android:title="@string/setting_title_search_engine"
                 android:summary="@string/setting_summary_search_engine_google"
                 android:entries="@array/setting_entries_search_engine"
                 android:entryValues="@array/setting_values_search_engine">
-        </io.github.mthli.Ninja.View.SearchEngineListPreference>
+        </com.ecjtu.ninjabrowser.view.SearchEngineListPreference>
 
         <ListPreference android:key="@string/sp_notification_priority"
                         android:defaultValue="0"
@@ -85,14 +85,14 @@
                             android:summary="@string/setting_summary_text_reflow">
         </CheckBoxPreference>
 
-        <io.github.mthli.Ninja.View.UserAgentListPreference
+        <com.ecjtu.ninjabrowser.view.UserAgentListPreference
                 android:key="@string/sp_user_agent"
                 android:defaultValue="0"
                 android:title="@string/setting_title_user_agent"
                 android:summary="@string/setting_summary_user_agent_default"
                 android:entries="@array/setting_entries_user_agent"
                 android:entryValues="@array/setting_values_user_agent">
-        </io.github.mthli.Ninja.View.UserAgentListPreference>
+        </com.ecjtu.ninjabrowser.view.UserAgentListPreference>
 
         <ListPreference android:key="@string/sp_rendering"
                         android:defaultValue="0"
