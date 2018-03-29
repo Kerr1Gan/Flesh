@@ -54,6 +54,8 @@ dependencies {
     compile 'com.google.firebase:firebase-ads:11.4.0'
     compile 'com.android.support:multidex:1.0.0'
 
+    compile project(':ninja-browser')
+
     //paypal
 //    compile 'com.paypal.sdk:paypal-android-sdk:2.16.0'
 //    compile 'com.google.android.gms:play-services-wallet:11.8.0'

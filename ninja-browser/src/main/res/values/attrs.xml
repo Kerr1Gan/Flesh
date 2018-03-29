@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <!-- AndroidAgo -->
+    <declare-styleable name="RelativeTimeTextView">
+        <attr name="relativeTimePrefix" format="string" />
+        <attr name="relativeTimeSuffix" format="string" />
+        <attr name="referenceTime" format="string" />
+    </declare-styleable>
+
+</resources>

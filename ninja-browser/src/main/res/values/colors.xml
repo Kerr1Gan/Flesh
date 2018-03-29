@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <color name="blue_900">#0D47A1</color>
+    <color name="blue_800">#1565C0</color>
+    <color name="blue_700">#1976D2</color>
+    <color name="blue_600">#1E88E5</color>
+    <color name="blue_500">#2196F3</color>
+    <color name="blue_400">#42A5F5</color>
+    <color name="blue_300">#64B5F6</color>
+    <color name="blue_200">#90CAF9</color>
+    <color name="blue_100">#BBDEFB</color>
+
+    <color name="gray_900">#212121</color>
+    <color name="gray_800">#424242</color>
+    <color name="gray_700">#616161</color>
+    <color name="gray_600">#757575</color>
+    <color name="gray_500">#9E9E9E</color>
+    <color name="gray_400">#BDBDBD</color>
+    <color name="gray_300">#E0E0E0</color>
+    <color name="gray_200">#EEEEEE</color>
+    <color name="gray_100">#F5F5F5</color>
+
+    <color name="black">#000000</color>
+    <color name="shadow_dark">#CC212121</color>
+    <color name="shadow_light">#44212121</color>
+    <color name="background_dark">@color/gray_900</color>
+    <color name="background_light">@color/gray_100</color>
+    <color name="light">#F3F3F3</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparent">@android:color/transparent</color>
+
+    <color name="text">#212121</color>
+    <color name="text_secondary">#727272</color>
+    <color name="hint">#B8B8B8</color>
+    <color name="dividers">#DADADA</color>
+
+</resources>
