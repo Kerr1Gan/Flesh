@@ -133,6 +133,8 @@ abstract class BaseNetwork {
         mutableMap?.let {
             httpURLConnection.requestMethod = Method.POST
             setDoInputOutput(null, true)
+            httpURLConnection.setDoInput(mDoInput)
+            httpURLConnection.setDoOutput(mDoOutput)
             var param = ""
             for (obj in mutableMap.entries) {
                 if (!TextUtils.isEmpty(param)) {
