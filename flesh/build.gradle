@@ -4,7 +4,7 @@ android {
     compileSdkVersion 23
     buildToolsVersion "25.0.0"
     defaultConfig {
-        applicationId "com.ecjtu.flesh"
+        applicationId "com.solar.flesh"
         minSdkVersion 16
         targetSdkVersion 21
         versionCode 4
@@ -14,7 +14,7 @@ android {
         buildConfigField 'String', 'applicationId', "\"com.ecjtu.flesh\""
 
         ndk {
-            abiFilters 'armeabi-v7a'
+            abiFilters 'armeabi-v7a'/*, 'x86'*/
         }
     }
     buildTypes {
@@ -54,7 +54,7 @@ dependencies {
     compile 'com.google.firebase:firebase-ads:11.4.0'
     compile 'com.android.support:multidex:1.0.0'
 
-    compile project(':ninja-browser')
+    // compile project(':ninja-browser')
 
     //paypal
 //    compile 'com.paypal.sdk:paypal-android-sdk:2.16.0'

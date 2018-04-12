@@ -54,7 +54,9 @@
 
         <activity
             android:name=".ui.activity.AppWebViewActivity"
-            android:theme="@style/CCTranslucentTheme" />
+            android:theme="@style/CCTranslucentTheme"
+            android:hardwareAccelerated="true"
+            android:configChanges="orientation|keyboardHidden|screenSize|mcc|mnc"/>
 
         <service
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"

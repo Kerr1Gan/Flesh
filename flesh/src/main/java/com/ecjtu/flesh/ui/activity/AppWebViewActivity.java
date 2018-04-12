@@ -2,23 +2,33 @@ package com.ecjtu.flesh.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.ecjtu.componentes.TranslucentUtil;
 import com.ecjtu.flesh.R;
@@ -30,7 +40,7 @@ import com.ecjtu.flesh.util.admob.AdmobManager;
  * Created by Ethan_Xiang on 2018/3/28.
  */
 
-public class AppWebViewActivity extends AppCompatActivity {
+public class AppWebViewActivity extends AppCompatActivity implements BrowserDelegate {
 
     private static final String INTERFACE_NAME = "android";
     private WebView mWebView;
@@ -40,6 +50,12 @@ public class AppWebViewActivity extends AppCompatActivity {
     private View mTop;
     private int mOriginStatusBarColor = Color.WHITE;
     private long mLastBackTime = -1;
+
+    private View mCustomView;
+    private int mOriginalOrientation;
+    private FullscreenHolder mFullscreenHolder;
+    private VideoView mVideoView;
+    private WebChromeClient.CustomViewCallback mCustomViewCallback;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,14 +98,15 @@ public class AppWebViewActivity extends AppCompatActivity {
     private void initView() {
         findViewById(R.id.top).setPadding(0, TranslucentUtil.INSTANCE.getStatusBarHeight(this), 0, 0);
         mWebView = (WebView) findViewById(R.id.web_view);
-        mWebView.setWebViewClient(new SimpleWebViewClient());
-        mWebView.setWebChromeClient(new SimpleWebChromeClient());
-
         WebSettings settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true);
-
+        settings.setUseWideViewPort(true); // 支持视频全屏播放关键点
+        settings.setSupportZoom(true); // 支持缩放,支持视频全屏播放关键点
+        // settings.setAllowFileAccess(true); // 允许访问文件
         mJsInterface = new JavaScriptInterface(this);
         mWebView.addJavascriptInterface(mJsInterface, INTERFACE_NAME);
+        mWebView.setWebViewClient(new SimpleWebViewClient());
+        mWebView.setWebChromeClient(new SimpleWebChromeClient());
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
@@ -125,7 +142,6 @@ public class AppWebViewActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         mAdmobManager.onDestroy();
-        super.onDestroy();
         if (mWebView != null) {
             mWebView.removeJavascriptInterface(INTERFACE_NAME);
             mWebView.setWebViewClient(null);
@@ -137,6 +153,7 @@ public class AppWebViewActivity extends AppCompatActivity {
             mWebView.destroy();
             mWebView = null;
         }
+        super.onDestroy();
     }
 
     /**
@@ -202,7 +219,6 @@ public class AppWebViewActivity extends AppCompatActivity {
     }
 
     class SimpleWebChromeClient extends WebChromeClient {
-
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
@@ -225,5 +241,195 @@ public class AppWebViewActivity extends AppCompatActivity {
                 }
             }
         }
+
+        @Override
+        public void onShowCustomView(View view, CustomViewCallback callback) {
+            AppWebViewActivity.this.onShowCustomView(view, callback);
+        }
+
+        @Override
+        public void onHideCustomView() {
+            AppWebViewActivity.this.onHideCustomView();
+        }
     }
+
+    @Override
+    public void updateAutoComplete() {
+
+    }
+
+    @Override
+    public void updateBookmarks() {
+
+    }
+
+    @Override
+    public void updateInputBox(String query) {
+
+    }
+
+    @Override
+    public void updateProgress(int progress) {
+
+    }
+
+    @Override
+    public void openFileChooser(ValueCallback<Uri> uploadMsg) {
+
+    }
+
+    @Override
+    public void showFileChooser(ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams) {
+
+    }
+
+    @Override
+    public void onCreateView(WebView view, Message resultMsg) {
+
+    }
+
+    private void setCustomFullscreen(boolean fullscreen) {
+        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+        /*
+         * Can not use View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION,
+         * so we can not hide NavigationBar :(
+         */
+        int bits = WindowManager.LayoutParams.FLAG_FULLSCREEN;
+
+        if (fullscreen) {
+            layoutParams.flags |= bits;
+        } else {
+            layoutParams.flags &= ~bits;
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        }
+        getWindow().setAttributes(layoutParams);
+    }
+
+    private class VideoCompletionListener implements MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
+        @Override
+        public boolean onError(MediaPlayer mp, int what, int extra) {
+            return false;
+        }
+
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+            onHideCustomView();
+        }
+    }
+
+    @Override
+    public boolean onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
+        if (view == null) {
+            return false;
+        }
+        if (mCustomView != null && callback != null) {
+            callback.onCustomViewHidden();
+            return false;
+        }
+
+        mCustomView = view;
+        mOriginalOrientation = getRequestedOrientation();
+
+        mFullscreenHolder = new FullscreenHolder(this);
+        mFullscreenHolder.addView(
+                mCustomView,
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                ));
+
+        FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
+        decorView.addView(
+                mFullscreenHolder,
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                ));
+
+        mCustomView.setKeepScreenOn(true);
+        setCustomFullscreen(true);
+
+        if (view instanceof FrameLayout) {
+            if (((FrameLayout) view).getFocusedChild() instanceof VideoView) {
+                mVideoView = (VideoView) ((FrameLayout) view).getFocusedChild();
+                mVideoView.setOnErrorListener(new VideoCompletionListener());
+                mVideoView.setOnCompletionListener(new VideoCompletionListener());
+            }
+        }
+        mCustomViewCallback = callback;
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE); // Auto landscape when video shows
+        return true;
+    }
+
+    @Override
+    public boolean onHideCustomView() {
+        if (mCustomView == null || mCustomViewCallback == null) {
+            return false;
+        }
+
+        FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
+        if (decorView != null) {
+            decorView.removeView(mFullscreenHolder);
+        }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            try {
+                mCustomViewCallback.onCustomViewHidden();
+            } catch (Throwable t) {
+            }
+        }
+
+        mCustomView.setKeepScreenOn(false);
+        setCustomFullscreen(false);
+
+        mFullscreenHolder = null;
+        mCustomView = null;
+        if (mVideoView != null) {
+            mVideoView.setOnErrorListener(null);
+            mVideoView.setOnCompletionListener(null);
+            mVideoView = null;
+        }
+        setRequestedOrientation(mOriginalOrientation);
+
+        return true;
+    }
+
+    @Override
+    public void onLongPress(String url) {
+
+    }
+}
+
+class FullscreenHolder extends FrameLayout {
+    public FullscreenHolder(Context context) {
+        super(context);
+        this.setBackgroundColor(context.getResources().getColor(android.R.color.black));
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return true;
+    }
+}
+
+interface BrowserDelegate {
+    void updateAutoComplete();
+
+    void updateBookmarks();
+
+    void updateInputBox(String query);
+
+    void updateProgress(int progress);
+
+    void openFileChooser(ValueCallback<Uri> uploadMsg);
+
+    void showFileChooser(ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams);
+
+    void onCreateView(WebView view, Message resultMsg);
+
+    boolean onShowCustomView(View view, WebChromeClient.CustomViewCallback callback);
+
+    boolean onHideCustomView();
+
+    void onLongPress(String url);
 }
