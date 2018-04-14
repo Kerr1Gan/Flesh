@@ -20,6 +20,7 @@ import tv.danmaku.ijk.media.exo.video.IjkVideoView
 import tv.danmaku.ijk.media.exo.video.SimpleMediaController
 import tv.danmaku.ijk.media.player.IMediaPlayer
 
+
 /**
  * Created by Ethan_Xiang on 2018/2/2.
  */
@@ -121,11 +122,22 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
 
         mGestureDetector = GestureDetector(activity, this)
         initOrientationListener()
+        val root = view.findViewById(R.id.root)
+        activity.runOnUiThread {
 
-        if (isNavigationBarShow(activity)) {
-            val root = view.findViewById(R.id.root)
-            root.setPadding(root.paddingLeft, root.paddingTop, view.paddingRight, view.paddingBottom + getNavigationBarHeight(activity))
         }
+        root.post {
+            if (activity != null && isNavigationBarShow(activity)) {
+                mMediaController?.rootView?.setPadding(root.paddingLeft, root.paddingTop, view.paddingRight, view.paddingBottom + getNavigationBarHeight(activity))
+            }
+        }
+        /*root.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (root.viewTreeObserver.isAlive()) {
+                    root.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                }
+            }
+        })*/
     }
 
     private val mCallback = SimpleMediaController.MediaPlayerCallback {
