@@ -72,6 +72,9 @@ class SyncInfoProgressDialog(context: Context, val deviceId: String) : BaseDialo
                     val provider = BasicAWSCredentials(params[0], params[1])
                     val config = ClientConfiguration()
                     config.protocol = Protocol.HTTP
+                    if (index >= 1) {
+                        config.protocol = Protocol.HTTPS
+                    }
                     val mS3 = AmazonS3Client(provider, config)
                     val region = Region.getRegion(Regions.CN_NORTH_1)
                     mS3.setRegion(region)
