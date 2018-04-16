@@ -73,7 +73,7 @@ class MzituFragment : BaseTabPagerFragment {
                                             needUpdate = true
                                         }
                                     }
-                                    if (needUpdate) {
+                                    if (needUpdate && userVisibleHint) {
                                         getViewPager()?.adapter?.notifyDataSetChanged()
                                     }
                                 }
@@ -83,6 +83,11 @@ class MzituFragment : BaseTabPagerFragment {
                 }
             })
         }
+    }
+
+    override fun onUnSelectTab() {
+        (getViewPager()?.adapter as TabPagerAdapter?)?.unSelect()
+        super.onUnSelectTab()
     }
 
     override fun getLastTabPositionKey(): String {

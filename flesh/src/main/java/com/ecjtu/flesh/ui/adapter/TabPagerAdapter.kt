@@ -97,8 +97,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
         val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         if (recyclerView != null && getScrollYPosition(recyclerView) >= 0) {
             editor.putInt(KEY_LAST_POSITION + key,
-                    getScrollYPosition(recyclerView)).
-                    putInt(KEY_LAST_POSITION_OFFSET + key, getScrollYOffset(recyclerView))
+                    getScrollYPosition(recyclerView)).putInt(KEY_LAST_POSITION_OFFSET + key, getScrollYOffset(recyclerView))
         }
         editor.apply()
     }
@@ -135,8 +134,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
                 helper.put(KEY_CARD_CACHE + entry.key, pageModel)
                 if (recyclerView != null && getScrollYPosition(recyclerView) >= 0) {
                     editor.putInt(KEY_LAST_POSITION + entry.key,
-                            getScrollYPosition(recyclerView)).
-                            putInt(KEY_LAST_POSITION_OFFSET + entry.key, getScrollYOffset(recyclerView))
+                            getScrollYPosition(recyclerView)).putInt(KEY_LAST_POSITION_OFFSET + entry.key, getScrollYOffset(recyclerView))
                 }
                 if (recyclerView?.adapter is CardListAdapter) {
                     (recyclerView.adapter as CardListAdapter).onStop()
@@ -163,6 +161,12 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
     }
 
     open fun onDestroy() {
+    }
+
+    fun unSelect() {
+        for (entry in mViewStub) {
+            entry.value.getRefreshLayout()?.isRefreshing = false
+        }
     }
 
     private inner class VH(val itemView: View, private val menu: MenuModel, val key: String) {
