@@ -1,6 +1,7 @@
 package com.ecjtu.flesh.ui.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -26,9 +27,12 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.ecjtu.componentes.activity.AppThemeActivity;
+import com.ecjtu.componentes.activity.ImmersiveFragmentActivity;
 import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.R;
 import com.ecjtu.flesh.presenter.MainActivityDelegate;
+import com.ecjtu.flesh.ui.fragment.SearchFragment;
 import com.ecjtu.flesh.util.CloseableUtil;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallback;
@@ -44,6 +48,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -276,6 +282,17 @@ public class MainActivity extends AppCompatActivity {
                 searchView.setQuery("", false);
                 searchView.clearFocus(); // 可以收起键盘
                 // searchView.onActionViewCollapsed(); // 可以收起SearchView视图
+                if (!TextUtils.isEmpty(query)) {
+                    Bundle bundle = new Bundle();
+                    try {
+                        query = URLEncoder.encode(query, "utf-8");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    bundle.putString("url", com.ecjtu.netcore.Constants.HOST_MOBILE_URL + "/search/" + query);
+                    Intent intent = AppThemeActivity.newInstance(MainActivity.this, SearchFragment.class, bundle);
+                    startActivity(intent);
+                }
                 return true;
             }
 
