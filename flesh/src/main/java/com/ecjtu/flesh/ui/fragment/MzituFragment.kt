@@ -1,6 +1,7 @@
 package com.ecjtu.flesh.ui.fragment
 
 import android.os.Bundle
+import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.View
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
@@ -30,6 +31,17 @@ class MzituFragment : BaseTabPagerFragment {
 
     override fun onUserVisibleHintChanged(isVisibleToUser: Boolean) {
         super.onUserVisibleHintChanged(isVisibleToUser)
+        getViewPager()?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                (getViewPager()?.adapter as TabPagerAdapter?)?.unSelect(position)
+            }
+        })
         if (isVisibleToUser) {
             val helper = MenuListCacheHelper(context.filesDir.absolutePath)
             val lastTabPosition = getLastTabPosition()

@@ -163,8 +163,12 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
     open fun onDestroy() {
     }
 
-    fun unSelect() {
+    fun unSelect(index: Int? = -1) {
+        var i = 0
         for (entry in mViewStub) {
+            if (i++ == index) {
+                continue
+            }
             entry.value.getRefreshLayout()?.isRefreshing = false
         }
     }
