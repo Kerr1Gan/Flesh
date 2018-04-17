@@ -44,4 +44,6 @@
     <string name="simple_date_format_ymd">yyyy年M月d日</string>
 
     <string name="please_wait_for_sync">正在同步中请稍等。。。</string>
+    <string name="search">搜索</string>
+    <string name="input_key_words">请输入关键字</string>
 </resources>
