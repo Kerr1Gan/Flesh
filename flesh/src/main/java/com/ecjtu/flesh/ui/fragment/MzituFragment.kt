@@ -27,10 +27,6 @@ class MzituFragment : BaseTabPagerFragment {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.i(TAG, "onViewCreated")
-    }
-
-    override fun onUserVisibleHintChanged(isVisibleToUser: Boolean) {
-        super.onUserVisibleHintChanged(isVisibleToUser)
         getViewPager()?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }
@@ -42,6 +38,10 @@ class MzituFragment : BaseTabPagerFragment {
                 (getViewPager()?.adapter as TabPagerAdapter?)?.unSelect(position)
             }
         })
+    }
+
+    override fun onUserVisibleHintChanged(isVisibleToUser: Boolean) {
+        super.onUserVisibleHintChanged(isVisibleToUser)
         if (isVisibleToUser) {
             val helper = MenuListCacheHelper(context.filesDir.absolutePath)
             val lastTabPosition = getLastTabPosition()
