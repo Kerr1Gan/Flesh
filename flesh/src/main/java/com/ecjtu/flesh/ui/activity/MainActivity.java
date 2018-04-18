@@ -28,7 +28,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ecjtu.componentes.activity.AppThemeActivity;
-import com.ecjtu.componentes.activity.ImmersiveFragmentActivity;
 import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.R;
 import com.ecjtu.flesh.presenter.MainActivityDelegate;
@@ -48,7 +47,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLEncoder;
 
 public class MainActivity extends AppCompatActivity {
@@ -247,7 +245,13 @@ public class MainActivity extends AppCompatActivity {
         Menu menu = toolbar.getMenu();
         getMenuInflater().inflate(R.menu.menu_main_activity, menu);
         final MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        if (searchView == null) {
+            searchView = (SearchView) searchItem.getActionView();
+        }
+        if (searchView == null) {
+            return;
+        }
         SearchView.SearchAutoComplete textView = (SearchView.SearchAutoComplete) searchView.findViewById(R.id.search_src_text);
         if (textView != null) {
             textView.setTextColor(Color.WHITE);
@@ -275,12 +279,13 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        final SearchView finalSearchView = searchView;
         //配置searchView...
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                searchView.setQuery("", false);
-                searchView.clearFocus(); // 可以收起键盘
+                finalSearchView.setQuery("", false);
+                finalSearchView.clearFocus(); // 可以收起键盘
                 // searchView.onActionViewCollapsed(); // 可以收起SearchView视图
                 if (!TextUtils.isEmpty(query)) {
                     Bundle bundle = new Bundle();

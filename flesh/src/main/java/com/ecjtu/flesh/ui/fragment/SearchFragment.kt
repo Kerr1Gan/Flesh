@@ -48,8 +48,8 @@ class SearchFragment : Fragment() {
         userVisibleHint = true
 
         val actionBar = (activity as AppCompatActivity).supportActionBar
+        actionBar?.setTitle(R.string.search)
         actionBar?.setDisplayHomeAsUpEnabled(true)
-        actionBar?.setTitle(R.string.history)
         setHasOptionsMenu(true)
     }
 
