@@ -134,7 +134,7 @@ public class MainService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "onStartCommand");
-        if (intent.getAction() != null && intent.getAction().equals(ACTION_UPLOAD_DATABASE)) {
+        if (intent != null && intent.getAction() != null && intent.getAction().equals(ACTION_UPLOAD_DATABASE)) {
             String deviceId = intent.getStringExtra(EXTRA_DEVICE_ID);
             if (TextUtils.isEmpty(deviceId)) {
                 uploadDatabase(deviceId);
