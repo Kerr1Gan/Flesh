@@ -3,6 +3,7 @@ package com.ecjtu.flesh.util.reptiles;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -11,10 +12,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -29,6 +34,7 @@ public class HtmlSource {
 
     private HandlerThread mHandlerThread = new HandlerThread("HtmlSource");
     private Handler mHandler;
+    private WebResourceResponse mBlankResourceResponse;
 
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
     public HtmlSource(Context context) {
@@ -130,6 +136,21 @@ public class HtmlSource {
                     "'<html>'+" +
                     "document.getElementsByTagName('html')[0].innerHTML+'</html>');");
             super.onPageFinished(view, url);
+        }
+
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                String url = request.getUrl().toString().toLowerCase();
+                if (url.endsWith("jpg") || url.endsWith("png") || url.endsWith("gif")) {
+                    if (mBlankResourceResponse == null) {
+                        ByteArrayInputStream is = new ByteArrayInputStream(new byte[]{0});
+                        mBlankResourceResponse = new WebResourceResponse("text/*", "utf-8", 200, "OK", new HashMap<String, String>(), is);
+                    }
+                    return mBlankResourceResponse;
+                }
+            }
+            return super.shouldInterceptRequest(view, request);
         }
     }
 

@@ -15,7 +15,6 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -222,9 +221,6 @@ public class AppWebViewActivity extends AppCompatActivity implements BrowserDele
 
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Log.i(TAG, "shouldInterceptRequest " + request.getUrl());
-            }
             return super.shouldInterceptRequest(view, request);
         }
     }
