@@ -45,6 +45,7 @@ class SearchFragment : Fragment() {
         recyclerView?.layoutManager = LinearLayoutManager(recyclerView?.context, LinearLayoutManager.VERTICAL, false)
         mRefreshLayout = if (view is SwipeRefreshLayout) view else null
         mRefreshLayout?.setColorSchemeColors(mRefreshLayout!!.context.resources.getColor(R.color.colorPrimary))
+        mRefreshLayout?.isEnabled = false
         userVisibleHint = true
 
         val actionBar = (activity as AppCompatActivity).supportActionBar
