@@ -1,4 +1,4 @@
-package com.ecjtu.flesh.presenter
+package com.ecjtu.flesh.mvp.presenter
 
 import android.app.Activity
 import android.app.Application

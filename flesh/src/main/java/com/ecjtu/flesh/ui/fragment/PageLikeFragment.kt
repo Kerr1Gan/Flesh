@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.LikeTableImpl
-import com.ecjtu.flesh.presenter.PageLikeFragmentDelegate
+import com.ecjtu.flesh.mvp.presenter.PageLikeFragmentDelegate
 
 /**
  * Created by Ethan_Xiang on 2017/9/18.
