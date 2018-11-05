@@ -11,7 +11,7 @@ import android.widget.Toast
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.LikeTableImpl
-import com.ecjtu.flesh.presenter.PageDetailActivityDelegate
+import com.ecjtu.flesh.mvp.presenter.PageDetailActivityDelegate
 
 /**
  * Created by Ethan_Xiang on 2017/9/11.

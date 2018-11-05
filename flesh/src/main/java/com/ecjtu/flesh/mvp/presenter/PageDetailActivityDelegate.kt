@@ -1,4 +1,4 @@
-package com.ecjtu.flesh.presenter
+package com.ecjtu.flesh.mvp.presenter
 
 import android.database.sqlite.SQLiteDatabase
 import android.support.v7.widget.LinearLayoutManager

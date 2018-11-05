@@ -1,4 +1,4 @@
-package com.ecjtu.flesh.presenter
+package com.ecjtu.flesh.mvp.presenter
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -43,7 +43,7 @@ import kotlin.concurrent.thread
 /**
  * Created by KerriGan on 2017/6/2.
  */
-class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) {
+class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner), MainContract.Presenter {
 
     companion object {
         private const val KEY_LAST_TAB_ITEM = "key_last_tab_item"
@@ -176,26 +176,23 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner) 
 //        }
     }
 
-    fun onStop() {
+    override fun onStop() {
         mViewPager.adapter?.let {
             (mViewPager.adapter as TabPagerAdapter).onStop(owner)
             val helper = MenuListCacheHelper(owner.filesDir.absolutePath)
             helper.put(CACHE_MENU_LIST, (mViewPager.adapter as TabPagerAdapter).menu)
 
-            PreferenceManager.getDefaultSharedPreferences(owner).edit().
-                    putInt(KEY_LAST_TAB_ITEM, mTabLayout.selectedTabPosition).
-                    putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isAppbarLayoutExpand()).
-                    apply()
+            PreferenceManager.getDefaultSharedPreferences(owner).edit().putInt(KEY_LAST_TAB_ITEM, mTabLayout.selectedTabPosition).putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED, isAppbarLayoutExpand()).apply()
         }
     }
 
-    fun onResume() {
+    override fun onResume() {
         mViewPager.adapter?.let {
             (mViewPager.adapter as TabPagerAdapter).onResume()
         }
     }
 
-    fun onDestroy() {
+    override fun onDestroy() {
 //        thread {
 //            val content = findViewById(R.id.drawer_layout)
 //            content?.let {
