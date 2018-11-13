@@ -1,1 +1,1 @@
-include ':flesh', ':netcore', ':common-componentes', ':parcel', ':ijkplayer-java', ':ijkplayer-exo', ':ninja-browser'
+include ':flesh', ':netcore', ':common-componentes', ':parcel', ':ijkplayer-java', ':ijkplayer-exo', ':ninja-browser', 'mvp-dagger'
