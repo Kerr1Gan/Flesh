@@ -1,4 +1,4 @@
-package com.ecjtu.flesh.presenter
+package com.ecjtu.flesh.mvp.presenter
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
