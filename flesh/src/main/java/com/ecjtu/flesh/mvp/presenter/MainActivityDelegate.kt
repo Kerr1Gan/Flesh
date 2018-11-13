@@ -165,15 +165,6 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
                 mAppbarExpand = false
             }
         }
-
-//        val content = findViewById(R.id.drawer_layout)
-//        content?.let {
-//            showBg()
-//            val bitmap = BitmapFactory.decodeFile(owner.filesDir.absolutePath + "/bg.png")
-//            if (bitmap != null) {
-//                content.setBackgroundDrawable(BitmapDrawable(bitmap))
-//            }
-//        }
     }
 
     override fun onStop() {
@@ -193,45 +184,8 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
     }
 
     override fun onDestroy() {
-//        thread {
-//            val content = findViewById(R.id.drawer_layout)
-//            content?.let {
-//                val bitmap = convertView2Bitmap(content, content.width, content.height)
-//                val file = File(owner.filesDir, "bg.png")
-//                var os: OutputStream? = null
-//                try {
-//                    os = FileOutputStream(file)
-//                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, os)
-//                    bitmap.recycle()
-//                    os.close()
-//                } catch (ex: Exception) {
-//                } finally {
-//                    if (os != null) {
-//                        try {
-//                            os.close()
-//                        } catch (ex: Exception) {
-//                        }
-//                    }
-//                    bitmap.recycle()
-//                }
-//
-//            }
-//        }
-    }
 
-//    fun hideBg() {
-//        val vg = findViewById(R.id.drawer_layout) as ViewGroup
-//        for (i in 0 until vg.childCount) {
-//            vg.getChildAt(i).visibility = View.VISIBLE
-//        }
-//    }
-//
-//    fun showBg() {
-//        val vg = findViewById(R.id.drawer_layout) as ViewGroup
-//        for (i in 0 until vg.childCount) {
-//            vg.getChildAt(i).visibility = View.INVISIBLE
-//        }
-//    }
+    }
 
     fun isAppbarLayoutExpand(): Boolean = mAppbarExpand
 
