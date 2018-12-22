@@ -61,4 +61,6 @@ dependencies {
 //    compile 'com.google.android.gms:play-services-wallet:11.8.0'
 
 //    compile 'com.google.firebase:firebase-core:11.4.2'
+
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 }
