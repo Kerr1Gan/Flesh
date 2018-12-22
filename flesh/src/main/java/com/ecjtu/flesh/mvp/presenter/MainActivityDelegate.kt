@@ -35,7 +35,9 @@ import com.ecjtu.netcore.jsoup.impl.MenuSoup
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
+import okhttp3.*
 import java.io.File
+import java.io.IOException
 import java.net.HttpURLConnection
 import kotlin.concurrent.thread
 
@@ -69,37 +71,47 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
             mTabLayout.setupWithViewPager(mViewPager)
             mViewPager.setCurrentItem(lastTabItem)
         }
-        val request = AsyncNetwork()
-        request.request(Constants.HOST_MOBILE_URL, null)
-        request.setRequestCallback(object : IRequestCallback {
-            override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
-                val values = SoupFactory.parseHtml(MenuSoup::class.java, response)
-                if (values != null) {
-                    owner.runOnUiThread {
-                        var localList: List<MenuModel>? = null
-                        if (values[MenuSoup::class.java.simpleName] != null) {
-                            localList = values[MenuSoup::class.java.simpleName] as List<MenuModel>
-                            if (menuList == null && localList != null) {
-                                mViewPager.adapter = TabPagerAdapter(localList)
-                                mTabLayout.setupWithViewPager(mViewPager)
-                                mViewPager.setCurrentItem(lastTabItem)
-                            } else {
-                                var needUpdate = false
-                                for (obj in localList) {
-                                    if (menuList?.indexOf(obj) ?: 0 < 0) {
-                                        menuList?.add(0, obj)
-                                        needUpdate = true
+
+        val client = OkHttpClient()
+        val request = Request.Builder()
+                .url(Constants.HOST_MOBILE_URL)
+                .get()
+                .build()
+        client.newCall(request)
+                .enqueue(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                    }
+
+                    override fun onResponse(call: Call, response: Response) {
+                        val values = SoupFactory.parseHtml(MenuSoup::class.java, response.body()?.string())
+                        if (values != null) {
+                            owner.runOnUiThread {
+                                var localList: List<MenuModel>? = null
+                                if (values[MenuSoup::class.java.simpleName] != null) {
+                                    localList = values[MenuSoup::class.java.simpleName] as List<MenuModel>
+                                    owner.runOnUiThread {
+                                        if (menuList == null && localList != null) {
+                                            mViewPager.adapter = TabPagerAdapter(localList!!)
+                                            mTabLayout.setupWithViewPager(mViewPager)
+                                            mViewPager.setCurrentItem(lastTabItem)
+                                        } else {
+                                            var needUpdate = false
+                                            for (obj in localList!!) {
+                                                if (menuList?.indexOf(obj) ?: 0 < 0) {
+                                                    menuList?.add(0, obj)
+                                                    needUpdate = true
+                                                }
+                                            }
+                                            if (needUpdate) {
+                                                mViewPager.adapter.notifyDataSetChanged()
+                                            }
+                                        }
                                     }
-                                }
-                                if (needUpdate) {
-                                    mViewPager.adapter.notifyDataSetChanged()
                                 }
                             }
                         }
                     }
-                }
-            }
-        })
+                })
 
         initView()
     }
@@ -165,15 +177,6 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
                 mAppbarExpand = false
             }
         }
-
-//        val content = findViewById(R.id.drawer_layout)
-//        content?.let {
-//            showBg()
-//            val bitmap = BitmapFactory.decodeFile(owner.filesDir.absolutePath + "/bg.png")
-//            if (bitmap != null) {
-//                content.setBackgroundDrawable(BitmapDrawable(bitmap))
-//            }
-//        }
     }
 
     override fun onStop() {
@@ -193,45 +196,8 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
     }
 
     override fun onDestroy() {
-//        thread {
-//            val content = findViewById(R.id.drawer_layout)
-//            content?.let {
-//                val bitmap = convertView2Bitmap(content, content.width, content.height)
-//                val file = File(owner.filesDir, "bg.png")
-//                var os: OutputStream? = null
-//                try {
-//                    os = FileOutputStream(file)
-//                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, os)
-//                    bitmap.recycle()
-//                    os.close()
-//                } catch (ex: Exception) {
-//                } finally {
-//                    if (os != null) {
-//                        try {
-//                            os.close()
-//                        } catch (ex: Exception) {
-//                        }
-//                    }
-//                    bitmap.recycle()
-//                }
-//
-//            }
-//        }
-    }
 
-//    fun hideBg() {
-//        val vg = findViewById(R.id.drawer_layout) as ViewGroup
-//        for (i in 0 until vg.childCount) {
-//            vg.getChildAt(i).visibility = View.VISIBLE
-//        }
-//    }
-//
-//    fun showBg() {
-//        val vg = findViewById(R.id.drawer_layout) as ViewGroup
-//        for (i in 0 until vg.childCount) {
-//            vg.getChildAt(i).visibility = View.INVISIBLE
-//        }
-//    }
+    }
 
     fun isAppbarLayoutExpand(): Boolean = mAppbarExpand
 

@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 android {
     compileSdkVersion 23
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "27.0.2"
     defaultConfig {
         applicationId "com.ecjtu.flesh"
         minSdkVersion 15
@@ -38,4 +38,6 @@ dependencies {
     //    compile project(path: ':fastscroll')
     compile project(':common-componentes')
     compile project(':parcel')
+
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 }
