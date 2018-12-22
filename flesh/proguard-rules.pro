@@ -130,3 +130,14 @@
 # 不混淆 ijk ++
 -keep class tv.danmaku.**{*;}
 # ijk --
+
+# 不混淆 okhttp
+-keep class okhttp3.**{*;}
+-dontwarn okio.**
+-dontwarn com.squareup.**
+-dontwarn okhttp3.**
+-keep class okhttp3.**{*;}
+-keep interface okhttp3.**{*;}
+-keep class com.squareup.** { *; }
+-keep interface com.squareup.okhttp.** { *; }
+-keep interface okhttp3.** { *; }
