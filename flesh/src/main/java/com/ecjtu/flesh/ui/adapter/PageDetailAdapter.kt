@@ -137,7 +137,7 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerViewWrapAdapte
             val parent = target.view.parent?.parent
             val layoutParams = (parent as View).layoutParams
             var height = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
-            height += parent.findViewById(R.id.title).height
+            height += parent.findViewById<View>(R.id.title).height
             if (layoutParams.height != height) {
                 layoutParams.height = height
             }
@@ -167,8 +167,8 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerViewWrapAdapte
 
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val mImageView = itemView.findViewById(R.id.image) as ImageView
-        val mBottom = itemView.findViewById(R.id.bottom) as View
+        val mImageView = itemView.findViewById<View>(R.id.image) as ImageView
+        val mBottom = itemView.findViewById<View>(R.id.bottom) as View
 
         init {
             mImageView.adjustViewBounds = true

@@ -143,7 +143,7 @@ class TabPagerAdapter(val menu: List<MenuModel>) : PagerAdapter() {
     }
 
     private class VH(val itemView: View, private val menu: MenuModel, val key: String) {
-        val recyclerView = itemView.findViewById(R.id.recycler_view) as RecyclerView?
+        val recyclerView = itemView.findViewById<View>(R.id.recycler_view) as RecyclerView?
         private var mPageModel: PageModel? = null
         private val mRefreshLayout = if (itemView is SwipeRefreshLayout) itemView else null
 

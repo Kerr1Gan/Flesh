@@ -70,7 +70,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
         }
 
         //set empty
-        holder?.itemView?.findViewById(R.id.bottom)?.visibility = View.INVISIBLE
+        holder?.itemView?.findViewById<View>(R.id.bottom)?.visibility = View.INVISIBLE
 
         //db
         if (mDatabase == null) {
@@ -168,7 +168,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
             val layoutParams = (parent as View).layoutParams
             var height = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
 
-            val bottom = parent.findViewById(R.id.bottom)
+            val bottom = parent.findViewById<View>(R.id.bottom)
             height += bottom.height
             if (layoutParams.height != height) {
                 layoutParams.height = height
@@ -204,7 +204,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
         position?.let {
             val item = pageModel.itemList[position as Int]
             val url = item.href
-            if (!TextUtils.isEmpty(url) && url.startsWith("http://")) {
+            if (!TextUtils.isEmpty(url) && (url.startsWith("http://") || url.startsWith("https://"))) {
                 val intent = PageDetailActivity.newInstance(v.context, url, item.href, item.description, item.imgUrl)
                 v.context.startActivity(intent)
                 val db = DatabaseManager.getInstance(v.context)?.getDatabase() as SQLiteDatabase
@@ -241,10 +241,10 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
     }
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imageView = itemView.findViewById(R.id.image) as ImageView
-        val textView = itemView.findViewById(R.id.title) as TextView
-        val heart = itemView.findViewById(R.id.heart) as ImageView
-        val description = itemView.findViewById(R.id.description) as TextView
+        val imageView = itemView.findViewById<View>(R.id.image) as ImageView
+        val textView = itemView.findViewById<View>(R.id.title) as TextView
+        val heart = itemView.findViewById<View>(R.id.heart) as ImageView
+        val description = itemView.findViewById<View>(R.id.description) as TextView
 
         init {
             imageView.adjustViewBounds = true
