@@ -28,7 +28,7 @@ object SecretKeyUtils {
         try {
             val url = URL(Constants.SECRETE_KEY)
             val connection = url.openConnection() as HttpURLConnection
-            connection.connectTimeout = 3000
+            connection.connectTimeout = 4000
             val `is` = connection.inputStream
             return SecretKeyUtils.readSecretKey(`is`)
         } catch (e: Exception) {
@@ -41,7 +41,7 @@ object SecretKeyUtils {
         try {
             val url = URL(Constants.S3_KEY)
             val connection = url.openConnection() as HttpURLConnection
-            connection.connectTimeout = 3000
+            connection.connectTimeout = 4000
             val `is` = connection.inputStream
             val byteBuffer = ByteArrayOutputStream()
             val byteArr = ByteArray(1024)

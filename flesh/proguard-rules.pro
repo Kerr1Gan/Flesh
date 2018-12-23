@@ -52,6 +52,10 @@
 #保持下面的V4兼容包的类不被混淆
 -keep class android.support.v4.**{*;}
 
+#不提示V7包下错误警告
+-dontwarn android.support.v7.**
+-keep class android.support.v7.**{*;}
+
 #不混淆Parcelable和它的实现子类，还有Creator成员变量
 -keep class * implements android.os.Parcelable {
      public static final android.os.Parcelable$Creator *;

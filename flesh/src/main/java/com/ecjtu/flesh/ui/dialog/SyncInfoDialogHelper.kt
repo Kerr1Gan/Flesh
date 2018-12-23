@@ -152,8 +152,17 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                     if (index >= 1) {
-                        getDialog()?.cancel()
-                        System.out.println("SyncInfoDialogHelper amazon can not connect " + ex.toString())
+                        if (ex.toString().contains("404")) {
+                            getHandler().post {
+                                dialog.getButton(DialogInterface.BUTTON_POSITIVE).visibility = View.VISIBLE
+                                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).visibility = View.VISIBLE
+                                dialog.getButton(DialogInterface.BUTTON_NEUTRAL).visibility = View.VISIBLE
+                                dialog.findViewById(R.id.progress_bar)?.visibility = View.GONE
+                            }
+                        } else {
+                            getDialog()?.cancel()
+                            System.out.println("SyncInfoDialogHelper amazon can not connect " + ex.toString())
+                        }
                         break
                     }
                     index++

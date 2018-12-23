@@ -44,4 +44,6 @@
     <string name="simple_date_format_ymd">yyyy-M-d</string>
 
     <string name="please_wait_for_sync">"Please wait for sync data..."</string>
+    <string name="search">Search</string>
+    <string name="input_key_words">Please input key words.</string>
 </resources>

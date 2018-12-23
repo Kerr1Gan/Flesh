@@ -22,6 +22,8 @@ import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -41,7 +43,7 @@ import com.ecjtu.flesh.util.admob.AdmobManager;
  */
 
 public class AppWebViewActivity extends AppCompatActivity implements BrowserDelegate {
-
+    private static final String TAG = "AppWebViewActivity";
     private static final String INTERFACE_NAME = "android";
     private WebView mWebView;
     private JavaScriptInterface mJsInterface;
@@ -215,6 +217,11 @@ public class AppWebViewActivity extends AppCompatActivity implements BrowserDele
         @Override
         public void onPageCommitVisible(WebView view, String url) {
             super.onPageCommitVisible(view, url);
+        }
+
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+            return super.shouldInterceptRequest(view, request);
         }
     }
 

@@ -1,18 +1,14 @@
 package com.ecjtu.flesh.ui.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.ecjtu.flesh.R;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-
-import tv.danmaku.ijk.media.exo.video.AndroidMediaController;
-import tv.danmaku.ijk.media.exo.video.IjkVideoView;
+import com.ecjtu.flesh.util.reptiles.HtmlSource;
 
 /**
  * Created by Ethan_Xiang on 2017/10/10.
@@ -42,46 +38,72 @@ public class TestActivity extends AppCompatActivity {
 //        mVideoView.requestFocus();
 //        mVideoView.start();
 
-        MobileAds.initialize(this,
-                getString(R.string.admob_app_id));
-        AdView mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-        mAdView.setAdListener(new AdListener(){
-            @Override
-            public void onAdClosed() {
-                super.onAdClosed();
-            }
+//        MobileAds.initialize(this,
+//                getString(R.string.admob_app_id));
+//        AdView mAdView = (AdView) findViewById(R.id.adView);
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//        mAdView.loadAd(adRequest);
+//        mAdView.setAdListener(new AdListener(){
+//            @Override
+//            public void onAdClosed() {
+//                super.onAdClosed();
+//            }
+//
+//            @Override
+//            public void onAdFailedToLoad(int i) {
+//                super.onAdFailedToLoad(i);
+//            }
+//
+//            @Override
+//            public void onAdLeftApplication() {
+//                super.onAdLeftApplication();
+//            }
+//
+//            @Override
+//            public void onAdOpened() {
+//                super.onAdOpened();
+//            }
+//
+//            @Override
+//            public void onAdLoaded() {
+//                super.onAdLoaded();
+//            }
+//
+//            @Override
+//            public void onAdClicked() {
+//                super.onAdClicked();
+//            }
+//
+//            @Override
+//            public void onAdImpression() {
+//                super.onAdImpression();
+//            }
+//        });
 
-            @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-            }
+//        Intent intent = new Intent(this,AppWebViewActivity.class);
+//        intent.putExtra("url","http://m.mzitu.com");
+//        startActivity(intent);
 
+        final Handler handler = new Handler();
+        handler.post(new Runnable() {
             @Override
-            public void onAdLeftApplication() {
-                super.onAdLeftApplication();
-            }
-
-            @Override
-            public void onAdOpened() {
-                super.onAdOpened();
-            }
-
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-            }
-
-            @Override
-            public void onAdClicked() {
-                super.onAdClicked();
-            }
-
-            @Override
-            public void onAdImpression() {
-                super.onAdImpression();
+            public void run() {
+                final Runnable run = this;
+                if (source != null)
+                    source.release();
+                source = new HtmlSource(TestActivity.this);
+                source.addCallbackListeners(new HtmlSource.ICallback() {
+                    @Override
+                    public void afterJsHtml(String html) {
+                        Log.i("tttttt", html);
+                        handler.post(run);
+                    }
+                });
+                source.loadExeJsHtml("http://ofo91.com");
             }
         });
     }
+
+    HtmlSource source = null;
+
 }

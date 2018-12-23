@@ -90,7 +90,6 @@ public class SimpleMediaController extends FrameLayout {
     private void initFloatingWindow() {
         mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         mRoot = this;
-
         this.mAnimSlideOutBottom = AnimationUtils.loadAnimation(this.mContext, R.anim.video_slide_out_bottom);
         this.mAnimSlideOutTop = AnimationUtils.loadAnimation(this.mContext, R.anim.video_slide_out_top);
         this.mAnimSlideInBottom = AnimationUtils.loadAnimation(this.mContext, R.anim.video_slide_in_bottom);
@@ -530,6 +529,10 @@ public class SimpleMediaController extends FrameLayout {
 
     public void setMediaPlayerCallback(MediaPlayerCallback control) {
         mCallback = control;
+    }
+
+    public View getRootView() {
+        return mRoot;
     }
 
     public interface MediaPlayerCallback {
