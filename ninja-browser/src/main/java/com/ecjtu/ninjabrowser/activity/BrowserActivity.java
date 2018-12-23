@@ -1,6 +1,7 @@
 package com.ecjtu.ninjabrowser.activity;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -24,7 +25,11 @@ import android.text.Html;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
-import android.view.*;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
@@ -33,18 +38,30 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.ecjtu.ninjabrowser.R;
 import com.ecjtu.ninjabrowser.browser.AdBlock;
 import com.ecjtu.ninjabrowser.browser.AlbumController;
 import com.ecjtu.ninjabrowser.browser.BrowserContainer;
 import com.ecjtu.ninjabrowser.browser.BrowserController;
-import com.ecjtu.ninjabrowser.service.ClearService;
-import com.ecjtu.ninjabrowser.task.ScreenshotTask;
 import com.ecjtu.ninjabrowser.database.Record;
 import com.ecjtu.ninjabrowser.database.RecordAction;
+import com.ecjtu.ninjabrowser.service.ClearService;
 import com.ecjtu.ninjabrowser.service.HolderService;
+import com.ecjtu.ninjabrowser.task.ScreenshotTask;
 import com.ecjtu.ninjabrowser.unit.BrowserUnit;
 import com.ecjtu.ninjabrowser.unit.IntentUnit;
 import com.ecjtu.ninjabrowser.unit.ViewUnit;
@@ -62,7 +79,13 @@ import com.ecjtu.ninjabrowser.view.SwitcherPanel;
 
 import org.askerov.dynamicgrid.DynamicGridView;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class BrowserActivity extends Activity implements BrowserController {
     // Sync with NinjaToast.show() 2000ms delay
@@ -110,6 +133,7 @@ public class BrowserActivity extends Activity implements BrowserController {
             onHideCustomView();
         }
     }
+
     private FullscreenHolder fullscreenHolder;
     private View customView;
     private VideoView videoView;
@@ -159,10 +183,12 @@ public class BrowserActivity extends Activity implements BrowserController {
         switcherPanel = (SwitcherPanel) findViewById(R.id.switcher_panel);
         switcherPanel.setStatusListener(new SwitcherPanel.StatusListener() {
             @Override
-            public void onFling() {}
+            public void onFling() {
+            }
 
             @Override
-            public void onExpanded() {}
+            public void onExpanded() {
+            }
 
             @Override
             public void onCollapsed() {
@@ -321,7 +347,9 @@ public class BrowserActivity extends Activity implements BrowserController {
             @Override
             public void onGlobalLayout() {
                 switcherPanel.fixKeyBoardShowing(switcherPanel.getHeight());
-                switcherPanel.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    switcherPanel.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
             }
         });
 
@@ -664,7 +692,9 @@ public class BrowserActivity extends Activity implements BrowserController {
             @Override
             public void afterTextChanged(Editable s) {
                 if (currentAlbumController != null && currentAlbumController instanceof NinjaWebView) {
-                    ((NinjaWebView) currentAlbumController).findAllAsync(s.toString());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        ((NinjaWebView) currentAlbumController).findAllAsync(s.toString());
+                    }
                 }
             }
         });
@@ -923,10 +953,12 @@ public class BrowserActivity extends Activity implements BrowserController {
             Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.album_fade_out);
             fadeOut.setAnimationListener(new Animation.AnimationListener() {
                 @Override
-                public void onAnimationRepeat(Animation animation) {}
+                public void onAnimationRepeat(Animation animation) {
+                }
 
                 @Override
-                public void onAnimationEnd(Animation animation) {}
+                public void onAnimationEnd(Animation animation) {
+                }
 
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -1270,7 +1302,8 @@ public class BrowserActivity extends Activity implements BrowserController {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             try {
                 customViewCallback.onCustomViewHidden();
-            } catch (Throwable t) {}
+            } catch (Throwable t) {
+            }
         }
 
         customView.setKeepScreenOn(false);
