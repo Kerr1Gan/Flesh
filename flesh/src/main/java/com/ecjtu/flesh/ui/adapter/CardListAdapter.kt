@@ -204,7 +204,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
         position?.let {
             val item = pageModel.itemList[position as Int]
             val url = item.href
-            if (!TextUtils.isEmpty(url) && url.startsWith("http://")) {
+            if (!TextUtils.isEmpty(url) && (url.startsWith("http://") || url.startsWith("https://"))) {
                 val intent = PageDetailActivity.newInstance(v.context, url, item.href, item.description, item.imgUrl)
                 v.context.startActivity(intent)
                 val db = DatabaseManager.getInstance(v.context)?.getDatabase() as SQLiteDatabase
