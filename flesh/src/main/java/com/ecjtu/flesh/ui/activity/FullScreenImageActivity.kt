@@ -119,7 +119,7 @@ class FullScreenImageActivity : RotateByOrientationActivity(), RequestListener<B
     }
 
     private fun initView() {
-        val toolbar = findViewById(R.id.tool_bar) as Toolbar?
+        val toolbar = findViewById<View>(R.id.tool_bar) as Toolbar?
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = ""
