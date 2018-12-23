@@ -53,10 +53,10 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
         private const val CACHE_MENU_LIST = "menu_list_cache"
     }
 
-    private val mFloatButton = owner.findViewById(R.id.float_button) as FloatingActionButton
-    private val mViewPager = owner.findViewById(R.id.view_pager) as ViewPager
-    private val mTabLayout = owner.findViewById(R.id.tab_layout) as TabLayout
-    private val mAppbarLayout = owner.findViewById(R.id.app_bar) as AppBarLayout
+    private val mFloatButton = owner.findViewById<View>(R.id.float_button) as FloatingActionButton
+    private val mViewPager = owner.findViewById<View>(R.id.view_pager) as ViewPager
+    private val mTabLayout = owner.findViewById<View>(R.id.tab_layout) as TabLayout
+    private val mAppbarLayout = owner.findViewById<View>(R.id.app_bar) as AppBarLayout
     private var mAppbarExpand = true
 
     init {
@@ -220,8 +220,8 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
             val vg = snake.view as LinearLayout
             val layout = LayoutInflater.from(owner).inflate(R.layout.layout_quick_jump, vg, false) as ViewGroup
 
-            val local = layout.findViewById(R.id.seek_bar) as SeekBar
-            val pos = layout.findViewById(R.id.position) as TextView
+            val local = layout.findViewById<View>(R.id.seek_bar) as SeekBar
+            val pos = layout.findViewById<View>(R.id.position) as TextView
 
             val listener = { v: View ->
                 if (position != mTabLayout.selectedTabPosition) {
@@ -252,9 +252,9 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
                 }
                 Unit
             }
-            layout.findViewById(R.id.top).setOnClickListener(listener)
-            layout.findViewById(R.id.mid).setOnClickListener(listener)
-            layout.findViewById(R.id.bottom).setOnClickListener(listener)
+            layout.findViewById<View>(R.id.top).setOnClickListener(listener)
+            layout.findViewById<View>(R.id.mid).setOnClickListener(listener)
+            layout.findViewById<View>(R.id.bottom).setOnClickListener(listener)
 
             local.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -272,7 +272,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
                 val curPos = (recyclerView?.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                 local.progress = curPos
             }
-            layout.findViewById(R.id.mid).setOnClickListener(listener)
+            layout.findViewById<View>(R.id.mid).setOnClickListener(listener)
             vg.addView(layout)
         }
         snake.show()

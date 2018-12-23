@@ -3,6 +3,7 @@ package com.ecjtu.flesh.mvp.presenter
 import android.app.Activity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.View
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.ui.adapter.CardListAdapter
 import com.ecjtu.netcore.model.PageModel
@@ -12,7 +13,7 @@ import com.ecjtu.netcore.model.PageModel
  */
 abstract class BasePageActivityDelegate(owner: Activity, protected val itemList: List<PageModel.ItemModel>) : Delegate<Activity>(owner) {
 
-    private val mRecyclerView = owner.findViewById(R.id.recycler_view) as RecyclerView
+    private val mRecyclerView = owner.findViewById<View>(R.id.recycler_view) as RecyclerView
     private var mPageModel: PageModel? = null
 
     init {

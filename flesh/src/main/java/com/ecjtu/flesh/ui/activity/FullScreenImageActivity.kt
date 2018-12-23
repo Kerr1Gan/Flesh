@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
@@ -61,7 +62,8 @@ class FullScreenImageActivity : RotateByOrientationActivity(), RequestListener<B
                         .addHeader("Referer", "http://m.mzitu.com/")
 
                 val glideUrl = GlideUrl(uri, builder.build())
-                Glide.with(this).asBitmap().load(glideUrl).listener(this).into(findViewById(R.id.image) as ImageView)
+                val image = findViewById<View>(R.id.image) as ImageView
+                Glide.with(this).asBitmap().load(glideUrl).listener(this).into(image)
                 return
             }
         }
@@ -99,7 +101,7 @@ class FullScreenImageActivity : RotateByOrientationActivity(), RequestListener<B
     }
 
     private fun initView() {
-        val toolbar = findViewById(R.id.tool_bar) as Toolbar?
+        val toolbar = findViewById<View>(R.id.tool_bar) as Toolbar?
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = ""
