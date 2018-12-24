@@ -143,7 +143,7 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                             dialog.getButton(DialogInterface.BUTTON_POSITIVE).visibility = View.VISIBLE
                             dialog.getButton(DialogInterface.BUTTON_NEGATIVE).visibility = View.VISIBLE
                             dialog.getButton(DialogInterface.BUTTON_NEUTRAL).visibility = View.VISIBLE
-                            dialog.findViewById(R.id.progress_bar)?.visibility = View.GONE
+                            dialog.findViewById<View>(R.id.progress_bar)?.visibility = View.GONE
                             getDialog()?.setMessage(getContext().getString(R.string.sync_info_explain) + "$timeString.")
                         }
                         break
@@ -157,7 +157,7 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
                                 dialog.getButton(DialogInterface.BUTTON_POSITIVE).visibility = View.VISIBLE
                                 dialog.getButton(DialogInterface.BUTTON_NEGATIVE).visibility = View.VISIBLE
                                 dialog.getButton(DialogInterface.BUTTON_NEUTRAL).visibility = View.VISIBLE
-                                dialog.findViewById(R.id.progress_bar)?.visibility = View.GONE
+                                dialog.findViewById<View>(R.id.progress_bar)?.visibility = View.GONE
                             }
                         } else {
                             getDialog()?.cancel()

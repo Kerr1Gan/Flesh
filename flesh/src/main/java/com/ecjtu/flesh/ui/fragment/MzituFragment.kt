@@ -12,6 +12,8 @@ import com.ecjtu.netcore.jsoup.impl.MenuSoup
 import com.ecjtu.netcore.model.MenuModel
 import com.ecjtu.netcore.network.AsyncNetwork
 import com.ecjtu.netcore.network.IRequestCallback
+import okhttp3.*
+import java.io.IOException
 import java.net.HttpURLConnection
 
 /**
@@ -58,42 +60,50 @@ class MzituFragment : BaseTabPagerFragment {
                     }
                 }
             }
-            val request = AsyncNetwork()
-            request.request(Constants.HOST_MOBILE_URL, null)
-            request.setRequestCallback(object : IRequestCallback {
-                override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
-                    val values = SoupFactory.parseHtml(MenuSoup::class.java, response)
-                    if (values != null) {
-                        activity.runOnUiThread {
-                            if (getViewPager()?.currentItem != 0) {
-                                return@runOnUiThread
-                            }
-                            var localList: List<MenuModel>? = null
-                            if (values[MenuSoup::class.java.simpleName] != null) {
-                                localList = values[MenuSoup::class.java.simpleName] as List<MenuModel>
-                                if (menuList == null && localList != null) {
-                                    getViewPager()?.adapter = TabPagerAdapter(localList)
-                                    if (userVisibleHint && getViewPager() != null) {
-                                        getTabLayout()?.setupWithViewPager(getViewPager())
-                                        getViewPager()?.setCurrentItem(lastTabPosition)
+
+            val client = OkHttpClient()
+            val request = Request.Builder()
+                    .url(Constants.HOST_MOBILE_URL)
+                    .get()
+                    .build()
+            client.newCall(request)
+                    .enqueue(object : Callback {
+                        override fun onFailure(call: Call, e: IOException) {
+                        }
+
+                        override fun onResponse(call: Call, response: Response) {
+                            val values = SoupFactory.parseHtml(MenuSoup::class.java, response.body()?.string())
+                            if (values != null) {
+                                activity.runOnUiThread {
+                                    if (getViewPager()?.currentItem != 0) {
+                                        return@runOnUiThread
                                     }
-                                } else {
-                                    var needUpdate = false
-                                    for (obj in localList) {
-                                        if (menuList?.indexOf(obj) ?: 0 < 0) {
-                                            menuList?.add(0, obj)
-                                            needUpdate = true
+                                    var localList: List<MenuModel>? = null
+                                    if (values[MenuSoup::class.java.simpleName] != null) {
+                                        localList = values[MenuSoup::class.java.simpleName] as List<MenuModel>
+                                        if (menuList == null && localList != null) {
+                                            getViewPager()?.adapter = TabPagerAdapter(localList)
+                                            if (userVisibleHint && getViewPager() != null) {
+                                                getTabLayout()?.setupWithViewPager(getViewPager())
+                                                getViewPager()?.setCurrentItem(lastTabPosition)
+                                            }
+                                        } else {
+                                            var needUpdate = false
+                                            for (obj in localList) {
+                                                if (menuList?.indexOf(obj) ?: 0 < 0) {
+                                                    menuList?.add(0, obj)
+                                                    needUpdate = true
+                                                }
+                                            }
+                                            if (needUpdate && userVisibleHint) {
+                                                getViewPager()?.adapter?.notifyDataSetChanged()
+                                            }
                                         }
-                                    }
-                                    if (needUpdate && userVisibleHint) {
-                                        getViewPager()?.adapter?.notifyDataSetChanged()
                                     }
                                 }
                             }
                         }
-                    }
-                }
-            })
+                    })
         }
     }
 

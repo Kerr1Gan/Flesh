@@ -139,11 +139,11 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                             val code = (jObj.opt("code") as String).toInt()
                             if (code < 0) {
                                 getHandler().post {
-                                    val messageView = getDialog()?.findViewById(android.R.id.message) as TextView?
+                                    val messageView = getDialog()?.findViewById<View>(android.R.id.message) as TextView?
                                     messageView?.setText("通过PayPal支付5刀即可获得1月Vip。")
                                     messageView?.visibility = View.VISIBLE
 
-                                    getDialog()?.findViewById(R.id.progress_bar)?.visibility = View.GONE
+                                    getDialog()?.findViewById<View>(R.id.progress_bar)?.visibility = View.GONE
                                     getDialog()?.getButton(DialogInterface.BUTTON_NEGATIVE)?.visibility = View.VISIBLE
                                     getDialog()?.getButton(DialogInterface.BUTTON_POSITIVE)?.visibility = View.VISIBLE
                                     getDialog()?.getButton(DialogInterface.BUTTON_NEUTRAL)?.visibility = View.VISIBLE
@@ -153,7 +153,7 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                                 json = json.optJSONObject("data")
                                 val key = json.optString("paymentId")
                                 getHandler().post {
-                                    val messageView = getDialog()?.findViewById(android.R.id.message) as TextView?
+                                    val messageView = getDialog()?.findViewById<View>(android.R.id.message) as TextView?
                                     messageView?.setText("您的Vip信息：\n" + "key:" + key)
                                     messageView?.visibility = View.VISIBLE
                                     getDialog()?.getButton(DialogInterface.BUTTON_POSITIVE)?.setText("复制key")
@@ -168,7 +168,7 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
                                         getDialog()?.cancel()
                                     }
 
-                                    getDialog()?.findViewById(R.id.progress_bar)?.visibility = View.GONE
+                                    getDialog()?.findViewById<View>(R.id.progress_bar)?.visibility = View.GONE
                                     getDialog()?.getButton(DialogInterface.BUTTON_NEGATIVE)?.visibility = View.VISIBLE
                                     getDialog()?.getButton(DialogInterface.BUTTON_POSITIVE)?.visibility = View.VISIBLE
                                 }
@@ -235,7 +235,7 @@ class GetVipDialogHelper(context: Context) : BaseDialogHelper(context) {
         builder.setNegativeButton("不了", null)
         builder.setPositiveButton("确定", { dialog: DialogInterface, _ ->
             if (dialog is AlertDialog) {
-                val vipKey = (dialog.findViewById(R.id.edit_text) as EditText?)?.text?.toString()
+                val vipKey = (dialog.findViewById<View>(R.id.edit_text) as EditText?)?.text?.toString()
                 verifyVip(vipKey, mDeviceId)
             }
         }).create().show()

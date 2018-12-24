@@ -92,7 +92,7 @@ class VideoTabFragment : BaseTabPagerFragment() {
     }
 
     private fun notifyRecyclerView() {
-        mRecyclerView = view?.findViewById(R.id.recycler_view) as RecyclerView?
+        mRecyclerView = view?.findViewById<View>(R.id.recycler_view) as RecyclerView?
         mRecyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         mRecyclerView?.adapter = SimpleAdapter()
     }
@@ -134,7 +134,7 @@ class VideoTabFragment : BaseTabPagerFragment() {
     }
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textView: TextView = itemView.findViewById(R.id.text) as TextView
+        val textView: TextView = itemView.findViewById<View>(R.id.text) as TextView
 
         init {
 

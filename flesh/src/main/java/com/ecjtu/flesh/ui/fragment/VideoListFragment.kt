@@ -41,18 +41,18 @@ open class VideoListFragment : BaseTabPagerFragment(), BaseTabPagerFragment.IDel
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         setDelegate(this)
-        mTabLayout = view?.findViewById(R.id.tab_layout) as TabLayout
+        mTabLayout = view?.findViewById<View>(R.id.tab_layout) as TabLayout
         super.onViewCreated(view, savedInstanceState)
         Log.i(TAG, "onViewCreated")
         userVisibleHint = true
-        mToolbar = view.findViewById(R.id.tool_bar) as Toolbar?
+        mToolbar = view.findViewById<View>(R.id.tool_bar) as Toolbar?
         if (activity is AppCompatActivity) {
-            val content = view.findViewById(R.id.content)
+            val content = view.findViewById<View>(R.id.content)
             (activity as AppCompatActivity).setSupportActionBar(mToolbar)
             (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
             content?.setPadding(content.paddingLeft, content.paddingTop + getStatusBarHeight(), content.paddingRight, content.paddingBottom)
         }
-        mFloatButton = view.findViewById(R.id.float_button) as FloatingActionButton?
+        mFloatButton = view.findViewById<View>(R.id.float_button) as FloatingActionButton?
         mFloatButton?.setOnClickListener {
             doFloatButton(mTabLayout!!, getViewPager()!!, getViewPager()!!)
         }
@@ -119,8 +119,8 @@ open class VideoListFragment : BaseTabPagerFragment(), BaseTabPagerFragment.IDel
             val vg = snake.view as LinearLayout
             val layout = LayoutInflater.from(context).inflate(R.layout.layout_quick_jump, vg, false) as ViewGroup
 
-            val local = layout.findViewById(R.id.seek_bar) as SeekBar
-            val pos = layout.findViewById(R.id.position) as TextView
+            val local = layout.findViewById<View>(R.id.seek_bar) as SeekBar
+            val pos = layout.findViewById<View>(R.id.position) as TextView
 
             val listener = { v: View ->
                 if (position != tabLayout.selectedTabPosition) {
@@ -151,9 +151,9 @@ open class VideoListFragment : BaseTabPagerFragment(), BaseTabPagerFragment.IDel
                 }
                 Unit
             }
-            layout.findViewById(R.id.top).setOnClickListener(listener)
-            layout.findViewById(R.id.mid).setOnClickListener(listener)
-            layout.findViewById(R.id.bottom).setOnClickListener(listener)
+            layout.findViewById<View>(R.id.top).setOnClickListener(listener)
+            layout.findViewById<View>(R.id.mid).setOnClickListener(listener)
+            layout.findViewById<View>(R.id.bottom).setOnClickListener(listener)
 
             local.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -171,7 +171,7 @@ open class VideoListFragment : BaseTabPagerFragment(), BaseTabPagerFragment.IDel
                 val curPos = (recyclerView?.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                 local.progress = curPos
             }
-            layout.findViewById(R.id.mid).setOnClickListener(listener)
+            layout.findViewById<View>(R.id.mid).setOnClickListener(listener)
             vg.addView(layout)
         }
         snake.show()

@@ -99,7 +99,7 @@ class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager
     }
 
     private inner class VH(val itemView: View, private val menu: MenuModel, val key: String) {
-        val recyclerView = itemView.findViewById(R.id.recycler_view) as RecyclerView?
+        val recyclerView = itemView.findViewById<View>(R.id.recycler_view) as RecyclerView?
         private var mPageModel: List<MeiPaiModel>? = null
         private val mRefreshLayout = if (itemView is SwipeRefreshLayout) itemView else null
 

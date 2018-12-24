@@ -138,7 +138,7 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
         }
         imageView?.setTag(R.id.extra_tag, position)
         holder?.textView?.setText(pageModel.get(position).title)
-        val bottom = holder?.itemView?.findViewById(R.id.bottom)
+        val bottom = holder?.itemView?.findViewById<View>(R.id.bottom)
         bottom?.visibility = View.VISIBLE
 
         if (position == itemCount - 1) {
@@ -160,7 +160,7 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
                 }
                 parent = parent.parent as View
             }
-            val bottom = parent.findViewById(R.id.bottom)
+            val bottom = parent.findViewById<View>(R.id.bottom)
             bottom.visibility = View.VISIBLE
         }
         return false
@@ -178,7 +178,7 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
             val layoutParams = (parent as View).layoutParams
             var height = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
 
-            val bottom = parent.findViewById(R.id.bottom)
+            val bottom = parent.findViewById<View>(R.id.bottom)
             height += bottom.height
             if (layoutParams.height != height) {
                 layoutParams.height = height
@@ -356,13 +356,13 @@ open class VideoCardListAdapter(var pageModel: List<VideoModel>, private val rec
 
     inner class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ijkVideoView: IjkVideoView? = /*itemView.findViewById(R.id.ijk_video) as IjkVideoView?*/null
-        val textView = itemView.findViewById(R.id.title) as TextView
-        val heart = itemView.findViewById(R.id.heart) as ImageView
-        val description = itemView.findViewById(R.id.description) as TextView
+        val textView = itemView.findViewById<View>(R.id.title) as TextView
+        val heart = itemView.findViewById<View>(R.id.heart) as ImageView
+        val description = itemView.findViewById<View>(R.id.description) as TextView
 //        val thumb = itemView.findViewById(R.id.thumb) as ImageView
 //        val mediaController = AndroidMediaController(itemView.context)
 
-        val thumb = itemView.findViewById(R.id.image) as ImageView
+        val thumb = itemView.findViewById<View>(R.id.image) as ImageView
 
         init {
             heart.setOnClickListener(this@VideoCardListAdapter.getHeartClickListener())

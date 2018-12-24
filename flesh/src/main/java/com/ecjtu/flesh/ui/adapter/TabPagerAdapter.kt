@@ -160,7 +160,6 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
         }
     }
 
-<<<<<<< HEAD
     open fun onDestroy() {
     }
 
@@ -175,11 +174,8 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
     }
 
     private inner class VH(val itemView: View, private val menu: MenuModel, val key: String) {
-        val recyclerView = itemView.findViewById(R.id.recycler_view) as RecyclerView?
-=======
-    private class VH(val itemView: View, private val menu: MenuModel, val key: String) {
         val recyclerView = itemView.findViewById<View>(R.id.recycler_view) as RecyclerView?
->>>>>>> bba4a4d... update gradle implementation
+
         private var mPageModel: PageModel? = null
         private val mRefreshLayout = if (itemView is SwipeRefreshLayout) itemView else null
 

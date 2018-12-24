@@ -120,7 +120,7 @@ class MeiPaiCardListAdapter(pageModel: List<MeiPaiModel>, val recyclerView: Recy
             val layoutParams = (parent as View).layoutParams
             var height = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
 
-            val bottom = parent.findViewById(R.id.bottom)
+            val bottom = parent.findViewById<View>(R.id.bottom)
             height += bottom.height
             if (layoutParams.height != height) {
                 layoutParams.height = height

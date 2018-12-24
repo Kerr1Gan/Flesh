@@ -14,7 +14,7 @@ android {
         buildConfigField 'String', 'applicationId', "\"com.ecjtu.flesh\""
 
         ndk {
-            abiFilters 'armeabi-v7a'/*, 'x86'*/
+            abiFilters 'armeabi-v7a', 'x86'
         }
     }
     buildTypes {

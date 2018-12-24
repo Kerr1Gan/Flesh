@@ -50,10 +50,10 @@ import kotlin.reflect.KClass
  */
 class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner), BaseTabPagerFragment.IDelegate {
 
-    private val mFloatButton = owner.findViewById(R.id.float_button) as FloatingActionButton
-    private val mViewPager = owner.findViewById(R.id.view_pager) as ViewPager
-    private val mTabLayout = owner.findViewById(R.id.tab_layout) as TabLayout
-    private val mAppbarLayout = owner.findViewById(R.id.app_bar) as AppBarLayout
+    private val mFloatButton = owner.findViewById<View>(R.id.float_button) as FloatingActionButton
+    private val mViewPager = owner.findViewById<View>(R.id.view_pager) as ViewPager
+    private val mTabLayout = owner.findViewById<View>(R.id.tab_layout) as TabLayout
+    private val mAppbarLayout = owner.findViewById<View>(R.id.app_bar) as AppBarLayout
     private var mAppbarExpand = true
     private var mCurrentPagerIndex = 0
     private var mBottomNav: BottomNavigationBar? = null

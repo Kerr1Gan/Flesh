@@ -57,7 +57,7 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
     }
 
     open protected fun initView() {
-        mViewPager = view!!.findViewById(R.id.view_pager) as ViewPager?
+        mViewPager = view!!.findViewById<View>(R.id.view_pager) as ViewPager?
         mTabLayout = delegate?.getTabLayout()
         if (userVisibleHint) {
             attachTabLayout()

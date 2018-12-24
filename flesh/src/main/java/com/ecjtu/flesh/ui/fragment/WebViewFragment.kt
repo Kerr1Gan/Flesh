@@ -95,7 +95,7 @@ class WebViewFragment : Fragment() {
 
     @SuppressLint("JavascriptInterface")
     private fun initWebView() {
-        mWebView = view?.findViewById(R.id.web_view) as WebView?
+        mWebView = view?.findViewById<View>(R.id.web_view) as WebView?
         mWebView?.setWebViewClient(SimpleWebViewClient())
         mWebView?.setWebChromeClient(SimpleWebChromeClient())
 

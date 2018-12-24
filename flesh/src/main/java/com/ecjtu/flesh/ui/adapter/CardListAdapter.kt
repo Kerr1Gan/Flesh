@@ -72,7 +72,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
         Log.i("CardListAdapter", "onBindViewHolder position = $position ,height = ${params?.height}")
 
         //set empty
-        holder?.itemView?.findViewById(R.id.bottom)?.visibility = View.INVISIBLE
+        holder?.itemView?.findViewById<View>(R.id.bottom)?.visibility = View.INVISIBLE
 
         //db
         if (mDatabase == null) {
@@ -119,7 +119,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
             Glide.with(context).asBitmap().load(R.drawable.shape_drawable_white).listener(this).apply(options).into(imageView)
             holder?.textView?.setText(pageModel.itemList[position].description)
 //            holder?.imageView?.setImageDrawable(ColorDrawable(Color.WHITE))
-            val bottom = holder?.itemView?.findViewById(R.id.bottom)
+            val bottom = holder?.itemView?.findViewById<View>(R.id.bottom)
             bottom?.visibility = View.VISIBLE
         }
 
@@ -174,7 +174,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
     override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
         if (target is BitmapImageViewTarget) {
             val parent = target.view.parent?.parent as View
-            val bottom = parent.findViewById(R.id.bottom)
+            val bottom = parent.findViewById<View>(R.id.bottom)
             bottom.visibility = View.VISIBLE
         }
         return false
@@ -186,7 +186,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
             val layoutParams = (parent as View).layoutParams
             var height = resource?.height ?: LinearLayout.LayoutParams.WRAP_CONTENT
             Log.i("CardListAdapter", "onResourceReady height = $height")
-            val bottom = parent.findViewById(R.id.bottom)
+            val bottom = parent.findViewById<View>(R.id.bottom)
             height += bottom.height
             if (layoutParams.height != height) {
                 layoutParams.height = height
@@ -277,10 +277,10 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
     }
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imageView = itemView.findViewById(R.id.image) as ImageView
-        val textView = itemView.findViewById(R.id.title) as TextView
-        val heart = itemView.findViewById(R.id.heart) as ImageView
-        val description = itemView.findViewById(R.id.description) as TextView
+        val imageView = itemView.findViewById<View>(R.id.image) as ImageView
+        val textView = itemView.findViewById<View>(R.id.title) as TextView
+        val heart = itemView.findViewById<View>(R.id.heart) as ImageView
+        val description = itemView.findViewById<View>(R.id.description) as TextView
 
         init {
             imageView.adjustViewBounds = true

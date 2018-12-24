@@ -41,7 +41,7 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView = view?.findViewById(R.id.recycler_view) as RecyclerView?
+        recyclerView = view?.findViewById<View>(R.id.recycler_view) as RecyclerView?
         recyclerView?.layoutManager = LinearLayoutManager(recyclerView?.context, LinearLayoutManager.VERTICAL, false)
         mRefreshLayout = if (view is SwipeRefreshLayout) view else null
         mRefreshLayout?.setColorSchemeColors(mRefreshLayout!!.context.resources.getColor(R.color.colorPrimary))

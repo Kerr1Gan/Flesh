@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
@@ -63,7 +64,7 @@ class FullScreenImageActivity : RotateByOrientationActivity(), RequestListener<B
                         .addHeader("Referer", "http://m.mzitu.com/")
 
                 val glideUrl = GlideUrl(uri, builder.build())
-                Glide.with(this).asBitmap().load(glideUrl).listener(this).into(findViewById(R.id.image) as ImageView)
+                Glide.with(this).asBitmap().load(glideUrl).listener(this).into(findViewById<View>(R.id.image) as ImageView)
                 val ad = AdmobManager(this)
                 ad.loadInterstitialAd(getString(R.string.admob_chaye), object : AdmobCallback {
                     override fun onLoaded() {
