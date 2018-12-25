@@ -97,13 +97,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         View content = findViewById(R.id.content);
         content.setPadding(content.getPaddingLeft(), content.getPaddingTop() + getStatusBarHeight(), content.getPaddingRight(), content.getPaddingBottom());
 
+        mPresenter.checkZero(this, this);
         boolean isZero = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.PREF_ZERO, false);
-        long lastCheckTime = PreferenceManager.getDefaultSharedPreferences(this).getLong(Constants.LAST_CHECK_TIME, System.currentTimeMillis());
-        if (System.currentTimeMillis() - lastCheckTime >= 1000 * 60 * 60 * 24) {
-            isZero = false;
-        }
         if (!isZero) {
-            mPresenter.checkZero(this, this);
+            initialize();
         }
     }
 
@@ -263,6 +260,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void initialize() {
+        if (mFloatButton != null) {
+            return;
+        }
         mFloatButton = findViewById(R.id.float_button);
         mViewPager = findViewById(R.id.view_pager);
         mTabLayout = findViewById(R.id.tab_layout);
@@ -430,6 +430,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         String glideStr = Formatter.formatFileSize(this, glideSize);
         TextView textView = findViewById(R.id.size);
         mBottomNav = findViewById(R.id.bottom_navigation_bar);
+        mBottomNav.setVisibility(View.VISIBLE);
 
         textView.setText(String.format("%s/%s", glideStr, cacheStr));
 

@@ -17,8 +17,6 @@ object Constants {
     @JvmField
     val PREF_ZERO = "constants_pref_is_zero"
 
-    const val LAST_CHECK_TIME = "constants_last_check_time"
-
     @JvmField
     val PREF_NOTIFICATION_URL = "constants_pref_notification_url"
 
