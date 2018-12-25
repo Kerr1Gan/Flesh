@@ -27,7 +27,7 @@ abstract class BasePageActivityDelegate(owner: Activity, protected val itemList:
         }
     }
 
-    open protected fun getCardListAdapter(pageModel: PageModel):CardListAdapter{
+    protected open fun getCardListAdapter(pageModel: PageModel): CardListAdapter {
         return CardListAdapter(pageModel)
     }
 
@@ -39,7 +39,7 @@ abstract class BasePageActivityDelegate(owner: Activity, protected val itemList:
         (mRecyclerView.adapter as CardListAdapter?)?.onResume()
     }
 
-    protected fun getRecyclerView():RecyclerView{
+    protected fun getRecyclerView(): RecyclerView {
         return mRecyclerView
     }
 }
