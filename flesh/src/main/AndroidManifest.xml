@@ -19,7 +19,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity
-            android:name="com.ecjtu.flesh.uerinterface.activity.MainActivity"
+            android:name="com.ecjtu.flesh.userinterface.activity.MainActivity"
             android:theme="@style/AppThemeNoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,10 +29,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".uerinterface.activity.PageDetailActivity"
+            android:name=".userinterface.activity.PageDetailActivity"
             android:exported="true" />
         <activity
-            android:name=".uerinterface.activity.FullScreenImageActivity"
+            android:name=".userinterface.activity.FullScreenImageActivity"
             android:process=":child"
             android:theme="@style/CCImageStatusBarStyle" />
 
@@ -41,20 +41,20 @@
             android:process=":msg" />
 
         <activity
-            android:name=".uerinterface.activity.TestActivity"
+            android:name=".userinterface.activity.TestActivity"
             android:exported="true"
             android:theme="@style/AppThemeNoActionBar" />
 
         <activity
-            android:name=".uerinterface.activity.PayPalSampleActivity"
+            android:name=".userinterface.activity.PayPalSampleActivity"
             android:exported="true" />
 
         <activity
-            android:name=".uerinterface.activity.PayPalActivity"
+            android:name=".userinterface.activity.PayPalActivity"
             android:theme="@style/CCTranslucentTheme" />
 
         <activity
-            android:name=".uerinterface.activity.AppWebViewActivity"
+            android:name=".userinterface.activity.AppWebViewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|mcc|mnc"
             android:hardwareAccelerated="true"
             android:theme="@style/CCTranslucentTheme" />

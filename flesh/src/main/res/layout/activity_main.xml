@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ecjtu.flesh.uerinterface.activity.MainActivity">
+    tools:context="com.ecjtu.flesh.userinterface.activity.MainActivity">
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/content"
@@ -62,7 +62,7 @@
             app:fabSize="mini"
             app:layout_anchor="@+id/view_pager_container"
             app:layout_anchorGravity="bottom|right"
-            app:layout_behavior="com.ecjtu.flesh.ui.widget.ScrollAwareFABBehavior"
+            app:layout_behavior="com.ecjtu.flesh.userinterface.widget.ScrollAwareFABBehavior"
             app:layout_scrollFlags="scroll|enterAlways" />
 
 

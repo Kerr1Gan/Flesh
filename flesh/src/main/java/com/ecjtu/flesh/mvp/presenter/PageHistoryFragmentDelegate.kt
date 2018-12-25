@@ -1,8 +1,8 @@
 package com.ecjtu.flesh.mvp.presenter
 
 import android.app.Activity
-import com.ecjtu.flesh.uerinterface.adapter.CardListAdapter
-import com.ecjtu.flesh.uerinterface.adapter.HistoryCardListAdapter
+import com.ecjtu.flesh.userinterface.adapter.CardListAdapter
+import com.ecjtu.flesh.userinterface.adapter.HistoryCardListAdapter
 import com.ecjtu.netcore.model.PageModel
 
 /**

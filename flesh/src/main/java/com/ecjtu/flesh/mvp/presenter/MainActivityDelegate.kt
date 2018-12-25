@@ -31,11 +31,11 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem
 import com.bumptech.glide.Glide
 import com.ecjtu.componentes.activity.AppThemeActivity
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.uerinterface.activity.MainActivity
-import com.ecjtu.flesh.uerinterface.adapter.TabPagerAdapter
-import com.ecjtu.flesh.uerinterface.dialog.GetVipDialogHelper
-import com.ecjtu.flesh.uerinterface.dialog.SyncInfoDialogHelper
-import com.ecjtu.flesh.uerinterface.fragment.*
+import com.ecjtu.flesh.userinterface.activity.MainActivity
+import com.ecjtu.flesh.userinterface.adapter.TabPagerAdapter
+import com.ecjtu.flesh.userinterface.dialog.GetVipDialogHelper
+import com.ecjtu.flesh.userinterface.dialog.SyncInfoDialogHelper
+import com.ecjtu.flesh.userinterface.fragment.*
 import com.ecjtu.flesh.util.activity.ActivityUtil
 import com.ecjtu.flesh.util.admob.AdmobCallback
 import com.ecjtu.flesh.util.admob.AdmobManager

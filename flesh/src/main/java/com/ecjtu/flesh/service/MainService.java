@@ -21,7 +21,7 @@ import com.ecjtu.flesh.db.DatabaseManager;
 import com.ecjtu.flesh.db.table.impl.NotificationTableImpl;
 import com.ecjtu.flesh.model.models.NotificationModel;
 import com.ecjtu.flesh.notification.SimpleNotificationBuilder;
-import com.ecjtu.flesh.uerinterface.fragment.WebViewFragment;
+import com.ecjtu.flesh.userinterface.fragment.WebViewFragment;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallback;
 
