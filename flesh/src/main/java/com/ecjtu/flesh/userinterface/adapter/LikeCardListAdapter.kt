@@ -60,7 +60,7 @@ class LikeCardListAdapter(pageModel: PageModel) : CardListAdapter(pageModel) {
             val item = pageModel.itemList[position as Int]
             val url = item.href
             if (item.type == 0) {
-                if (!TextUtils.isEmpty(url) && url.startsWith("http://")) {
+                if (!TextUtils.isEmpty(url) && (url.startsWith("http://") || url.startsWith("https://"))) {
                     val intent = PageDetailActivity.newInstance(v.context, url, item.href, item.description, item.imgUrl)
                     v.context.startActivity(intent)
                     val db = DatabaseManager.getInstance(v.context)?.getDatabase() as SQLiteDatabase

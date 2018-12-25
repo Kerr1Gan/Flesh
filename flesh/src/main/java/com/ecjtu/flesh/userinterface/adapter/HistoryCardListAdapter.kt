@@ -37,8 +37,8 @@ class HistoryCardListAdapter(pageModel: PageModel) : CardListAdapter(pageModel) 
     override fun onBindViewHolder(holder: VH?, position: Int) {
         super.onBindViewHolder(holder, position)
         if (mDateFormat2 == null) {
-            mDateFormat2 = SimpleDateFormat(holder?.itemView?.context?.getString(R.string.simple_date_format_ymd) ?:
-                    "yyyy-MM-dd",
+            mDateFormat2 = SimpleDateFormat(holder?.itemView?.context?.getString(R.string.simple_date_format_ymd)
+                    ?: "yyyy-MM-dd",
                     Locale.getDefault())
         }
         val db = DatabaseManager.getInstance(holder?.itemView?.context)?.getDatabase()
@@ -61,7 +61,7 @@ class HistoryCardListAdapter(pageModel: PageModel) : CardListAdapter(pageModel) 
             val item = pageModel.itemList[position as Int]
             val url = item.href
             if (item.type == 0) {
-                if (!TextUtils.isEmpty(url) && url.startsWith("http://")) {
+                if (!TextUtils.isEmpty(url) && (url.startsWith("http://") || url.startsWith("https://"))) {
                     val intent = PageDetailActivity.newInstance(v.context, url, item.href, item.description, item.imgUrl)
                     v.context.startActivity(intent)
                     val db = DatabaseManager.getInstance(v.context)?.getDatabase() as SQLiteDatabase
