@@ -48,6 +48,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.bumptech.glide.Glide;
 import com.ecjtu.componentes.activity.AppThemeActivity;
+import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.R;
 import com.ecjtu.flesh.mvp.presenter.MainContract;
 import com.ecjtu.flesh.mvp.presenter.MainPresenter;
@@ -86,9 +87,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         super.onCreate(savedInstanceState);
         transparent();
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        Toolbar toolbar = findViewById(R.id.tool_bar);
         setupToolbar(toolbar);
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, 0, 0);
         drawerToggle.syncState();
         drawerLayout.setDrawerListener(drawerToggle);
@@ -96,9 +97,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         View content = findViewById(R.id.content);
         content.setPadding(content.getPaddingLeft(), content.getPaddingTop() + getStatusBarHeight(), content.getPaddingRight(), content.getPaddingBottom());
 
-//        if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.PREF_ZERO, false)) {
-//        }
-        mPresenter.checkZero(this, this);
+        boolean isZero = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.PREF_ZERO, false);
+        long lastCheckTime = PreferenceManager.getDefaultSharedPreferences(this).getLong(Constants.LAST_CHECK_TIME, System.currentTimeMillis());
+        if (System.currentTimeMillis() - lastCheckTime >= 1000 * 60 * 60 * 24) {
+            isZero = false;
+        }
+        if (!isZero) {
+            mPresenter.checkZero(this, this);
+        }
     }
 
     @Override
@@ -109,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     protected void onPause() {
         super.onPause();
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(TabPagerAdapter.KEY_APPBAR_LAYOUT_COLLAPSED, isAppbarLayoutExpand()).apply();
         mPresenter.dropView();
     }
 
