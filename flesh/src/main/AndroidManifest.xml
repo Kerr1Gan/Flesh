@@ -19,19 +19,20 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity
-            android:name="com.ecjtu.flesh.ui.activity.MainActivity"
+            android:name="com.ecjtu.flesh.uerinterface.activity.MainActivity"
             android:theme="@style/AppThemeNoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activity.PageDetailActivity"
+            android:name=".uerinterface.activity.PageDetailActivity"
             android:exported="true" />
         <activity
-            android:name=".ui.activity.FullScreenImageActivity"
+            android:name=".uerinterface.activity.FullScreenImageActivity"
             android:process=":child"
             android:theme="@style/CCImageStatusBarStyle" />
 
@@ -40,23 +41,23 @@
             android:process=":msg" />
 
         <activity
-            android:name=".ui.activity.TestActivity"
+            android:name=".uerinterface.activity.TestActivity"
             android:exported="true"
             android:theme="@style/AppThemeNoActionBar" />
 
         <activity
-            android:name=".ui.activity.PayPalSampleActivity"
+            android:name=".uerinterface.activity.PayPalSampleActivity"
             android:exported="true" />
 
         <activity
-            android:name=".ui.activity.PayPalActivity"
+            android:name=".uerinterface.activity.PayPalActivity"
             android:theme="@style/CCTranslucentTheme" />
 
         <activity
-            android:name=".ui.activity.AppWebViewActivity"
-            android:theme="@style/CCTranslucentTheme"
+            android:name=".uerinterface.activity.AppWebViewActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|mcc|mnc"
             android:hardwareAccelerated="true"
-            android:configChanges="orientation|keyboardHidden|screenSize|mcc|mnc"/>
+            android:theme="@style/CCTranslucentTheme" />
 
         <service
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"

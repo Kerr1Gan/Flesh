@@ -8,8 +8,8 @@ import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.impl.PageDetailCacheHelper
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.DetailPageTableImpl
-import com.ecjtu.flesh.ui.activity.PageDetailActivity
-import com.ecjtu.flesh.ui.adapter.PageDetailAdapter
+import com.ecjtu.flesh.uerinterface.activity.PageDetailActivity
+import com.ecjtu.flesh.uerinterface.adapter.PageDetailAdapter
 import com.ecjtu.netcore.jsoup.impl.PageDetailSoup
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.model.PageDetailModel

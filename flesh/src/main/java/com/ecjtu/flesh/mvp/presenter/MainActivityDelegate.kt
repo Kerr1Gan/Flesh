@@ -31,11 +31,11 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem
 import com.bumptech.glide.Glide
 import com.ecjtu.componentes.activity.AppThemeActivity
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.ui.activity.MainActivity
-import com.ecjtu.flesh.ui.adapter.TabPagerAdapter
-import com.ecjtu.flesh.ui.dialog.GetVipDialogHelper
-import com.ecjtu.flesh.ui.dialog.SyncInfoDialogHelper
-import com.ecjtu.flesh.ui.fragment.*
+import com.ecjtu.flesh.uerinterface.activity.MainActivity
+import com.ecjtu.flesh.uerinterface.adapter.TabPagerAdapter
+import com.ecjtu.flesh.uerinterface.dialog.GetVipDialogHelper
+import com.ecjtu.flesh.uerinterface.dialog.SyncInfoDialogHelper
+import com.ecjtu.flesh.uerinterface.fragment.*
 import com.ecjtu.flesh.util.activity.ActivityUtil
 import com.ecjtu.flesh.util.admob.AdmobCallback
 import com.ecjtu.flesh.util.admob.AdmobManager
@@ -347,7 +347,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
     }
 
     inner class FragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-        val fragments = Array<Fragment?>(2, { int ->
+        val fragments = Array<Fragment?>(2) { int ->
             when (int) {
                 0 -> {
                     Log.i("FragmentAdapter", "new MzituFragment")
@@ -361,7 +361,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
                     null
                 }
             }
-        })
+        }
 
         init {
         }

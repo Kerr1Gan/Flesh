@@ -5,7 +5,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.ecjtu.flesh.R
-import com.ecjtu.flesh.ui.adapter.CardListAdapter
+import com.ecjtu.flesh.uerinterface.adapter.CardListAdapter
 import com.ecjtu.netcore.model.PageModel
 
 /**

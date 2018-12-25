@@ -3,8 +3,8 @@ package com.ecjtu.flesh.notification
 import android.app.PendingIntent
 import android.content.Context
 import com.ecjtu.componentes.activity.ActionBarFragmentActivity
-import com.ecjtu.flesh.ui.activity.PageDetailActivity
-import com.ecjtu.flesh.ui.fragment.WebViewFragment
+import com.ecjtu.flesh.uerinterface.activity.PageDetailActivity
+import com.ecjtu.flesh.uerinterface.fragment.WebViewFragment
 
 /**
  * Created by Ethan_Xiang on 2017/9/22.
