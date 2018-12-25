@@ -26,17 +26,17 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
 
     @Override
     public boolean onStartNestedScroll(final CoordinatorLayout coordinatorLayout, final FloatingActionButton child,
-                                       final View directTargetChild, final View target, final int nestedScrollAxes) {
+                                       final View directTargetChild, final View target, final int nestedScrollAxes, @ViewCompat.NestedScrollType int type) {
         // Ensure we react to vertical scrolling
         return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL
-                || super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes);
+                || super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes, type);
     }
 
     @Override
     public void onNestedScroll(final CoordinatorLayout coordinatorLayout, final FloatingActionButton child,
                                final View target, final int dxConsumed, final int dyConsumed,
-                               final int dxUnconsumed, final int dyUnconsumed) {
-        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+                               final int dxUnconsumed, final int dyUnconsumed, @ViewCompat.NestedScrollType int type) {
+        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type);
         if (dyConsumed > 0 && !this.mIsAnimatingOut && child.getVisibility() == View.VISIBLE) {
             // User scrolled down and the FAB is currently visible -> hide the FAB
             animateOut(child);
@@ -61,7 +61,7 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
 
                         public void onAnimationEnd(View view) {
                             ScrollAwareFABBehavior.this.mIsAnimatingOut = false;
-                            view.setVisibility(View.GONE);
+                            view.setVisibility(View.INVISIBLE); // 版本提升后当view状态为gone时，将不再接收onNestedScroll回掉
                         }
                     }).start();
         } else {
