@@ -39,9 +39,9 @@ class VideoTabFragment : BaseTabPagerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        if (getDelegate()?.getTabLayout() != null) {
-            setTabLayout(getDelegate()?.getTabLayout()!!)
-        }
+//        if (getDelegate()?.getTabLayout() != null) {
+//            setTabLayout(getDelegate()?.getTabLayout()!!)
+//        }
         val tabJson = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_VIDEO_TAB_JSON, "")
         try {
             val jArray = JSONArray(tabJson)

@@ -10,7 +10,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -49,9 +48,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.bumptech.glide.Glide;
 import com.ecjtu.componentes.activity.AppThemeActivity;
-import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.R;
-import com.ecjtu.flesh.mvp.presenter.MainActivityDelegate;
 import com.ecjtu.flesh.mvp.presenter.MainContract;
 import com.ecjtu.flesh.mvp.presenter.MainPresenter;
 import com.ecjtu.flesh.userinterface.adapter.TabPagerAdapter;
@@ -61,32 +58,25 @@ import com.ecjtu.flesh.userinterface.fragment.BaseTabPagerFragment;
 import com.ecjtu.flesh.userinterface.fragment.MzituFragment;
 import com.ecjtu.flesh.userinterface.fragment.PageHistoryFragment;
 import com.ecjtu.flesh.userinterface.fragment.PageLikeFragment;
-import com.ecjtu.flesh.userinterface.fragment.SearchFragment;
 import com.ecjtu.flesh.userinterface.fragment.VideoTabFragment;
-import com.ecjtu.flesh.util.CloseableUtil;
 import com.ecjtu.flesh.util.activity.ActivityUtil;
 import com.ecjtu.flesh.util.file.FileUtil;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.lang.reflect.Field;
-import java.net.URLEncoder;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View {
 
     private static final String STATUS_BAR_HEIGHT = "status_bar_height";
 
-    private MainActivityDelegate mDelegate;
     private FloatingActionButton mFloatButton;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     private AppBarLayout mAppbarLayout;
     private boolean mAppbarExpand = true;
-    private int mCurrentPagerIndex = 0;
     private BottomNavigationBar mBottomNav = null;
 
     private MainContract.Presenter mPresenter = new MainPresenter();
@@ -106,35 +96,31 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         View content = findViewById(R.id.content);
         content.setPadding(content.getPaddingLeft(), content.getPaddingTop() + getStatusBarHeight(), content.getPaddingRight(), content.getPaddingBottom());
 
-        if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.PREF_ZERO, false)) {
-//            mDelegate = new MainActivityDelegate(this);
-        }
-
-        mPresenter.checkZero();
+//        if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.PREF_ZERO, false)) {
+//        }
+        mPresenter.checkZero(this, this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (mDelegate != null) {
-            mDelegate.onStop();
-        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPresenter.dropView();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mDelegate != null) {
-            mDelegate.onResume();
-        }
+        mPresenter.takeView(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mDelegate != null) {
-            mDelegate.onDestroy();
-        }
         Glide.get(this).clearMemory();
         String deviceId = null;
         TelephonyManager telephonyManager = ((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE));
@@ -157,22 +143,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             }
             if (TextUtils.isEmpty(deviceId) || longLocal == 0L) {
                 deviceId = PreferenceManager.getDefaultSharedPreferences(this).getString("paymentId", "");
-                if (TextUtils.isEmpty(deviceId)) {
-                    if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                        String sdUrl = Environment.getExternalStorageDirectory().getAbsolutePath();
-                        File vipFile = new File(sdUrl, Constants.LOCAL_VIP_PATH);
-                        BufferedReader reader = null;
-                        try {
-                            reader = new BufferedReader(new FileReader(vipFile));
-                            deviceId = reader.readLine();
-                            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("paymentId", deviceId).apply();
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        } finally {
-                            CloseableUtil.INSTANCE.closeQuitely(reader);
-                        }
-                    }
-                }
+                mPresenter.readPaymentId(deviceId);
             }
 //            startService(MainService.createUploadDbIntent(this, deviceId));
         }
@@ -271,15 +242,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 finalSearchView.clearFocus(); // 可以收起键盘
                 // searchView.onActionViewCollapsed(); // 可以收起SearchView视图
                 if (!TextUtils.isEmpty(query)) {
-                    Bundle bundle = new Bundle();
-                    try {
-                        query = URLEncoder.encode(query, "utf-8");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    bundle.putString("url", com.ecjtu.netcore.Constants.HOST_MOBILE_URL + "/search/" + query);
-                    Intent intent = AppThemeActivity.newInstance(MainActivity.this, SearchFragment.class, bundle);
-                    startActivity(intent);
+                    mPresenter.query(query);
                 }
                 return true;
             }
@@ -293,52 +256,47 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void initialize() {
-        runOnUiThread(new Runnable() {
+        mFloatButton = findViewById(R.id.float_button);
+        mViewPager = findViewById(R.id.view_pager);
+        mTabLayout = findViewById(R.id.tab_layout);
+        mAppbarLayout = findViewById(R.id.app_bar);
+
+        mViewPager.setAdapter(new FragmentAdapter(getSupportFragmentManager()));
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void run() {
-                mFloatButton = findViewById(R.id.float_button);
-                mViewPager = findViewById(R.id.view_pager);
-                mTabLayout = findViewById(R.id.tab_layout);
-                mAppbarLayout = findViewById(R.id.app_bar);
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-                mViewPager.setAdapter(new FragmentAdapter(getSupportFragmentManager()));
-                mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                    @Override
-                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
 
+            @Override
+            public void onPageSelected(int position) {
+                Log.i("FragmentAdapter", "onPageSelected position " + position);
+                switch (position) {
+                    case 0:
+                        mTabLayout.setVisibility(View.VISIBLE);
+                        break;
+                    case 1:
+                        mTabLayout.setVisibility(View.GONE);
+                        break;
+                }
+                mBottomNav.selectTab(position, false);
+                if (mViewPager.getAdapter() instanceof FragmentPagerAdapter) {
+                    FragmentPagerAdapter adapter = (FragmentPagerAdapter) mViewPager.getAdapter();
+                    Fragment fragment = adapter.getItem(position);
+                    if (fragment instanceof BaseTabPagerFragment) {
+                        ((BaseTabPagerFragment) fragment).onSelectTab();
                     }
+                }
+            }
 
-                    @Override
-                    public void onPageSelected(int position) {
-                        Log.i("FragmentAdapter", "onPageSelected position " + position);
-                        switch (position) {
-                            case 0:
-                                mTabLayout.setVisibility(View.VISIBLE);
-                                break;
-                            case 1:
-                                mTabLayout.setVisibility(View.GONE);
-                                break;
-                        }
-                        mBottomNav.selectTab(position, false);
-                        if (mViewPager.getAdapter() instanceof FragmentPagerAdapter) {
-                            FragmentPagerAdapter adapter = (FragmentPagerAdapter) mViewPager.getAdapter();
-                            Fragment fragment = adapter.getItem(position);
-                            if (fragment instanceof BaseTabPagerFragment) {
-                                ((BaseTabPagerFragment) fragment).onSelectTab();
-                            }
-                        }
-                    }
+            @Override
+            public void onPageScrollStateChanged(int state) {
 
-                    @Override
-                    public void onPageScrollStateChanged(int state) {
-
-                    }
-                });
-
-                initView();
-                recoverTab(0, isAppbarLayoutExpand());
             }
         });
+
+        initView();
+        recoverTab(0, isAppbarLayoutExpand());
     }
 
     @Override
@@ -580,10 +538,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         mBottomNav.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
             @Override
             public void onTabSelected(int position) {
-                mCurrentPagerIndex = position;
-//                mViewPager.adapter?.apply {
-//                    (this as TabPagerAdapter).onStop(this, mTabLayout.selectedTabPosition, isAppbarLayoutExpand())
-//                }
                 switch (position) {
                     case 0: {
                         mViewPager.setCurrentItem(0);
@@ -641,7 +595,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             Log.i("FragmentAdapter", "instantiateItem position " + position);
             if (ret instanceof BaseTabPagerFragment) {
                 BaseTabPagerFragment local = ((BaseTabPagerFragment) ret);
-                local.setDelegate(mDelegate);
+                local.setMainView(MainActivity.this);
                 local.setTabLayout(getTabLayout());
                 fragments[position] = local;
             }

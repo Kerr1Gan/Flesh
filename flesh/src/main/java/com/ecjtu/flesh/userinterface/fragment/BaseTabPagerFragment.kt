@@ -1,6 +1,5 @@
 package com.ecjtu.flesh.userinterface.fragment
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
@@ -14,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ecjtu.flesh.R
+import com.ecjtu.flesh.mvp.presenter.MainContract
 import com.ecjtu.flesh.userinterface.adapter.IChangeTab
 import com.ecjtu.flesh.userinterface.adapter.TabPagerAdapter
 
@@ -26,21 +26,16 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
         private const val TAG = "BaseTabPagerFragment"
     }
 
-    private var delegate: IDelegate? = null
     private var mViewPager: ViewPager? = null
     private var mTabLayout: TabLayout? = null
     private val mHandler = Handler()
     private var mLastTabPosition = -1
+    private var mainView: MainContract.View? = null
 
     constructor() : super()
 
-    @SuppressLint("ValidFragment")
-    constructor(delegate: IDelegate) : super() {
-        this.delegate = delegate
-    }
-
-    fun setDelegate(delegate: IDelegate) {
-        this.delegate = delegate
+    fun setMainView(view: MainContract.View) {
+        mainView = view
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -58,7 +53,7 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
 
     open protected fun initView() {
         mViewPager = view!!.findViewById<View>(R.id.view_pager) as ViewPager?
-        mTabLayout = delegate?.getTabLayout()
+        mTabLayout = mainView?.getTabLayout()
         if (userVisibleHint) {
             attachTabLayout()
         }
@@ -84,7 +79,7 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
 
     open fun onUserVisibleHintChanged(isVisibleToUser: Boolean) {
         Log.i(this::class.java.simpleName, "onUserVisibleHintChanged " + isVisibleToUser)
-        Log.i(this::class.java.simpleName, "onUserVisibleHintChanged delegate " + delegate?.toString()
+        Log.i(this::class.java.simpleName, "onUserVisibleHintChanged delegate " + mainView?.toString()
                 + " tabLayout " + mTabLayout?.toString())
         if (isVisibleToUser) {
             attachTabLayout()
@@ -102,8 +97,9 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
         super.onStop()
         Log.i(this::class.java.simpleName, "onStop tabIndex " + mTabLayout?.selectedTabPosition)
         getViewPager()?.let {
-            (getViewPager()?.adapter as TabPagerAdapter?)?.onStop(context, getTabLayout()?.selectedTabPosition ?: 0,
-                    getDelegate()?.isAppbarLayoutExpand() ?: false)
+            (getViewPager()?.adapter as TabPagerAdapter?)?.onStop(context, getTabLayout()?.selectedTabPosition
+                    ?: 0,
+                    getMainView()?.isAppbarLayoutExpand() ?: false)
         }
         if (getLastTabPosition() < 0) {
             setLastTabPosition(getCompatLastTabPosition())
@@ -135,8 +131,7 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
 
     open fun getCompatLastTabPosition(): Int {
         if (context == null) return getLastTabPosition()
-        return if (mLastTabPosition >= 0) mLastTabPosition else PreferenceManager.getDefaultSharedPreferences(context).
-                getInt(getLastTabPositionKey(), 0)
+        return if (mLastTabPosition >= 0) mLastTabPosition else PreferenceManager.getDefaultSharedPreferences(context).getInt(getLastTabPositionKey(), 0)
     }
 
     open fun getLastTabPosition(): Int = mLastTabPosition
@@ -155,8 +150,8 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
         return mViewPager
     }
 
-    open fun getDelegate(): IDelegate? {
-        return delegate
+    open fun getMainView(): MainContract.View? {
+        return mainView
     }
 
     open fun getTabLayout(): TabLayout? {

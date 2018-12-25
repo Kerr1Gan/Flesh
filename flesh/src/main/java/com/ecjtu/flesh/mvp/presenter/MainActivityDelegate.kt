@@ -379,7 +379,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
             val ret = super.instantiateItem(container, position)
             Log.i("FragmentAdapter", "instantiateItem position $position")
             if (ret is BaseTabPagerFragment) {
-                ret.setDelegate(this@MainActivityDelegate)
+//                ret.setDelegate(this@MainActivityDelegate)
                 ret.setTabLayout(getTabLayout())
                 fragments[position] = ret
             }

@@ -40,7 +40,7 @@ open class VideoListFragment : BaseTabPagerFragment(), BaseTabPagerFragment.IDel
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        setDelegate(this)
+//        setDelegate(this)
         mTabLayout = view?.findViewById<View>(R.id.tab_layout) as TabLayout
         super.onViewCreated(view, savedInstanceState)
         Log.i(TAG, "onViewCreated")

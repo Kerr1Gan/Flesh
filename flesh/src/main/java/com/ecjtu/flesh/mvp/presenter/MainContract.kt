@@ -1,5 +1,6 @@
 package com.ecjtu.flesh.mvp.presenter
 
+import android.app.Activity
 import android.content.Context
 import android.support.design.widget.TabLayout
 import com.ashokvarma.bottomnavigation.BottomNavigationBar
@@ -11,8 +12,10 @@ class MainContract {
         fun onStop()
         fun onResume()
         fun onDestroy()
-        fun checkZero()
+        fun checkZero(activity: Activity, view: MainContract.View)
         fun loadServerUrl()
+        fun readPaymentId(deviceId: String)
+        fun query(query: String)
     }
 
     interface View : IView<Presenter> {
