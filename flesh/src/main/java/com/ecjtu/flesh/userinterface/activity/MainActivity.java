@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         if (mViewPager.getAdapter() != null) {
             BaseTabPagerFragment fragment = (BaseTabPagerFragment) ((FragmentAdapter) mViewPager.getAdapter()).getItem(mViewPager.getCurrentItem());
             ViewPager viewPager = (fragment).getViewPager();
-            if (viewPager.getAdapter() == null) {
+            if (viewPager != null && viewPager.getAdapter() == null) {
                 return;
             }
             TabPagerAdapter tabPager = (TabPagerAdapter) viewPager.getAdapter();
@@ -335,74 +335,72 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         }
 
         Snackbar snake = Snackbar.make(findViewById(R.id.content), "", Snackbar.LENGTH_SHORT);
-        if (snake.getView() instanceof LinearLayout) {
-            LinearLayout vg = (LinearLayout) snake.getView();
-            ViewGroup layout = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.layout_quick_jump, vg, false);
+        ViewGroup vg = (ViewGroup) snake.getView();
+        ViewGroup layout = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.layout_quick_jump, vg, false);
 
-            SeekBar local = layout.findViewById(R.id.seek_bar);
-            final TextView pos = layout.findViewById(R.id.position);
-            final Snackbar finalSnackbar = snake;
-            final RecyclerView finalRecyclerView = recyclerView;
-            final int finalSize = size;
-            View.OnClickListener listener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (position != mTabLayout.getSelectedTabPosition()) {
-                        finalSnackbar.dismiss();
-                    } else {
-                        switch (v.getId()) {
-                            case R.id.top: {
-                                if (finalRecyclerView != null) {
-                                    finalRecyclerView.getLayoutManager().scrollToPosition(0);
-                                }
-                                break;
+        SeekBar local = layout.findViewById(R.id.seek_bar);
+        final TextView pos = layout.findViewById(R.id.position);
+        final Snackbar finalSnackbar = snake;
+        final RecyclerView finalRecyclerView = recyclerView;
+        final int finalSize = size;
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (position != mTabLayout.getSelectedTabPosition()) {
+                    finalSnackbar.dismiss();
+                } else {
+                    switch (v.getId()) {
+                        case R.id.top: {
+                            if (finalRecyclerView != null) {
+                                finalRecyclerView.getLayoutManager().scrollToPosition(0);
                             }
-
-                            case R.id.mid: {
-                                int jumpPos = Integer.valueOf(pos.getText().toString()) - 2;
-                                if (jumpPos < 0) jumpPos = 0;
-                                (finalRecyclerView.getLayoutManager()).
-                                        scrollToPosition(jumpPos);
-                                break;
-                            }
-
-                            case R.id.bottom: {
-                                (finalRecyclerView.getLayoutManager()).
-                                        scrollToPosition(finalSize - 2);
-                                break;
-                            }
+                            break;
                         }
-                        finalSnackbar.dismiss();
+
+                        case R.id.mid: {
+                            int jumpPos = Integer.valueOf(pos.getText().toString()) - 2;
+                            if (jumpPos < 0) jumpPos = 0;
+                            (finalRecyclerView.getLayoutManager()).
+                                    scrollToPosition(jumpPos);
+                            break;
+                        }
+
+                        case R.id.bottom: {
+                            (finalRecyclerView.getLayoutManager()).
+                                    scrollToPosition(finalSize - 2);
+                            break;
+                        }
                     }
+                    finalSnackbar.dismiss();
                 }
-            };
-            layout.findViewById(R.id.top).setOnClickListener(listener);
-            layout.findViewById(R.id.mid).setOnClickListener(listener);
-            layout.findViewById(R.id.bottom).setOnClickListener(listener);
-            local.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    pos.setText(String.valueOf(progress));
-                }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-
-                }
-            });
-            local.setMax(size);
-            if (recyclerView != null) {
-                int curPos = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
-                local.setProgress(curPos);
             }
-            layout.findViewById(R.id.mid).setOnClickListener(listener);
-            vg.addView(layout);
+        };
+        layout.findViewById(R.id.top).setOnClickListener(listener);
+        layout.findViewById(R.id.mid).setOnClickListener(listener);
+        layout.findViewById(R.id.bottom).setOnClickListener(listener);
+        local.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                pos.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        local.setMax(size);
+        if (recyclerView != null) {
+            int curPos = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
+            local.setProgress(curPos);
         }
+        layout.findViewById(R.id.mid).setOnClickListener(listener);
+        vg.addView(layout);
         snake.show();
     }
 
