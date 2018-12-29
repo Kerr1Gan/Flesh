@@ -16,13 +16,12 @@ import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
 import com.ecjtu.flesh.userinterface.adapter.CardListAdapter
+import com.ecjtu.netcore.Constants
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.jsoup.impl.PageSoup
 import com.ecjtu.netcore.model.PageModel
-import com.ecjtu.netcore.network.AsyncNetwork
-import com.ecjtu.netcore.network.IRequestCallbackV2
-import java.lang.Exception
-import java.net.HttpURLConnection
+import okhttp3.*
+import java.io.IOException
 
 /**
  * Created by Ethan_Xiang on 2018/4/17.
@@ -76,67 +75,74 @@ class SearchFragment : Fragment() {
     }
 
     private fun requestUrl() {
-        val request = AsyncNetwork()
         val url = arguments.get("url") as String?
+        val client = OkHttpClient()
+        val request = Request.Builder()
+                .url(Constants.HOST_MOBILE_URL)
+                .get()
+                .build()
+        val call = client.newCall(request)
         if (!TextUtils.isEmpty(url)) {
-            request.request(url!!, null)
-            mRefreshLayout?.setRefreshing(true)
-        } else {
-            mRefreshLayout?.setRefreshing(false)
-        }
-        request.setRequestCallback(object : IRequestCallbackV2 {
-            override fun onSuccess(httpURLConnection: HttpURLConnection?, response: String) {
-                val values = SoupFactory.parseHtml(PageSoup::class.java, response)
-                if (values != null) {
-                    val soups = values[PageSoup::class.java.simpleName] as PageModel
+            call.enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    mRefreshLayout?.post {
+                        mRefreshLayout?.isRefreshing = false
+                    }
+                }
 
-                    var needUpdate = false
-                    if (mPageModel != null) {
-                        val list = mPageModel!!.itemList
-                        soups.itemList.reverse()
-                        for (item in soups.itemList) {
-                            val index = list.indexOf(item)
-                            if (index < 0) {
-                                list.add(0, item)
-                                needUpdate = true
-                            } else {
-                                list.set(index, item)
+                override fun onResponse(call: Call, response: Response) {
+                    mRefreshLayout?.post {
+                        mRefreshLayout?.isRefreshing = false
+                    }
+                    val values = SoupFactory.parseHtml(PageSoup::class.java, response.body()?.string())
+                    if (values != null) {
+                        val soups = values[PageSoup::class.java.simpleName] as PageModel
+
+                        var needUpdate = false
+                        if (mPageModel != null) {
+                            val list = mPageModel!!.itemList
+                            soups.itemList.reverse()
+                            for (item in soups.itemList) {
+                                val index = list.indexOf(item)
+                                if (index < 0) {
+                                    list.add(0, item)
+                                    needUpdate = true
+                                } else {
+                                    list.set(index, item)
+                                }
                             }
                         }
-                    }
-                    val finalNeedUpdate = needUpdate
-                    recyclerView?.post {
-                        if (mPageModel == null) {
-                            recyclerView?.adapter = CardListAdapter(soups)
-                            recyclerView?.adapter?.notifyDataSetChanged()
-                            mPageModel = soups
-                        } else {
-                            (recyclerView?.adapter as CardListAdapter).pageModel = mPageModel!!
-                            if (finalNeedUpdate) {
+                        val finalNeedUpdate = needUpdate
+                        recyclerView?.post {
+                            if (mPageModel == null) {
+                                recyclerView?.adapter = CardListAdapter(soups)
                                 recyclerView?.adapter?.notifyDataSetChanged()
+                                mPageModel = soups
+                            } else {
+                                (recyclerView?.adapter as CardListAdapter).pageModel = mPageModel!!
+                                if (finalNeedUpdate) {
+                                    recyclerView?.adapter?.notifyDataSetChanged()
+                                }
                             }
                         }
+                        val impl = ClassPageTableImpl()
+                        val db = DatabaseManager.getInstance(mRefreshLayout?.context)?.getDatabase()
+                        db?.let {
+                            db.beginTransaction()
+                            impl.addPage(db, if (mPageModel == null) soups else mPageModel!!)
+                            db.setTransactionSuccessful()
+                            db.endTransaction()
+                        }
+                        db?.close()
                     }
-                    val impl = ClassPageTableImpl()
-                    val db = DatabaseManager.getInstance(mRefreshLayout?.context)?.getDatabase()
-                    db?.let {
-                        db.beginTransaction()
-                        impl.addPage(db, if (mPageModel == null) soups else mPageModel!!)
-                        db.setTransactionSuccessful()
-                        db.endTransaction()
+                    mRefreshLayout?.post {
+                        mRefreshLayout?.isRefreshing = false
                     }
-                    db?.close()
                 }
-                mRefreshLayout?.post {
-                    mRefreshLayout?.setRefreshing(false)
-                }
-            }
-
-            override fun onError(httpURLConnection: HttpURLConnection?, exception: Exception) {
-                mRefreshLayout?.post {
-                    mRefreshLayout?.setRefreshing(false)
-                }
-            }
-        })
+            })
+            mRefreshLayout?.isRefreshing = true
+        } else {
+            mRefreshLayout?.isRefreshing = false
+        }
     }
 }
