@@ -76,13 +76,13 @@ class SearchFragment : Fragment() {
 
     private fun requestUrl() {
         val url = arguments.get("url") as String?
-        val client = OkHttpClient()
-        val request = Request.Builder()
-                .url(Constants.HOST_MOBILE_URL)
-                .get()
-                .build()
-        val call = client.newCall(request)
         if (!TextUtils.isEmpty(url)) {
+            val client = OkHttpClient()
+            val request = Request.Builder()
+                    .url(url)
+                    .get()
+                    .build()
+            val call = client.newCall(request)
             call.enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     mRefreshLayout?.post {
