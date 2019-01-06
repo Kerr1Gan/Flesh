@@ -56,8 +56,8 @@
             android:id="@+id/float_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="30dp"
             android:layout_marginEnd="30dp"
+            android:layout_marginRight="30dp"
             android:layout_marginBottom="68dp"
             android:src="@drawable/ic_float_button"
             app:fabSize="mini"
@@ -207,6 +207,18 @@
                     android:textSize="16dp" />
 
                 <TextView
+                    android:id="@+id/update"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_update"
+                    android:drawablePadding="12dp"
+                    android:gravity="center_vertical"
+                    android:padding="20dp"
+                    android:text="@string/check_update"
+                    android:textColor="@android:color/black"
+                    android:textSize="16dp" />
+
+                <TextView
                     android:id="@+id/disclaimer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -217,7 +229,8 @@
                     android:text="@string/statement"
                     android:textColor="@android:color/black"
                     android:textSize="16dp"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:visibility="visible" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

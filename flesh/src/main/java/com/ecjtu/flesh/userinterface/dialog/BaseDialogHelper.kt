@@ -21,7 +21,7 @@ abstract class BaseDialogHelper {
         init()
     }
 
-    open protected fun init() {
+    protected open fun init() {
         mAlertDialogBuilder = AlertDialog.Builder(mContext)
         setDialog(onCreateDialog())
         getDialog()?.setOnShowListener {
@@ -35,7 +35,7 @@ abstract class BaseDialogHelper {
         }
     }
 
-    open protected fun initAsync() {
+    protected open fun initAsync() {
     }
 
     fun getDialog(): AlertDialog? = mDialog
@@ -52,13 +52,13 @@ abstract class BaseDialogHelper {
         return mHandler
     }
 
-    abstract protected fun onCreateDialog(): AlertDialog?
+    protected abstract fun onCreateDialog(): AlertDialog?
 
-    open protected fun onDialogShow(dialog: AlertDialog) {
+    protected open fun onDialogShow(dialog: AlertDialog) {
 
     }
 
-    open protected fun onDialogCancel(dialog: AlertDialog) {
+    protected open fun onDialogCancel(dialog: AlertDialog) {
 
     }
 }

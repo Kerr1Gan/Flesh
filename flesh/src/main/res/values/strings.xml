@@ -8,6 +8,7 @@
     <string name="cache">Cache</string>
     <string name="feedback">Feedback</string>
     <string name="statement">Statement</string>
+    <string name="check_update">Check update</string>
     <string name="statement_content">所有资源均来自网络，如有侵权请联系mnsync@outlook.com，将会尽快删除。</string>
     <string name="delete_collection">Delete Favorite</string>
     <string name="collect_success">Success</string>

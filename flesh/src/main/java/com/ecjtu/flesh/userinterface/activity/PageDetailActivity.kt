@@ -3,10 +3,13 @@ package com.ecjtu.flesh.userinterface.activity
 import android.content.Context
 import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -52,6 +55,8 @@ class PageDetailActivity : AppCompatActivity(), PageDetailContract.View {
 
     private val mPresenter: PageDetailContract.Presenter = PageDetailPresenter()
 
+    private lateinit var actionBarDrawable: ColorDrawable
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_page_detail)
@@ -83,7 +88,23 @@ class PageDetailActivity : AppCompatActivity(), PageDetailContract.View {
         mRecyclerView?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         val pageModel = mPresenter.readCache()
         if (pageModel != null) {
+            actionBarDrawable = ColorDrawable(ContextCompat.getColor(this, R.color.colorPrimary))
             mRecyclerView?.adapter = PageDetailAdapter(pageModel)
+//            mRecyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//                override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+//                    super.onScrolled(recyclerView, dx, dy)
+//                    Log.i("PageDetailActivity", "dx = $dx , dy = $dy")
+//                    if (dx == 0 && dy == 0) return
+//                    var alpha = actionBarDrawable.alpha + dy
+//                    if (alpha < 0) {
+//                        alpha = 0
+//                    } else if (alpha > 255) {
+//                        alpha = 255
+//                    }
+//                    actionBarDrawable.alpha = alpha
+//                    supportActionBar?.setBackgroundDrawable(actionBarDrawable)
+//                }
+//            })
         }
     }
 

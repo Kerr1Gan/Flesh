@@ -54,6 +54,7 @@ class FullScreenImageActivity : RotateByOrientationActivity(), RequestListener<B
             initView()
             if (!TextUtils.isEmpty(uri)) {
                 var host = uri.replace("http://", "")
+                host = host.replace("https://", "")
                 host = host.substring(0, host.indexOf("/"))
                 val builder = LazyHeaders.Builder().addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Mobile Safari/537.36")
                         .addHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8")

@@ -40,7 +40,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -53,6 +52,7 @@ import com.ecjtu.flesh.R;
 import com.ecjtu.flesh.mvp.presenter.MainContract;
 import com.ecjtu.flesh.mvp.presenter.MainPresenter;
 import com.ecjtu.flesh.userinterface.adapter.TabPagerAdapter;
+import com.ecjtu.flesh.userinterface.dialog.CheckUpdateDialogHelper;
 import com.ecjtu.flesh.userinterface.dialog.GetVipDialogHelper;
 import com.ecjtu.flesh.userinterface.dialog.SyncInfoDialogHelper;
 import com.ecjtu.flesh.userinterface.fragment.BaseTabPagerFragment;
@@ -521,6 +521,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     } catch (Exception ex2) {
                     }
                 }
+            }
+        });
+
+        findViewById(R.id.update).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new CheckUpdateDialogHelper(getContext()).getDialog().show();
             }
         });
 

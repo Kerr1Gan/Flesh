@@ -7,4 +7,5 @@ package com.ecjtu.netcore;
 public class Constants {
     public static final String HOST_URL = "http://www.mzitu.com";
     public static final String HOST_MOBILE_URL = "http://m.mzitu.com";
+    public static final String CHECK_UPDATE_URL = "https://kerr1gan.github.io/flesh/update.json";
 }
