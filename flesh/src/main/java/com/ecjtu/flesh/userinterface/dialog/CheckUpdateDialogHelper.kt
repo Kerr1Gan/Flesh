@@ -134,7 +134,7 @@ class CheckUpdateDialogHelper(context: Context) : BaseDialogHelper(context) {
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
             //指定下载路径和下载文件名
             val name = url.substring(url.lastIndexOf("/") + 1)
-            request.setDestinationInExternalFilesDir(getContext(), Environment.DIRECTORY_DOWNLOADS, name)
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, name)
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             request.setVisibleInDownloadsUi(true)
             //大于11版本手机允许扫描
