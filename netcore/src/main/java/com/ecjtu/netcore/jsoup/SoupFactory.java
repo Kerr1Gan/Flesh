@@ -1,7 +1,5 @@
 package com.ecjtu.netcore.jsoup;
 
-import com.ecjtu.netcore.jsoup.BaseSoup;
-
 import java.util.Map;
 
 /**

@@ -3,9 +3,7 @@ package com.ecjtu.flesh.userinterface.dialog
 import android.Manifest
 import android.app.Activity
 import android.app.DownloadManager
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -14,6 +12,7 @@ import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +23,7 @@ import com.ecjtu.flesh.model.models.UpdateBean
 import com.ecjtu.netcore.Constants
 import com.google.gson.Gson
 import okhttp3.*
+import java.io.File
 import java.io.IOException
 
 class CheckUpdateDialogHelper(context: Context) : BaseDialogHelper(context) {
@@ -31,6 +31,19 @@ class CheckUpdateDialogHelper(context: Context) : BaseDialogHelper(context) {
     private lateinit var okHttpClient: OkHttpClient
     private var call: Call? = null
     private var content: View? = null
+    private var filePath: String? = null
+
+    private val broadcastReceiver = object : BroadcastReceiver() {
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.getAction().equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
+                if (!TextUtils.isEmpty(filePath)) {
+                    installApk(context!!, filePath!!)
+                }
+            }
+        }
+    }
+
     override fun onCreateDialog(): AlertDialog? {
         content = LayoutInflater.from(getContext()).inflate(R.layout.layout_progress, null)
         getBuilder()?.setTitle(R.string.check_update)
@@ -92,19 +105,22 @@ class CheckUpdateDialogHelper(context: Context) : BaseDialogHelper(context) {
                 }
             }
         })
-
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        getContext().registerReceiver(broadcastReceiver, intentFilter)
     }
 
     override fun onDialogCancel(dialog: AlertDialog) {
         super.onDialogCancel(dialog)
         call?.cancel()
+        getContext().unregisterReceiver(broadcastReceiver)
     }
 
     private fun needUpdate(version: Int, url: String) {
         getHandler().post {
             if (version > BuildConfig.VERSION_CODE || true) {
                 getDialog()?.getButton(DialogInterface.BUTTON_POSITIVE)?.isEnabled = true
-                download(url)
+                filePath = download(url)
             }
         }
     }
@@ -113,7 +129,7 @@ class CheckUpdateDialogHelper(context: Context) : BaseDialogHelper(context) {
         return content?.parent?.parent as ViewGroup?
     }
 
-    private fun download(url: String) {
+    private fun download(url: String): String? {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             if (getContext() is Activity) {
@@ -121,8 +137,9 @@ class CheckUpdateDialogHelper(context: Context) : BaseDialogHelper(context) {
                         Manifest.permission.READ_EXTERNAL_STORAGE), 100)
             }
             Toast.makeText(getContext(), "unable to access write external storage", Toast.LENGTH_SHORT).show()
-            return
+            return null
         }
+        var path: String? = null
         try {
 //            val packageName = "com.android.providers.downloads";
 //            val intent =  Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -134,13 +151,14 @@ class CheckUpdateDialogHelper(context: Context) : BaseDialogHelper(context) {
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
             //指定下载路径和下载文件名
             val name = url.substring(url.lastIndexOf("/") + 1)
+            path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath + File.separator + name
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, name)
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             request.setVisibleInDownloadsUi(true)
             //大于11版本手机允许扫描
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 //表示允许MediaScanner扫描到这个文件，默认不允许。
-                request.allowScanningByMediaScanner();
+                request.allowScanningByMediaScanner()
             }
 
             // 设置一些基本显示信息
@@ -153,6 +171,20 @@ class CheckUpdateDialogHelper(context: Context) : BaseDialogHelper(context) {
             downloadManager.enqueue(request)
         } catch (ex: Exception) {
             ex.printStackTrace()
+        }
+        return path
+    }
+
+    // 安装Apk
+    private fun installApk(context: Context, path: String) {
+        try {
+            val i = Intent(Intent.ACTION_VIEW)
+            i.setDataAndType(Uri.parse("file://$path"), "application/vnd.android.package-archive")
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(i)
+        } catch (e: Exception) {
+            Log.i("CheckUpdateDialogHelper", "安装失败")
+            e.printStackTrace()
         }
     }
 
