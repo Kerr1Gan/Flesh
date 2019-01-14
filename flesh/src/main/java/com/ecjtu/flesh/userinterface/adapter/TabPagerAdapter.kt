@@ -51,7 +51,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
     }
 
     override fun instantiateItem(container: ViewGroup?, position: Int): Any {
-        Log.i("ttttttt", "TabPagerAdapter instantiateItem " + position + " container " + container?.childCount)
+        Log.i("TabPagerAdapter", "TabPagerAdapter instantiateItem " + position + " container " + container?.childCount)
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
         container?.addView(item)
         val title = getPageTitle(position) as String
@@ -74,7 +74,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
     }
 
     override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
-        Log.i("ttttttt", "TabPagerAdapter remove view " + position)
+        Log.i("TabPagerAdapter", "TabPagerAdapter remove view " + position)
         container?.removeView(`object` as View)
         val vh: VH? = mViewStub.remove(getPageTitle(position))
         onDestroyItem(container?.context!!, getPageTitle(position).toString(), vh?.recyclerView, vh?.getPageModel())
@@ -146,7 +146,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
 
         editor.putBoolean(KEY_APPBAR_LAYOUT_COLLAPSED + "_" + this::class.java.simpleName, isExpand)
         if (tabIndex >= 0) {
-            Log.i("tttttttttt", "tabPager " + tabIndex)
+            Log.i("TabPagerAdapter", "tabPager " + tabIndex)
             editor.putInt(KEY_LAST_TAB_ITEM + "_" + this::class.java.simpleName, tabIndex)
         }
         editor.apply()

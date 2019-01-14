@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.text.TextUtils
@@ -118,7 +117,8 @@ class CheckUpdateDialogHelper(context: Context) : BaseDialogHelper(context) {
 
     private fun needUpdate(version: Int, url: String) {
         getHandler().post {
-            if (version > BuildConfig.VERSION_CODE || true) {
+            if (version > BuildConfig.VERSION_CODE) {
+                getDialog()?.setMessage("有新的更新")
                 getDialog()?.getButton(DialogInterface.BUTTON_POSITIVE)?.isEnabled = true
                 filePath = download(url)
             }
