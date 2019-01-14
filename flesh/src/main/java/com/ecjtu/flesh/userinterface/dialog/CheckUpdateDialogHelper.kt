@@ -141,11 +141,6 @@ class CheckUpdateDialogHelper(context: Context) : BaseDialogHelper(context) {
         }
         var path: String? = null
         try {
-//            val packageName = "com.android.providers.downloads";
-//            val intent =  Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-//            intent.setData(Uri.parse("package:" + packageName));
-//            getContext().startActivity(intent)
-
             //创建下载任务,downloadUrl就是下载链接
             val request = DownloadManager.Request(Uri.parse(url))
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)

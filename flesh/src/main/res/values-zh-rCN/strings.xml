@@ -30,7 +30,7 @@
     <string name="no">不了</string>
     <string name="yes">好的</string>
     <string name="warn">警告</string>
-    <string name="sync_info_dialog_warning">由于您使用的是模拟器，所以无法同步数据。</string>
+    <string name="sync_info_dialog_warning">由于您使用的是模拟器或者没有READ_PHONE_STATE权限，所以无法同步数据。</string>
     <string name="sync_info_explain">同步数据到服务器，上次同步时间</string>
     <string name="get_vip">获取Vip</string>
     <string name="get_vip_info">正在获取Vip信息...</string>

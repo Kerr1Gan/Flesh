@@ -1,8 +1,12 @@
 package com.ecjtu.flesh.userinterface.dialog
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.preference.PreferenceManager
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
 import android.text.TextUtils
@@ -34,8 +38,10 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
     private val mDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
 
     override fun onCreateDialog(): AlertDialog? {
-        val telephonyManager = getContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
-        var deviceId = telephonyManager?.getDeviceId()
+        var deviceId: String? = getDeviceInfo()
+        if (TextUtils.isEmpty(deviceId)) {
+            deviceId = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("deviceId", "")
+        }
         if (TextUtils.isEmpty(deviceId)) {
             deviceId = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constants.PREF_VIP_INFO, "")
         }
@@ -93,8 +99,7 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
             var index = 0
             do {
                 try {
-                    val telephonyManager = getContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
-                    var deviceId = telephonyManager?.getDeviceId()
+                    var deviceId = getDeviceInfo()
                     if (TextUtils.isEmpty(deviceId)) {
                         deviceId = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("deviceId", "")
                     }
@@ -174,5 +179,16 @@ class SyncInfoDialogHelper(context: Context) : BaseDialogHelper(context) {
     override fun onDialogCancel(dialog: AlertDialog) {
         super.onDialogCancel(dialog)
 //        getHandler().removeMessages(0, null)
+    }
+
+    private fun getDeviceInfo(): String? {
+        val telephonyManager = getContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+            return telephonyManager?.getDeviceId()
+        }
+        if (getContext() is Activity) {
+            ActivityCompat.requestPermissions(getContext() as Activity, arrayOf(Manifest.permission.READ_PHONE_STATE), 100)
+        }
+        return null
     }
 }
