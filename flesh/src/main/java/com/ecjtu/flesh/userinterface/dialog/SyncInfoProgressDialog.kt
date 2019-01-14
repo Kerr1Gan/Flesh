@@ -80,6 +80,13 @@ class SyncInfoProgressDialog(context: Context, val deviceId: String) : BaseDialo
                     mS3.setRegion(region)
                     mS3.setEndpoint(Constants.S3_URL)
                     val dbPath = getContext().getDatabasePath(DatabaseManager.DB_NAME)
+                    //clear original db. db被替换后db journal文件也需要被清空，但是清空后在获取db时会造成app崩溃。所以直接采取重启app的方案
+//                    val listFiles = dbPath.parentFile.listFiles()
+//                    for (tmpDb in listFiles) {
+//                        if (!tmpDb.name.equals(DatabaseManager.DB_NAME) && tmpDb.name.contains(DatabaseManager.DB_NAME)) {
+//                            tmpDb.delete()
+//                        }
+//                    }
                     val request = GetObjectRequest("firststorage0001", "databases/$deviceId")
                     var bytesCount = 0L
                     var lengthCount = -1L
@@ -113,6 +120,7 @@ class SyncInfoProgressDialog(context: Context, val deviceId: String) : BaseDialo
                             }
                             FileUtil.moveFile2Path(tempFile, dbPath)
                             Toast.makeText(getContext(), R.string.sync_success, Toast.LENGTH_SHORT).show()
+                            getHandler().postDelayed({ System.exit(0) }, 1000)
                             getDialog()?.cancel()
                         }
                     }

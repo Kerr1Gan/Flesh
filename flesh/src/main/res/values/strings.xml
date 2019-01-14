@@ -25,7 +25,7 @@
     <string name="upload_success">upload success</string>
     <string name="upload_failure">upload fail</string>
     <string name="sync">sync</string>
-    <string name="sync_success">sync success</string>
+    <string name="sync_success">sync success.app need restart</string>
     <string name="sync_failure">sync failure</string>
     <string name="no">no</string>
     <string name="yes">yes</string>

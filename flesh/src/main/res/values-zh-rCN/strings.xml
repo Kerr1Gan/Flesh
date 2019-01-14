@@ -25,7 +25,7 @@
     <string name="upload_success">上传成功</string>
     <string name="upload_failure">上传失败</string>
     <string name="sync">同步</string>
-    <string name="sync_success">同步成功</string>
+    <string name="sync_success">同步成功,app需要重启</string>
     <string name="sync_failure">同步失败</string>
     <string name="no">不了</string>
     <string name="yes">好的</string>
