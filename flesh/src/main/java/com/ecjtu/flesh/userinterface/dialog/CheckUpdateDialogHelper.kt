@@ -121,6 +121,8 @@ class CheckUpdateDialogHelper(context: Context) : BaseDialogHelper(context) {
                 getDialog()?.setMessage("有新的更新")
                 getDialog()?.getButton(DialogInterface.BUTTON_POSITIVE)?.isEnabled = true
                 filePath = download(url)
+            } else {
+                getDialog()?.setMessage("没有新版本")
             }
         }
     }

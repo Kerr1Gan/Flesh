@@ -7,14 +7,17 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.ecjtu.componentes.activity.AppThemeActivity;
 import com.ecjtu.flesh.Constants;
+import com.ecjtu.flesh.model.models.UpdateBean;
 import com.ecjtu.flesh.userinterface.fragment.SearchFragment;
 import com.ecjtu.flesh.util.CloseableUtil;
 import com.ecjtu.netcore.network.AsyncNetwork;
 import com.ecjtu.netcore.network.IRequestCallback;
 import com.ecjtu.netcore.network.IRequestCallbackV2;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,8 +27,15 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainPresenter implements MainContract.Presenter {
 
@@ -145,5 +155,30 @@ public class MainPresenter implements MainContract.Presenter {
         bundle.putString("url", com.ecjtu.netcore.Constants.HOST_MOBILE_URL + "/search/" + query);
         Intent intent = AppThemeActivity.newInstance(view.getContext(), SearchFragment.class, bundle);
         view.getContext().startActivity(intent);
+    }
+
+    @Override
+    public void checkUpdate() {
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(com.ecjtu.netcore.Constants.CHECK_UPDATE_URL)
+                .get()
+                .build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i("MainPresenter", "check update failed " + e.toString());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String body = response.body().string();
+                if (!TextUtils.isEmpty(body)) {
+                    UpdateBean updateBean = new Gson().fromJson(body, UpdateBean.class);
+                    view.needUpdate(updateBean.getVersionCode(), updateBean.getForce());
+                }
+            }
+        });
     }
 }

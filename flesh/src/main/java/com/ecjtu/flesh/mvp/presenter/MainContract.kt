@@ -16,6 +16,7 @@ class MainContract {
         fun loadServerUrl()
         fun readPaymentId(deviceId: String)
         fun query(query: String)
+        fun checkUpdate()
     }
 
     interface View : IView<Presenter> {
@@ -27,5 +28,6 @@ class MainContract {
         fun getTabLayout(): TabLayout
         fun loadAd()
         fun getContext(): Context
+        fun needUpdate(versionCode: Int, force: Boolean)
     }
 }

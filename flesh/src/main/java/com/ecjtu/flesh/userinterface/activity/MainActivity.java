@@ -1,8 +1,10 @@
 package com.ecjtu.flesh.userinterface.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -15,6 +17,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -47,6 +50,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.bumptech.glide.Glide;
 import com.ecjtu.componentes.activity.AppThemeActivity;
+import com.ecjtu.flesh.BuildConfig;
 import com.ecjtu.flesh.Constants;
 import com.ecjtu.flesh.R;
 import com.ecjtu.flesh.mvp.presenter.MainContract;
@@ -129,12 +133,16 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         String deviceId = null;
         TelephonyManager telephonyManager = ((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE));
         if (telephonyManager != null) {
-            try {
-                deviceId = telephonyManager.getDeviceId();
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                try {
+                    deviceId = telephonyManager.getDeviceId();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
+
         if (TextUtils.isEmpty(deviceId)) {
             long longLocal = 0L;
             try {
@@ -527,9 +535,15 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         findViewById(R.id.update).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new CheckUpdateDialogHelper(getContext()).getDialog().show();
+                AlertDialog dialog = new CheckUpdateDialogHelper(getContext()).getDialog();
+                if (dialog != null) {
+                    dialog.setCancelable(false);
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.show();
+                }
             }
         });
+        mPresenter.checkUpdate();
 
         mAppbarExpand = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(TabPagerAdapter.KEY_APPBAR_LAYOUT_COLLAPSED, false);
         mAppbarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
@@ -581,6 +595,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
             }
         });
+    }
+
+    @Override
+    public void needUpdate(int versionCode, boolean force) {
+        if (versionCode > BuildConfig.VERSION_CODE) {
+            TextView tv = findViewById(R.id.update);
+            tv.setText(tv.getText() + "(有新版本)");
+        }
     }
 
     private class FragmentAdapter extends FragmentPagerAdapter {
