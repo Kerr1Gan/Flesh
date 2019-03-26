@@ -51,7 +51,7 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
         }
     }
 
-    open protected fun initView() {
+    protected open fun initView() {
         mViewPager = view!!.findViewById<View>(R.id.view_pager) as ViewPager?
         mTabLayout = mainView?.getTabLayout()
         if (userVisibleHint) {
