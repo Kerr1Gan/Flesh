@@ -30,7 +30,7 @@ public class MenuSoup extends BaseSoup {
         for (Element ele : childArr) {
             String title = ele.attr("title");
             String url = ele.attr("href");
-            if (!title.equals("") && !title.equalsIgnoreCase("首页")) {
+            if (!title.equals("") && !title.equalsIgnoreCase("首页") && !title.contains("下载美之图")) {
                 MenuModel model = new MenuModel(title, url);
                 models.add(model);
             }

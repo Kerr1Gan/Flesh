@@ -66,6 +66,7 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerViewWrapAdapte
             String.format(pageModel.imgUrl, position + 1)
         }
         var host = url?.replace("http://", "")
+        host = host?.replace("https://", "")
         host = host?.substring(0, host.indexOf("/"))
         val builder = LazyHeaders.Builder().addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Mobile Safari/537.36")
                 .addHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8")
@@ -116,10 +117,7 @@ class PageDetailAdapter(var pageModel: PageDetailModel) : RecyclerViewWrapAdapte
                                     .addHeader("Referer", "http://m.mzitu.com/")
                             val glideUrl = GlideUrl(imgUrl, builder.build())
                             try {
-                                Glide.with(target.view.context).asBitmap().load(glideUrl).
-                                        apply(RequestOptions().apply { centerCrop() }).
-                                        listener(this@PageDetailAdapter).
-                                        into(target.view)
+                                Glide.with(target.view.context).asBitmap().load(glideUrl).apply(RequestOptions().apply { centerCrop() }).listener(this@PageDetailAdapter).into(target.view)
                             } catch (ex: Exception) {
                                 // java.lang.IllegalArgumentException You cannot start a load for a destroyed activity #56
                                 ex.printStackTrace()
