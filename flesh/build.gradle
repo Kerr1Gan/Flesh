@@ -13,14 +13,22 @@ android {
         multiDexEnabled true
         buildConfigField 'String', 'applicationId', "\"com.ecjtu.flesh\""
 
-        ndk {
-            abiFilters 'armeabi-v7a'/*, 'x86'*/
-        }
     }
     buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            ndk {
+                abiFilters 'armeabi-v7a', 'x86'
+            }
+        }
+
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            ndk {
+                abiFilters 'armeabi-v7a'/*, 'x86'*/
+            }
         }
     }
 }
