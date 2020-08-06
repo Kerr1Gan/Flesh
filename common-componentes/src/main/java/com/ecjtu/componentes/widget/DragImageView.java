@@ -14,7 +14,7 @@ import android.view.View;
  * Created by Ethan_Xiang on 2017/10/12.
  */
 
-public class DragImageView extends android.support.v7.widget.AppCompatImageView {
+public class DragImageView extends androidx.appcompat.widget.AppCompatImageView {
 
     private final static String TAG = "MatrixImageView";
     private GestureDetector mGestureDetector;

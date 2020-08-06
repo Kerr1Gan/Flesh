@@ -3,7 +3,7 @@ package com.ecjtu.flesh.userinterface.fragment
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +17,7 @@ import java.io.File
 /**
  * Created by Ethan_Xiang on 2018/2/5.
  */
-class WebViewFragment : Fragment() {
+class WebViewFragment : androidx.fragment.app.Fragment() {
 
     companion object {
         const val TAG = "WebViewFragment"
@@ -53,17 +53,17 @@ class WebViewFragment : Fragment() {
 
     private var mWebView: WebView? = null
     private var mJsInterface: JavaScriptInterface? = null
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_web_view, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initWebView()
 
         if (arguments != null) {
-            var url = arguments.get(EXTRA_URL) as String?
-            var type = arguments.get(EXTRA_TYPE)
+            var url = arguments!!.get(EXTRA_URL) as String?
+            var type = arguments!!.get(EXTRA_TYPE)
             if (type == null) {
                 type = TYPE_DEFAULT
             }
@@ -73,7 +73,7 @@ class WebViewFragment : Fragment() {
                     mWebView?.loadUrl(url)
                 }
             } else if (type == TYPE_INNER_WEB) {
-                var file = context.getExternalFilesDir(WEB_ROOT_PATH)
+                var file = context?.getExternalFilesDir(WEB_ROOT_PATH)
                 if (file != null) {
                     file = File(file, url)
                     if (file.exists() && !file.isDirectory) {
@@ -102,7 +102,7 @@ class WebViewFragment : Fragment() {
         val settings = mWebView?.getSettings()
         settings?.javaScriptEnabled = true
 
-        mJsInterface = JavaScriptInterface(context)
+        mJsInterface = JavaScriptInterface(context!!)
         mWebView?.addJavascriptInterface(mJsInterface, INTERFACE_NAME)
     }
 

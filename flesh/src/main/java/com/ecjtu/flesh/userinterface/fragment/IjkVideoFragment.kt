@@ -6,8 +6,8 @@ import android.content.res.Configuration
 import android.graphics.Point
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.widget.ContentLoadingProgressBar
+import androidx.fragment.app.Fragment
+import androidx.core.widget.ContentLoadingProgressBar
 import android.text.TextUtils
 import android.util.Log
 import android.view.*
@@ -24,7 +24,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer
 /**
  * Created by Ethan_Xiang on 2018/2/2.
  */
-class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnTouchListener {
+class IjkVideoFragment : androidx.fragment.app.Fragment(), GestureDetector.OnGestureListener, View.OnTouchListener {
 
     companion object {
         @JvmField
@@ -47,16 +47,16 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
 
     private var mAdMob: AdmobManager? = null
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_ijk_video_player, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mAdMob = AdmobManager(context)
+        mAdMob = AdmobManager(context!!)
         mAdMob?.loadInterstitialAd(getString(R.string.admob_chaye), object : AdmobCallback {
             override fun onLoaded() {
-                if (activity != null && !activity.isFinishing) {
+                if (activity != null && !activity!!.isFinishing) {
                     mAdMob?.getLatestInterstitialAd()?.show()
                 }
             }
@@ -114,21 +114,21 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
                 mVideoView?.setVideoPath(uri)
                 mVideoView?.start()
             } else {
-                activity.finish()
+                activity?.finish()
             }
         } else {
-            activity.finish()
+            activity?.finish()
         }
 
         mGestureDetector = GestureDetector(activity, this)
         initOrientationListener()
         val root = view.findViewById<View>(R.id.root)
-        activity.runOnUiThread {
+        activity?.runOnUiThread {
 
         }
         root.post {
-            if (activity != null && isNavigationBarShow(activity)) {
-                mMediaController?.rootView?.setPadding(root.paddingLeft, root.paddingTop, view.paddingRight, view.paddingBottom + getNavigationBarHeight(activity))
+            if (activity != null && isNavigationBarShow(activity!!)) {
+                mMediaController?.rootView?.setPadding(root.paddingLeft, root.paddingTop, view.paddingRight, view.paddingBottom + getNavigationBarHeight(activity!!))
             }
         }
         /*root.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -142,10 +142,10 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
 
     private val mCallback = SimpleMediaController.MediaPlayerCallback {
         mIgnoreOrientation = !mIgnoreOrientation
-        if (activity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE) {
-            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT)
+        if (activity?.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE) {
+            activity?.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT)
         } else {
-            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
+            activity?.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
         }
     }
 
@@ -166,7 +166,7 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
         }
         mOrientationListener?.disable()
 
-        if (activity.isFinishing) {
+        if (activity!!.isFinishing) {
             mVideoView?.pause()
             mVideoView?.stopPlayback()
             mVideoView?.release(true)
@@ -194,14 +194,14 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
 
     private fun setOrientationConfig(orientation: Int) {
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
-            activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE)
+            activity?.getWindow()?.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            activity?.getWindow()?.addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
+            activity?.getWindow()?.getDecorView()?.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE)
             //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            activity?.getWindow()?.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
+            activity?.getWindow()?.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             val flags: Int
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
                 flags = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
@@ -212,7 +212,7 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
             } else {
                 flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
             }
-            activity.getWindow().getDecorView().setSystemUiVisibility(flags)
+            activity?.getWindow()?.getDecorView()?.setSystemUiVisibility(flags)
         }
     }
 
@@ -224,13 +224,13 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
                 }
                 // 设置竖屏
                 if (rotation >= 0 && rotation <= 45 || rotation >= 315 || rotation >= 135 && rotation <= 225) {
-                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                    activity?.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                 } else if (rotation > 45 && rotation < 135 || rotation > 225 && rotation < 315) {
                     // 设置横屏
                     if (rotation > 225 && rotation < 315) {
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+                        activity?.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
                     } else {
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE)
+                        activity?.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE)
                     }
                 }
             }
@@ -260,7 +260,7 @@ class IjkVideoFragment : Fragment(), GestureDetector.OnGestureListener, View.OnT
 
     override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
         if (e2.rawX - e1.rawX > 200 && Math.abs(e2.rawY - e1.rawY) < 200 && velocityX > 500) {
-            activity.finish()
+            activity?.finish()
         }
         return false
     }

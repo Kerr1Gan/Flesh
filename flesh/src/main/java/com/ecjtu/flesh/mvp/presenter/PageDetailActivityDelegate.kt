@@ -1,9 +1,9 @@
 package com.ecjtu.flesh.mvp.presenter
 
 import android.database.sqlite.SQLiteDatabase
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.impl.PageDetailCacheHelper
 import com.ecjtu.flesh.db.DatabaseManager
@@ -46,7 +46,7 @@ class PageDetailActivityDelegate(owner: PageDetailActivity, val url: String) : D
                         } else {
                             mPageModel = model
                             (mRecyclerView.adapter as PageDetailAdapter).pageModel = model
-                            mRecyclerView.adapter.notifyDataSetChanged()
+                            mRecyclerView.adapter?.notifyDataSetChanged()
                         }
                     }
                     val db = DatabaseManager.getInstance(owner)?.getDatabase() as SQLiteDatabase

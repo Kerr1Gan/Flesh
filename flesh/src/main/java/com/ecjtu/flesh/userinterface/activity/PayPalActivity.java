@@ -1,6 +1,6 @@
 package com.ecjtu.flesh.userinterface.activity;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by xiang on 2018/3/9.

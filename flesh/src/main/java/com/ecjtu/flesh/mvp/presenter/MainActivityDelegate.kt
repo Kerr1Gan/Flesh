@@ -4,19 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Build
 import android.preference.PreferenceManager
-import android.support.annotation.RequiresApi
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.ViewPager
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.text.format.Formatter
 import android.util.Log
 import android.view.Gravity
@@ -26,6 +13,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ashokvarma.bottomnavigation.BottomNavigationBar
 import com.ashokvarma.bottomnavigation.BottomNavigationItem
 import com.bumptech.glide.Glide
@@ -40,6 +31,10 @@ import com.ecjtu.flesh.util.activity.ActivityUtil
 import com.ecjtu.flesh.util.admob.AdmobCallback
 import com.ecjtu.flesh.util.admob.AdmobManager
 import com.ecjtu.flesh.util.file.FileUtil
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import java.io.File
 import kotlin.concurrent.thread
 import kotlin.reflect.KClass
@@ -51,7 +46,7 @@ import kotlin.reflect.KClass
 class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner), BaseTabPagerFragment.IDelegate {
 
     private val mFloatButton = owner.findViewById<View>(R.id.float_button) as FloatingActionButton
-    private val mViewPager = owner.findViewById<View>(R.id.view_pager) as ViewPager
+    private val mViewPager = owner.findViewById<View>(R.id.view_pager) as androidx.viewpager.widget.ViewPager
     private val mTabLayout = owner.findViewById<View>(R.id.tab_layout) as TabLayout
     private val mAppbarLayout = owner.findViewById<View>(R.id.app_bar) as AppBarLayout
     private var mAppbarExpand = true
@@ -63,7 +58,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
     init {
         loadAd()
         mViewPager.adapter = FragmentAdapter(owner.supportFragmentManager)
-        mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        mViewPager.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }
 
@@ -81,8 +76,8 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
                     }
                 }
                 mBottomNav?.selectTab(position, false)
-                if (mViewPager.adapter is FragmentPagerAdapter) {
-                    val fragment = (mViewPager.adapter as FragmentPagerAdapter).getItem(position)
+                if (mViewPager.adapter is androidx.fragment.app.FragmentPagerAdapter) {
+                    val fragment = (mViewPager.adapter as androidx.fragment.app.FragmentPagerAdapter).getItem(position)
                     if (fragment is BaseTabPagerFragment) {
                         fragment.onSelectTab()
                     }
@@ -112,8 +107,8 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
         findViewById(R.id.like)?.setOnClickListener {
             val intent = AppThemeActivity.newInstance(owner, PageLikeFragment::class.java)
             owner.startActivity(intent)
-            val drawerLayout = findViewById(R.id.drawer_layout) as DrawerLayout
-            drawerLayout.closeDrawer(Gravity.START)
+            val drawerLayout = findViewById(R.id.drawer_layout) as androidx.drawerlayout.widget.DrawerLayout
+            drawerLayout.closeDrawer(Gravity.LEFT)
         }
 
         findViewById(R.id.cache)?.setOnClickListener {
@@ -139,8 +134,8 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
         findViewById(R.id.history)?.setOnClickListener {
             val intent = AppThemeActivity.newInstance(owner, PageHistoryFragment::class.java)
             owner.startActivity(intent)
-            val drawerLayout = findViewById(R.id.drawer_layout) as DrawerLayout
-            drawerLayout.closeDrawer(Gravity.START)
+            val drawerLayout = findViewById(R.id.drawer_layout) as androidx.drawerlayout.widget.DrawerLayout
+            drawerLayout.closeDrawer(Gravity.LEFT)
         }
 
         findViewById(R.id.vip_info)?.setOnClickListener {
@@ -164,13 +159,14 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
         }
 
         mAppbarExpand = PreferenceManager.getDefaultSharedPreferences(owner).getBoolean(TabPagerAdapter.KEY_APPBAR_LAYOUT_COLLAPSED, false)
-        mAppbarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+
+        mAppbarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             if (verticalOffset == 0) {
                 mAppbarExpand = true
             } else if (verticalOffset == -(appBarLayout.height - mTabLayout.height)) {
                 mAppbarExpand = false
             }
-        }
+        })
 
         mBottomNav!!
                 .addItem(BottomNavigationItem(R.drawable.ic_image, "Image"))
@@ -179,8 +175,8 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
                 .initialise()
         mBottomNav!!.setTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
             override fun onTabUnselected(position: Int) {
-                if (mViewPager.adapter is FragmentPagerAdapter) {
-                    val fragment = (mViewPager.adapter as FragmentPagerAdapter).getItem(position)
+                if (mViewPager.adapter is androidx.fragment.app.FragmentPagerAdapter) {
+                    val fragment = (mViewPager.adapter as androidx.fragment.app.FragmentPagerAdapter).getItem(position)
                     if (fragment is BaseTabPagerFragment) {
                         fragment.onUnSelectTab()
                     }
@@ -346,8 +342,8 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
         })
     }
 
-    inner class FragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-        val fragments = Array<Fragment?>(2) { int ->
+    inner class FragmentAdapter(fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+        val fragments = Array<androidx.fragment.app.Fragment?>(2) { int ->
             when (int) {
                 0 -> {
                     Log.i("FragmentAdapter", "new MzituFragment")
@@ -366,7 +362,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
         init {
         }
 
-        override fun getItem(position: Int): Fragment {
+        override fun getItem(position: Int): androidx.fragment.app.Fragment {
             Log.i("FragmentAdapter", "getItem position $position id " + fragments[position]!!.toString())
             return fragments[position]!!
         }
@@ -375,7 +371,7 @@ class MainActivityDelegate(owner: MainActivity) : Delegate<MainActivity>(owner),
             return fragments.size
         }
 
-        override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val ret = super.instantiateItem(container, position)
             Log.i("FragmentAdapter", "instantiateItem position $position")
             if (ret is BaseTabPagerFragment) {

@@ -2,10 +2,10 @@ package com.ecjtu.flesh.mvp.presenter
 
 import android.app.Activity
 import android.content.Context
-import android.support.design.widget.TabLayout
 import com.ashokvarma.bottomnavigation.BottomNavigationBar
 import com.ecjtu.flesh.mvp.IPresenter
 import com.ecjtu.flesh.mvp.IView
+import com.google.android.material.tabs.TabLayout
 
 class MainContract {
     interface Presenter : IPresenter<View> {

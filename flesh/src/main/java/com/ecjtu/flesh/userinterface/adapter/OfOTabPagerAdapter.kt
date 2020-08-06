@@ -1,14 +1,14 @@
 package com.ecjtu.flesh.userinterface.adapter
 
-import android.support.v4.view.ViewPager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.netcore.model.MenuModel
 
 /**
  * Created by xiang on 2018/2/25.
  */
-class OfOTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : V33TabPagerAdapter(menu, viewPager) {
+class OfOTabPagerAdapter(menu: List<MenuModel>, viewPager: androidx.viewpager.widget.ViewPager) : V33TabPagerAdapter(menu, viewPager) {
     private val KEY_LAST_POSITION = "ofo91_last_position_"
     private val KEY_LAST_POSITION_OFFSET = "ofo91_last_position_offset_"
 

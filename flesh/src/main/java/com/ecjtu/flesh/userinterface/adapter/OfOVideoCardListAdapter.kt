@@ -1,8 +1,8 @@
 package com.ecjtu.flesh.userinterface.adapter
 
 import android.database.sqlite.SQLiteDatabase
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.ecjtu.componentes.activity.RotateNoCreateActivity
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager

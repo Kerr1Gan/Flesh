@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.text.TextUtils
 import com.ecjtu.componentes.R
 
@@ -39,7 +39,7 @@ open class BaseFragmentActivity : BaseActionActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.cc_activity_base_fragment)
         val fragmentName = intent.getStringExtra(EXTRA_FRAGMENT_NAME)
-        var fragment: Fragment? = null
+        var fragment: androidx.fragment.app.Fragment? = null
         if (TextUtils.isEmpty(fragmentName)) {
             //set default fragment
             //fragment = makeFragment(MainFragment::class.java!!.getName())
@@ -63,10 +63,10 @@ open class BaseFragmentActivity : BaseActionActivity() {
                 .commit()
     }
 
-    fun makeFragment(name: String): Fragment? {
+    fun makeFragment(name: String): androidx.fragment.app.Fragment? {
         try {
             val fragmentClazz = Class.forName(name)
-            return fragmentClazz.newInstance() as Fragment
+            return fragmentClazz.newInstance() as androidx.fragment.app.Fragment
         } catch (e: Exception) {
             e.printStackTrace()
         }

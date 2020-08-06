@@ -2,12 +2,12 @@ package com.ecjtu.flesh.userinterface.adapter
 
 import android.content.Context
 import android.preference.PreferenceManager
-import android.support.v4.view.ViewPager
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.model.models.VideoModel
 import com.ecjtu.netcore.model.MenuModel
@@ -15,7 +15,7 @@ import com.ecjtu.netcore.model.MenuModel
 /**
  * Created by Ethan_Xiang on 2018/2/22.
  */
-open class V33TabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTabPagerAdapter(menu, viewPager) {
+open class V33TabPagerAdapter(menu: List<MenuModel>, viewPager: androidx.viewpager.widget.ViewPager) : VideoTabPagerAdapter(menu, viewPager) {
     private val KEY_LAST_POSITION = "v33_last_position_"
     private val KEY_LAST_POSITION_OFFSET = "v33_last_position_offset_"
 
@@ -25,7 +25,7 @@ open class V33TabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : Vid
 
     private var mRequestUrl: String? = null
 
-    override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
         container?.addView(item)
         val title = getPageTitle(position) as String

@@ -2,8 +2,8 @@ package com.ecjtu.flesh.userinterface.dialog
 
 import android.content.Context
 import android.preference.PreferenceManager
-import android.support.v7.app.AlertDialog
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.amazonaws.AbortedException
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.Protocol

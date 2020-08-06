@@ -4,9 +4,9 @@ import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.Bucket
 import com.bumptech.glide.Glide
@@ -30,7 +30,7 @@ import kotlin.concurrent.thread
  */
 class VipCardListAdapter(pageModel: List<VideoModel>, recyclerView: RecyclerView, private val s3Client: AmazonS3Client, private val bucket: Bucket) : VideoCardListAdapter(pageModel, recyclerView) {
 
-    override fun onBindViewHolder(holder: VH?, position: Int) {
+    override fun onBindViewHolder(holder: VH, position: Int) {
         super.onBindViewHolder(holder, position)
         val url = pageModel.get(position).videoUrl
         holder?.heart?.setTag(R.id.extra_tag_2, url)

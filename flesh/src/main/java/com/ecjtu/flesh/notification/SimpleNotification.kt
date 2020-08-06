@@ -3,8 +3,8 @@ package com.ecjtu.flesh.notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.support.v4.app.NotificationManagerCompat
-import android.support.v7.app.NotificationCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.ecjtu.flesh.R
 
 /**
@@ -38,7 +38,7 @@ abstract class SimpleNotification(val context: Context) {
     }
 
     open fun sendNotification(id: Int, builder: NotificationCompat.Builder?, tag: String? = null) {
-        NotificationManagerCompat.from(context).notify(tag, id, builder?.build())
+        NotificationManagerCompat.from(context).notify(tag, id, builder!!.build())
     }
 
     open fun cancelNotification(id: Int, tag: String? = null) {

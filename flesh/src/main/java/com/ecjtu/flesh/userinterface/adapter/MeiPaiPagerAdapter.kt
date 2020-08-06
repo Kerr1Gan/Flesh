@@ -3,13 +3,13 @@ package com.ecjtu.flesh.userinterface.adapter
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import android.support.v4.view.ViewPager
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.model.models.MeiPaiModel
 import com.ecjtu.flesh.model.models.VideoModel
@@ -18,7 +18,7 @@ import com.ecjtu.netcore.model.MenuModel
 /**
  * Created by Ethan_Xiang on 2018/2/9.
  */
-class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager) : VideoTabPagerAdapter(menu, viewPager) {
+class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: androidx.viewpager.widget.ViewPager) : VideoTabPagerAdapter(menu, viewPager) {
 
     private val KEY_LAST_POSITION = "meipai_last_position_"
     private val KEY_LAST_POSITION_OFFSET = "meipai_last_position_offset_"
@@ -28,13 +28,13 @@ class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager
     private var mMenuChildList: Map<String, List<MeiPaiModel>>? = null
 
 
-    override fun isViewFromObject(view: View?, `object`: Any?): Boolean = view == `object`
+    override fun isViewFromObject(view: View, `object`: Any): Boolean = view == `object`
 
     override fun getCount(): Int {
         return menu.size
     }
 
-    override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
         container?.addView(item)
         val title = getPageTitle(position) as String
@@ -46,7 +46,7 @@ class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager
         return item
     }
 
-    override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
+    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
         container?.removeView(`object` as View)
         val vh: VH? = mViewStub.remove(getPageTitle(position))
         onDestroyItem(container?.context!!, getPageTitle(position).toString(), vh?.recyclerView, vh?.getPageModel())
@@ -101,7 +101,7 @@ class MeiPaiPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager
     private inner class VH(val itemView: View, private val menu: MenuModel, val key: String) {
         val recyclerView = itemView.findViewById<View>(R.id.recycler_view) as RecyclerView?
         private var mPageModel: List<MeiPaiModel>? = null
-        private val mRefreshLayout = if (itemView is SwipeRefreshLayout) itemView else null
+        private val mRefreshLayout = if (itemView is androidx.swiperefreshlayout.widget.SwipeRefreshLayout) itemView else null
 
         init {
             recyclerView?.layoutManager = LinearLayoutManager(recyclerView?.context, LinearLayoutManager.VERTICAL, false)

@@ -2,9 +2,9 @@ package com.ecjtu.flesh.userinterface.fragment
 
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import com.ecjtu.flesh.Constants
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
@@ -34,7 +34,7 @@ class V33Fragment : VideoListFragment() {
     private var mV33Menu: List<MenuModel>? = null
     private var mV33Cache: Map<String, List<VideoModel>>? = null
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.i(TAG, "onViewCreated")
         getToolbar().setTitle(R.string.v33_title)
@@ -130,7 +130,7 @@ class V33Fragment : VideoListFragment() {
                 }
 
                 if (mLoadingDialog == null && context != null) {
-                    mLoadingDialog = AlertDialog.Builder(context).setTitle(R.string.loading).setMessage(R.string.may_take_a_few_minutes)
+                    mLoadingDialog = AlertDialog.Builder(context!!).setTitle(R.string.loading).setMessage(R.string.may_take_a_few_minutes)
                             .setNegativeButton(R.string.cancel, { dialog, which ->
                                 thread {
                                     req.cancel()
@@ -144,8 +144,8 @@ class V33Fragment : VideoListFragment() {
                 }
                 thread {
                     if (context != null) {
-                        val helper = VideoCacheHelper(context.filesDir.absolutePath)
-                        val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
+                        val helper = VideoCacheHelper(context!!.filesDir.absolutePath)
+                        val helper2 = MenuListCacheHelper(context!!.filesDir.absolutePath)
                         mV33Menu = helper2.get("v33menu")
                         mV33Cache = helper.get("v33cache")
                         val localMenu = mV33Menu
@@ -188,8 +188,8 @@ class V33Fragment : VideoListFragment() {
         super.onStop()
         thread {
             if (context != null) {
-                val helper = VideoCacheHelper(context.filesDir.absolutePath)
-                val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
+                val helper = VideoCacheHelper(context!!.filesDir.absolutePath)
+                val helper2 = MenuListCacheHelper(context!!.filesDir.absolutePath)
                 if (mV33Menu != null && mV33Cache != null) {
                     helper2.put("v33menu", mV33Menu)
                     helper.put("v33cache", mV33Cache)

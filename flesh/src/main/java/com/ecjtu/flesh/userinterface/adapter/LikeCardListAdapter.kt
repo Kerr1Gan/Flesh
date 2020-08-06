@@ -31,7 +31,7 @@ class LikeCardListAdapter(pageModel: PageModel) : CardListAdapter(pageModel) {
     private var mHistory: List<PageModel.ItemModel>? = null
     private var mS3: AmazonS3Client? = null
 
-    override fun onBindViewHolder(holder: VH?, position: Int) {
+    override fun onBindViewHolder(holder: VH, position: Int) {
         super.onBindViewHolder(holder, position)
         if (mHistory == null) {
             val db = DatabaseManager.getInstance(holder?.itemView?.context)?.getDatabase()

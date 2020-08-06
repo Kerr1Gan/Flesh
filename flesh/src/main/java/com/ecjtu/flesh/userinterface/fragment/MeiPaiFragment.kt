@@ -2,9 +2,9 @@ package com.ecjtu.flesh.userinterface.fragment
 
 import android.os.Bundle
 import android.os.Handler
-import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import com.ecjtu.flesh.cache.impl.MeiPaiCacheHelper
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.model.models.MeiPaiModel
@@ -29,7 +29,7 @@ class MeiPaiFragment : VideoListFragment(), BaseTabPagerFragment.IDelegate {
     private var mMeiPaiMenu: List<MenuModel>? = null
     private var mMeiPaiCache: Map<String, List<MeiPaiModel>>? = null
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.i(TAG, "onViewCreated")
         getToolbar().setTitle("美拍")
@@ -78,7 +78,7 @@ class MeiPaiFragment : VideoListFragment(), BaseTabPagerFragment.IDelegate {
                 if (mLoadingDialog == null) {
                     Handler().post {
                         if (context == null) return@post
-                        mLoadingDialog = AlertDialog.Builder(context).setTitle("加载中").setMessage("需要一小会时间")
+                        mLoadingDialog = AlertDialog.Builder(context!!).setTitle("加载中").setMessage("需要一小会时间")
                                 .setNegativeButton("取消", { dialog, which ->
                                     thread {
                                         req.cancel()
@@ -93,8 +93,8 @@ class MeiPaiFragment : VideoListFragment(), BaseTabPagerFragment.IDelegate {
                 }
                 thread {
                     if (context != null) {
-                        val helper = MeiPaiCacheHelper(context.filesDir.absolutePath)
-                        val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
+                        val helper = MeiPaiCacheHelper(context?.filesDir?.absolutePath)
+                        val helper2 = MenuListCacheHelper(context?.filesDir?.absolutePath)
                         mMeiPaiMenu = helper2.get("meipaimenu")
                         mMeiPaiCache = helper.get("meipaicache")
                         val localMenu = mMeiPaiMenu
@@ -129,8 +129,8 @@ class MeiPaiFragment : VideoListFragment(), BaseTabPagerFragment.IDelegate {
         super.onStop()
         thread {
             if (context != null) {
-                val helper = MeiPaiCacheHelper(context.filesDir.absolutePath)
-                val helper2 = MenuListCacheHelper(context.filesDir.absolutePath)
+                val helper = MeiPaiCacheHelper(context?.filesDir?.absolutePath)
+                val helper2 = MenuListCacheHelper(context?.filesDir?.absolutePath)
                 if (mMeiPaiMenu != null && mMeiPaiCache != null) {
                     helper2.put("meipaimenu", mMeiPaiMenu)
                     helper.put("meipaicache", mMeiPaiCache)

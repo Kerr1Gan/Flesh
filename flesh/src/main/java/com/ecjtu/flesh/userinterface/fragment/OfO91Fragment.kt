@@ -2,10 +2,10 @@ package com.ecjtu.flesh.userinterface.fragment
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import com.ecjtu.flesh.Constants
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.cache.impl.VideoCacheHelper
@@ -35,7 +35,7 @@ class OfO91Fragment : VideoListFragment() {
     private var mV33Menu: List<MenuModel>? = null
     private var mV33Cache: Map<String, List<VideoModel>>? = null
     private var mAccessible = false
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.i(TAG, "onViewCreated")
         val title = arguments?.getString("title") ?: ""
@@ -71,20 +71,20 @@ class OfO91Fragment : VideoListFragment() {
                                         doLoading()
                                     } else {
                                         if (activity != null) {
-                                            activity.finish()
+                                            activity?.finish()
                                         }
                                     }
                                 }
                                 if (activity != null) {
-                                    activity.runOnUiThread {
+                                    activity?.runOnUiThread {
                                         if (activity == null)
                                             return@runOnUiThread
-                                        AlertDialog.Builder(activity).setTitle("成年问答,未成年请赶紧离开！").
+                                        AlertDialog.Builder(activity!!).setTitle("成年问答,未成年请赶紧离开！").
                                                 setMessage(question).
                                                 setPositiveButton(answer1, listener).
                                                 setNegativeButton(answer2, listener).
                                                 setNeutralButton(answer3, listener).
-                                                setOnCancelListener { if (!mAccessible && activity != null) activity.finish() }.
+                                                setOnCancelListener { if (!mAccessible && activity != null) activity?.finish() }.
                                                 create().
                                                 show()
                                     }
@@ -180,7 +180,7 @@ class OfO91Fragment : VideoListFragment() {
             }
 
             if (mLoadingDialog == null && context != null) {
-                mLoadingDialog = AlertDialog.Builder(context).setTitle("加载中").setMessage("需要一小会时间")
+                mLoadingDialog = AlertDialog.Builder(context!!).setTitle("加载中").setMessage("需要一小会时间")
                         .setNegativeButton("取消", { dialog, which ->
                             thread {
                                 req.cancel()

@@ -3,19 +3,19 @@ package com.ecjtu.flesh.userinterface.adapter
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import android.support.v4.view.ViewPager
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ecjtu.flesh.R
 import com.ecjtu.netcore.model.MenuModel
 
 /**
  * Created by Ethan_Xiang on 2018/1/15.
  */
-open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: ViewPager) : TabPagerAdapter(menu), ViewPager.OnPageChangeListener {
+open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: androidx.viewpager.widget.ViewPager) : TabPagerAdapter(menu), androidx.viewpager.widget.ViewPager.OnPageChangeListener {
 
     private val KEY_LAST_POSITION = "video_last_position_"
     private val KEY_LAST_POSITION_OFFSET = "video_last_position_offset_"
@@ -49,7 +49,7 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
         mLastScrolledPosition = position
     }
 
-    override fun isViewFromObject(view: View?, `object`: Any?): Boolean = view == `object`
+    override fun isViewFromObject(view: View, `object`: Any): Boolean = view == `object`
 
     override fun getCount(): Int {
         return menu.size
@@ -116,7 +116,7 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
         editor.apply()
     }
 
-    override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
+    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
         container?.removeView(`object` as View)
         val vh: VH? = getViewStub()?.remove(getPageTitle(position))
         onDestroyItem(container?.context!!, getPageTitle(position).toString(), vh?.recyclerView)
@@ -156,7 +156,7 @@ open class VideoTabPagerAdapter(menu: List<MenuModel>, private val viewPager: Vi
 
     open inner class VH(val itemView: View, private val menu: MenuModel, val key: String) {
         val recyclerView = itemView.findViewById<View>(R.id.recycler_view) as RecyclerView?
-        private val mRefreshLayout = if (itemView is SwipeRefreshLayout) itemView else null
+        private val mRefreshLayout = if (itemView is androidx.swiperefreshlayout.widget.SwipeRefreshLayout) itemView else null
 
         init {
             recyclerView?.layoutManager = LinearLayoutManager(recyclerView?.context, LinearLayoutManager.VERTICAL, false)

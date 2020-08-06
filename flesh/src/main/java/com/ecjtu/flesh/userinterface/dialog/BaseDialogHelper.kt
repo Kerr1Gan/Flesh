@@ -2,7 +2,7 @@ package com.ecjtu.flesh.userinterface.dialog
 
 import android.content.Context
 import android.os.Handler
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 
 /**
  * Created by xiang on 2018/3/9.

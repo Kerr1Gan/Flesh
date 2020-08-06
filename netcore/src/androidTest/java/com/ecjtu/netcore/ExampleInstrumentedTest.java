@@ -1,19 +1,11 @@
 package com.ecjtu.netcore;
 
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-
-import com.ecjtu.netcore.network.AsyncNetwork;
-import com.ecjtu.netcore.network.IRequestCallback;
-import com.ecjtu.netcore.network.IRequestCallbackV2;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.net.HttpURLConnection;
-
-import static org.junit.Assert.*;
 
 /**
  * Instrumentation test, which will execute on an Android device.

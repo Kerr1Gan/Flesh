@@ -3,15 +3,15 @@ package com.ecjtu.flesh.userinterface.adapter
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import android.support.v4.view.PagerAdapter
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.viewpager.widget.PagerAdapter
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
 import com.ecjtu.flesh.cache.impl.PageListCacheHelper
@@ -30,7 +30,7 @@ import kotlin.concurrent.thread
 /**
  * Created by Ethan_Xiang on 2017/9/12.
  */
-open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
+open class TabPagerAdapter(var menu: List<MenuModel>) : androidx.viewpager.widget.PagerAdapter() {
 
     companion object {
         const val KEY_LAST_TAB_ITEM = "key_last_tab_item"
@@ -44,13 +44,13 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
 
     private val mViewStub = HashMap<String, VH>()
     private var mIsReset = false
-    override fun isViewFromObject(view: View?, `object`: Any?): Boolean = view == `object`
+    override fun isViewFromObject(view: View, `object`: Any): Boolean = view == `object`
 
     override fun getCount(): Int {
         return menu.size
     }
 
-    override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
         Log.i("TabPagerAdapter", "TabPagerAdapter instantiateItem " + position + " container " + container?.childCount)
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
         container?.addView(item)
@@ -73,7 +73,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
         return item
     }
 
-    override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
+    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
         Log.i("TabPagerAdapter", "TabPagerAdapter remove view " + position)
         container?.removeView(`object` as View)
         val vh: VH? = mViewStub.remove(getPageTitle(position))
@@ -177,7 +177,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
         val recyclerView = itemView.findViewById<View>(R.id.recycler_view) as RecyclerView?
 
         private var mPageModel: PageModel? = null
-        private val mRefreshLayout = if (itemView is SwipeRefreshLayout) itemView else null
+        private val mRefreshLayout = if (itemView is androidx.swiperefreshlayout.widget.SwipeRefreshLayout) itemView else null
 
         init {
             recyclerView?.layoutManager = LinearLayoutManager(recyclerView?.context, LinearLayoutManager.VERTICAL, false)
@@ -256,7 +256,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
                             } else {
                                 (recyclerView.adapter as CardListAdapter).pageModel = mPageModel!!
                                 if (finalNeedUpdate) {
-                                    recyclerView.adapter.notifyDataSetChanged()
+                                    recyclerView.adapter?.notifyDataSetChanged()
                                 }
                             }
                         }
@@ -283,7 +283,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
             })
         }
 
-        fun getRefreshLayout(): SwipeRefreshLayout? {
+        fun getRefreshLayout(): androidx.swiperefreshlayout.widget.SwipeRefreshLayout? {
             return mRefreshLayout
         }
     }
@@ -292,7 +292,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
         val layoutManager = recyclerView.layoutManager as LinearLayoutManager
         val position = layoutManager.findFirstVisibleItemPosition()
         val firstVisibleChildView = layoutManager.findViewByPosition(position)
-        val itemHeight = firstVisibleChildView.height
+        val itemHeight = firstVisibleChildView?.height ?: 0
         return position * itemHeight - (firstVisibleChildView?.top ?: 0)
     }
 
@@ -313,7 +313,7 @@ open class TabPagerAdapter(var menu: List<MenuModel>) : PagerAdapter() {
         return layoutManager.findLastVisibleItemPosition()
     }
 
-    override fun getItemPosition(`object`: Any?): Int {
+    override fun getItemPosition(`object`: Any): Int {
         return if (mIsReset) POSITION_NONE else super.getItemPosition(`object`)
     }
 

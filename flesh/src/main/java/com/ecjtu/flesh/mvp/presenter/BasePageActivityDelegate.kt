@@ -1,9 +1,9 @@
 package com.ecjtu.flesh.mvp.presenter
 
 import android.app.Activity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.userinterface.adapter.CardListAdapter
 import com.ecjtu.netcore.model.PageModel

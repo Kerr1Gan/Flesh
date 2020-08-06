@@ -11,7 +11,7 @@ import android.net.MailTo;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Message;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.webkit.*;

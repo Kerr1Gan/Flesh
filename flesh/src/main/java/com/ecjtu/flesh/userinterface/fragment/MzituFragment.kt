@@ -1,7 +1,7 @@
 package com.ecjtu.flesh.userinterface.fragment
 
 import android.os.Bundle
-import android.support.v4.view.ViewPager
+import androidx.viewpager.widget.ViewPager
 import android.util.Log
 import android.view.View
 import com.ecjtu.flesh.cache.impl.MenuListCacheHelper
@@ -23,10 +23,10 @@ class MzituFragment : BaseTabPagerFragment {
 
     constructor() : super()
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.i(TAG, "onViewCreated")
-        getViewPager()?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        getViewPager()?.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }
 
@@ -42,7 +42,7 @@ class MzituFragment : BaseTabPagerFragment {
     override fun onUserVisibleHintChanged(isVisibleToUser: Boolean) {
         super.onUserVisibleHintChanged(isVisibleToUser)
         if (isVisibleToUser) {
-            val helper = MenuListCacheHelper(context.filesDir.absolutePath)
+            val helper = MenuListCacheHelper(context?.filesDir?.absolutePath)
             val lastTabPosition = getLastTabPosition()
             var menuList: MutableList<MenuModel>? = null
             if (helper.get<Any>(TabPagerAdapter.CACHE_MENU_LIST + "_" + TabPagerAdapter::class.java) != null) {
@@ -71,7 +71,7 @@ class MzituFragment : BaseTabPagerFragment {
                         override fun onResponse(call: Call, response: Response) {
                             val values = SoupFactory.parseHtml(MenuSoup::class.java, response.body()?.string())
                             if (values != null) {
-                                activity.runOnUiThread {
+                                activity?.runOnUiThread {
                                     if (getViewPager()?.currentItem != 0) {
                                         return@runOnUiThread
                                     }

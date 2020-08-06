@@ -2,11 +2,11 @@ package com.ecjtu.flesh.userinterface.adapter
 
 import android.content.Context
 import android.preference.PreferenceManager
-import android.support.v4.view.ViewPager
-import android.support.v7.widget.LinearLayoutManager
+import androidx.viewpager.widget.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.amazonaws.Protocol
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.Bucket
@@ -23,7 +23,7 @@ import kotlin.concurrent.thread
 /**
  * Created by Ethan_Xiang on 2018/2/22.
  */
-class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTabPagerAdapter(menu, viewPager) {
+class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: androidx.viewpager.widget.ViewPager) : VideoTabPagerAdapter(menu, viewPager) {
     companion object {
         const val S3_URL_FORMAT = "%s://${Constants.S3_URL}/%s/%s"
         const val S3_IMAGE_FORMAT = "%s_image_%s.png"
@@ -39,7 +39,7 @@ class VipTabPagerAdapter(menu: List<MenuModel>, viewPager: ViewPager) : VideoTab
     private var mS3: AmazonS3Client? = null
     private var mProtocol: Protocol? = null
 
-    override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val item = LayoutInflater.from(container?.context).inflate(R.layout.layout_list_card_view, container, false)
         container?.addView(item)
         val title = getPageTitle(position) as String

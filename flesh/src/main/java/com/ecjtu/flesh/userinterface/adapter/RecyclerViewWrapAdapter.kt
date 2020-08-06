@@ -1,6 +1,7 @@
 package com.ecjtu.flesh.userinterface.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
+
 
 /**
  * Created by Ethan_Xiang on 2017/9/26.

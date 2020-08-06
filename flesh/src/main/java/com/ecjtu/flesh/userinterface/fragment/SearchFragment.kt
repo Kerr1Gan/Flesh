@@ -2,21 +2,18 @@ package com.ecjtu.flesh.userinterface.fragment
 
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.db.DatabaseManager
 import com.ecjtu.flesh.db.table.impl.ClassPageTableImpl
 import com.ecjtu.flesh.userinterface.adapter.CardListAdapter
-import com.ecjtu.netcore.Constants
 import com.ecjtu.netcore.jsoup.SoupFactory
 import com.ecjtu.netcore.jsoup.impl.PageSoup
 import com.ecjtu.netcore.model.PageModel
@@ -26,23 +23,23 @@ import java.io.IOException
 /**
  * Created by Ethan_Xiang on 2018/4/17.
  */
-class SearchFragment : Fragment() {
+class SearchFragment : androidx.fragment.app.Fragment() {
 
     private var mHandler: Handler = Handler()
 
     private var recyclerView: RecyclerView? = null
     private var mPageModel: PageModel? = null
-    private var mRefreshLayout: SwipeRefreshLayout? = null
+    private var mRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout? = null
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.layout_list_card_view, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view?.findViewById<View>(R.id.recycler_view) as RecyclerView?
         recyclerView?.layoutManager = LinearLayoutManager(recyclerView?.context, LinearLayoutManager.VERTICAL, false)
-        mRefreshLayout = if (view is SwipeRefreshLayout) view else null
+        mRefreshLayout = if (view is androidx.swiperefreshlayout.widget.SwipeRefreshLayout) view else null
         mRefreshLayout?.setColorSchemeColors(mRefreshLayout!!.context.resources.getColor(R.color.colorPrimary))
         mRefreshLayout?.isEnabled = false
         userVisibleHint = true
@@ -55,7 +52,7 @@ class SearchFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == android.R.id.home) {
-            activity.finish()
+            activity?.finish()
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -75,7 +72,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun requestUrl() {
-        val url = arguments.get("url") as String?
+        val url = arguments?.get("url") as String?
         if (!TextUtils.isEmpty(url)) {
             val client = OkHttpClient()
             val request = Request.Builder()

@@ -34,7 +34,7 @@ class HistoryCardListAdapter(pageModel: PageModel) : CardListAdapter(pageModel) 
 
     private var mS3: AmazonS3Client? = null
 
-    override fun onBindViewHolder(holder: VH?, position: Int) {
+    override fun onBindViewHolder(holder: VH, position: Int) {
         super.onBindViewHolder(holder, position)
         if (mDateFormat2 == null) {
             mDateFormat2 = SimpleDateFormat(holder?.itemView?.context?.getString(R.string.simple_date_format_ymd)

@@ -3,8 +3,8 @@ package com.ecjtu.flesh;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-import android.support.multidex.MultiDexApplication;
+
+import androidx.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
@@ -24,7 +24,6 @@ import com.ecjtu.flesh.db.table.impl.NotificationTableImpl;
 import com.ecjtu.flesh.service.MainService;
 import com.google.android.gms.ads.MobileAds;
 import com.tencent.bugly.Bugly;
-import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.List;
 

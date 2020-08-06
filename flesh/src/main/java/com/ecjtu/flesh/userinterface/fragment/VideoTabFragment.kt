@@ -4,12 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ecjtu.componentes.activity.ImmersiveFragmentActivity
 import com.ecjtu.flesh.Constants
 import com.ecjtu.flesh.R
@@ -34,11 +34,11 @@ class VideoTabFragment : BaseTabPagerFragment() {
             ItemInfo("OfO", arrayOf(), OfO91Fragment::class.java, ""),
             ItemInfo("Vip", arrayOf(), VipFragment::class.java, "")*/)
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_video_tab, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 //        if (getDelegate()?.getTabLayout() != null) {
 //            setTabLayout(getDelegate()?.getTabLayout()!!)
 //        }
@@ -104,11 +104,11 @@ class VideoTabFragment : BaseTabPagerFragment() {
     }
 
     inner class SimpleAdapter : RecyclerView.Adapter<VH>() {
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VH {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
             return VH(LayoutInflater.from(context).inflate(R.layout.layout_video_fragment_item, parent, false))
         }
 
-        override fun onBindViewHolder(holder: VH?, position: Int) {
+        override fun onBindViewHolder(holder: VH, position: Int) {
             holder?.textView?.text = mItemInfo[position].title
             holder?.itemView?.setOnClickListener {
                 if (mItemInfo[position].clazz.newInstance() is Activity) {
@@ -117,7 +117,7 @@ class VideoTabFragment : BaseTabPagerFragment() {
                     intent.putExtra("title", mItemInfo[position].title)
                     startActivity(intent)
                 } else {
-                    val intent = ImmersiveFragmentActivity.newInstance(context, mItemInfo[position].clazz,
+                    val intent = ImmersiveFragmentActivity.newInstance(context!!, mItemInfo[position].clazz,
                             Bundle().apply {
                                 putString("url", mItemInfo[position].url);
                                 putString("title", mItemInfo[position].title)

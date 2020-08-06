@@ -2,11 +2,11 @@ package com.ecjtu.flesh.userinterface.adapter
 
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -36,7 +36,7 @@ class MeiPaiCardListAdapter(pageModel: List<MeiPaiModel>, val recyclerView: Recy
         return pageModel.size
     }
 
-    override fun onBindViewHolder(holder: VH?, position: Int) {
+    override fun onBindViewHolder(holder: VH, position: Int) {
         if (mLastClickPosition < linearLayoutManager?.findFirstVisibleItemPosition() ?: 0 ||
                 mLastClickPosition > linearLayoutManager?.findLastVisibleItemPosition() ?: 0) {
             if (mLastClickPosition >= 0) {

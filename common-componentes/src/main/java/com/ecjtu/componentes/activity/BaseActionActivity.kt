@@ -10,8 +10,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.appcompat.app.AppCompatActivity
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.view.ViewConfiguration
@@ -23,7 +23,7 @@ import com.ecjtu.componentes.WeakHandler
  */
 abstract class BaseActionActivity : AppCompatActivity(), WeakHandler.IHandleMessage {
 
-    private var mLocalBroadcastManger: LocalBroadcastManager? = null
+    private var mLocalBroadcastManger: androidx.localbroadcastmanager.content.LocalBroadcastManager? = null
 
     private var mIntentFilter: IntentFilter? = null
 
@@ -38,12 +38,12 @@ abstract class BaseActionActivity : AppCompatActivity(), WeakHandler.IHandleMess
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mLocalBroadcastManger = LocalBroadcastManager.getInstance(this)
+        mLocalBroadcastManger = androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this)
         if (isRegisterActions()) {
             mIntentFilter = IntentFilter()
             mBroadcastReceiver = SimpleReceiver()
             registerActions(mIntentFilter)
-            mLocalBroadcastManger?.registerReceiver(mBroadcastReceiver, mIntentFilter)
+            mLocalBroadcastManger?.registerReceiver(mBroadcastReceiver!!, mIntentFilter!!)
         }
         mSimpleHandler = SimpleHandler(this)
     }
@@ -59,7 +59,7 @@ abstract class BaseActionActivity : AppCompatActivity(), WeakHandler.IHandleMess
     override fun onDestroy() {
         super.onDestroy()
         if (isRegisterActions()) {
-            mLocalBroadcastManger?.unregisterReceiver(mBroadcastReceiver)
+            mLocalBroadcastManger?.unregisterReceiver(mBroadcastReceiver!!)
         }
     }
 
@@ -79,7 +79,7 @@ abstract class BaseActionActivity : AppCompatActivity(), WeakHandler.IHandleMess
     }
 
     open fun unregisterActions() {
-        mLocalBroadcastManger?.unregisterReceiver(mBroadcastReceiver)
+        mLocalBroadcastManger?.unregisterReceiver(mBroadcastReceiver!!)
     }
 
     open fun getIntentFilter(): IntentFilter? {
@@ -90,8 +90,8 @@ abstract class BaseActionActivity : AppCompatActivity(), WeakHandler.IHandleMess
         for (action in array) {
             intentFilter.addAction(action)
         }
-        mLocalBroadcastManger?.unregisterReceiver(mBroadcastReceiver)
-        mLocalBroadcastManger?.registerReceiver(mBroadcastReceiver, intentFilter)
+        mLocalBroadcastManger?.unregisterReceiver(mBroadcastReceiver!!)
+        mLocalBroadcastManger?.registerReceiver(mBroadcastReceiver!!, intentFilter)
         mIntentFilter = intentFilter
     }
 

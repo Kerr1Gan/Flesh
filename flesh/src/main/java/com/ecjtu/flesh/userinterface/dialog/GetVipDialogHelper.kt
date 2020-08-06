@@ -3,13 +3,13 @@ package com.ecjtu.flesh.userinterface.dialog
 import android.content.*
 import android.os.Environment
 import android.preference.PreferenceManager
-import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
 import android.text.TextUtils
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.ecjtu.flesh.Constants
 import com.ecjtu.flesh.R
 import com.ecjtu.flesh.userinterface.activity.PayPalActivity

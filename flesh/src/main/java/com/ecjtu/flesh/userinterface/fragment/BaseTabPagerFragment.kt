@@ -5,9 +5,8 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.preference.PreferenceManager
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.view.ViewPager
+import androidx.fragment.app.Fragment
+import androidx.viewpager.widget.ViewPager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,17 +15,18 @@ import com.ecjtu.flesh.R
 import com.ecjtu.flesh.mvp.presenter.MainContract
 import com.ecjtu.flesh.userinterface.adapter.IChangeTab
 import com.ecjtu.flesh.userinterface.adapter.TabPagerAdapter
+import com.google.android.material.tabs.TabLayout
 
 /**
  * Created by xiang on 2018/2/9.
  */
-abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, IChangeTab {
+abstract class BaseTabPagerFragment : androidx.fragment.app.Fragment, androidx.viewpager.widget.ViewPager.OnPageChangeListener, IChangeTab {
 
     companion object {
         private const val TAG = "BaseTabPagerFragment"
     }
 
-    private var mViewPager: ViewPager? = null
+    private var mViewPager: androidx.viewpager.widget.ViewPager? = null
     private var mTabLayout: TabLayout? = null
     private val mHandler = Handler()
     private var mLastTabPosition = -1
@@ -38,12 +38,12 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
         mainView = view
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         Log.i(this::class.java.simpleName, "onCreateView")
         return inflater?.inflate(R.layout.fragment_base_tab_pager, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Log.i(this::class.java.simpleName, "onViewCreated")
         initView()
         if (getLastTabPosition() < 0) {
@@ -52,7 +52,7 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
     }
 
     open protected fun initView() {
-        mViewPager = view!!.findViewById<View>(R.id.view_pager) as ViewPager?
+        mViewPager = view!!.findViewById<View>(R.id.view_pager) as androidx.viewpager.widget.ViewPager?
         mTabLayout = mainView?.getTabLayout()
         if (userVisibleHint) {
             attachTabLayout()
@@ -97,7 +97,7 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
         super.onStop()
         Log.i(this::class.java.simpleName, "onStop tabIndex " + mTabLayout?.selectedTabPosition)
         getViewPager()?.let {
-            (getViewPager()?.adapter as TabPagerAdapter?)?.onStop(context, getTabLayout()?.selectedTabPosition
+            (getViewPager()?.adapter as TabPagerAdapter?)?.onStop(context!!, getTabLayout()?.selectedTabPosition
                     ?: 0,
                     getMainView()?.isAppbarLayoutExpand() ?: false)
         }
@@ -146,7 +146,7 @@ abstract class BaseTabPagerFragment : Fragment, ViewPager.OnPageChangeListener, 
         }
     }
 
-    open fun getViewPager(): ViewPager? {
+    open fun getViewPager(): androidx.viewpager.widget.ViewPager? {
         return mViewPager
     }
 

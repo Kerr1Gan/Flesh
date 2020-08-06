@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.Protocol
 import com.amazonaws.auth.BasicAWSCredentials
@@ -41,7 +41,7 @@ class VipFragment : VideoListFragment() {
     private var mRequest: BaseNetwork? = null
     private var mAccessible = false
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getToolbar().setTitle("Vip")
     }
@@ -49,7 +49,7 @@ class VipFragment : VideoListFragment() {
     override fun onUserVisibleHintChanged(isVisibleToUser: Boolean) {
         super.onUserVisibleHintChanged(isVisibleToUser)
         if (isVisibleToUser) {
-            val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
+            val telephonyManager = context!!.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
             val deviceId = telephonyManager?.getDeviceId()
             val serverUrl = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constants.PREF_SERVER_URL, Constants.SERVER_URL)
             AsyncNetwork().request(serverUrl + "/api/getUserByDeviceId?deviceId=" + deviceId)
@@ -73,7 +73,7 @@ class VipFragment : VideoListFragment() {
                         override fun onError(httpURLConnection: HttpURLConnection?, exception: java.lang.Exception) {
                             exception.printStackTrace()
                             if (activity != null) {
-                                activity.finish()
+                                activity?.finish()
                             }
                         }
                     })
@@ -104,15 +104,15 @@ class VipFragment : VideoListFragment() {
                                     doLoading()
                                 } else {
                                     if (activity != null) {
-                                        activity.finish()
+                                        activity?.finish()
                                     }
                                 }
                             }
                             if (activity != null) {
-                                activity.runOnUiThread {
+                                activity?.runOnUiThread {
                                     if (activity == null)
                                         return@runOnUiThread
-                                    AlertDialog.Builder(context).setTitle("回答问题才能进入").setMessage(question).setPositiveButton(answer1, listener).setNegativeButton(answer2, listener).setNeutralButton(answer3, listener).setOnCancelListener { if (!mAccessible && activity != null) activity.finish() }.create().show()
+                                    AlertDialog.Builder(context!!).setTitle("回答问题才能进入").setMessage(question).setPositiveButton(answer1, listener).setNegativeButton(answer2, listener).setNeutralButton(answer3, listener).setOnCancelListener { if (!mAccessible && activity != null) activity?.finish() }.create().show()
                                 }
                             }
                         }
@@ -170,7 +170,7 @@ class VipFragment : VideoListFragment() {
                                     mBuckets = renameBucket
 
                                     if (activity != null && Thread.currentThread().isInterrupted == false) {
-                                        activity.runOnUiThread {
+                                        activity?.runOnUiThread {
                                             if (mRequest == null) {
                                                 return@runOnUiThread
                                             }
@@ -207,7 +207,7 @@ class VipFragment : VideoListFragment() {
 
     private fun getVipInfo() {
         if (context != null) {
-            GetVipDialogHelper(context).getDialog()?.show()
+            GetVipDialogHelper(context!!).getDialog()?.show()
         }
     }
 

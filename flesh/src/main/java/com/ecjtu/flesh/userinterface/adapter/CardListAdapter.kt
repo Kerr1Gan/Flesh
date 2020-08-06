@@ -2,7 +2,6 @@ package com.ecjtu.flesh.userinterface.adapter
 
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
-import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.util.Log
 import android.util.TypedValue
@@ -12,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -48,7 +48,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
         return pageModel.itemList.size
     }
 
-    override fun onBindViewHolder(holder: VH?, position: Int) {
+    override fun onBindViewHolder(holder: VH, position: Int) {
         val context = holder?.itemView?.context
         val params = holder?.itemView?.layoutParams
         if (getHeight(position) != 0) {
@@ -166,7 +166,7 @@ open class CardListAdapter(var pageModel: PageModel) : RecyclerViewWrapAdapter<C
         holder?.heart?.setTag(R.id.extra_tag, pageModel.itemList[position])
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VH {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val v = LayoutInflater.from(parent?.context).inflate(R.layout.layout_card_view, parent, false)
         return VH(v)
     }
